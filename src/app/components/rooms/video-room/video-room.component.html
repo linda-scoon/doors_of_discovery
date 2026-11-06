@@ -1,0 +1,20 @@
+<app-room (mouseleave)="exitRoom()">
+  <app-wooden-door
+    (doorOpen)="enterRoom()"
+    [openedDoor]="openedDoor"
+    bgColor="#BA9238"
+  ></app-wooden-door>
+  <div class="room-container">
+    <h2>{{ videoTitle }}</h2>
+    <iframe
+      [src]="videoURL | safe"
+      width="480"
+      height="270"
+      allowfullscreen="true"
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      frameborder="no"
+      scrolling="no"
+    ></iframe>
+  </div>
+</app-room>

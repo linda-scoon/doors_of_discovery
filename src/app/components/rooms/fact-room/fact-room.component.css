@@ -1,0 +1,13 @@
+.room-container {
+  position: relative;
+}
+
+.fact {
+  text-align: center;
+}
+
+@media only screen and (min-width: 900px) {
+  .room-container {
+    max-width: 50vw;
+  }
+}

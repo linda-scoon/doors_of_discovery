@@ -5,7 +5,7 @@
   width: 30px;
   height: 60px;
   position: absolute;
-  left: 88%;
+  left: 90%;
 }
 
 .knob {
@@ -28,6 +28,18 @@
   right: 4px;
   border: 1px solid black;
   border-radius: 20px;
+}
+
+.handle-bar-open {
+  width: 40px;
+  height: 10px;
+  position: absolute;
+  background-color: rgb(185, 182, 188);
+  top: 17px;
+  right: 4px;
+  border: 1px solid black;
+  border-radius: 20px;
+  transform: skew(30deg, -40deg);
 }
 
 .keyhole-top {

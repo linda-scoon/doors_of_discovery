@@ -1,34 +1,16 @@
-.room {
-  border: 1px solid black;
-  background-color: yellow;
-  width: 30%;
-  height: 90vh;
+/* the track */
+.room-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-@media only screen and (max-width: 1000px) {
-  .room {
-    width: 40%;
-    height: 500px;
-  }
+.title {
+  text-align: center;
+  margin-bottom: 2px;
 }
 
-@media only screen and (max-width: 700px) {
-  .room {
-    width: 50%;
-    height: 90vh;
-  }
-}
-
-@media only screen and (max-width: 550px) {
-  .room {
-    width: 65%;
-    height: 90vh;
-  }
-}
-
-@media only screen and (max-width: 400px) {
-  .room {
-    width: 100%;
-    height: 90vh;
-  }
+audio {
+  max-width: 100%;
+  height: 30px;
 }

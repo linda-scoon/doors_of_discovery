@@ -1,0 +1,10 @@
+<app-room (mouseleave)="exitRoom()">
+  <app-wooden-door
+    (doorOpen)="enterRoom()"
+    [openedDoor]="openedDoor"
+    bgColor="#9F8170"
+  ></app-wooden-door>
+  <div class="room-container">
+    <p class="fact">{{ randomFact.Fact }}</p>
+  </div>
+</app-room>

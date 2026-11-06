@@ -1,9 +1,16 @@
-<div class="wooden-door">
-  <div class="top">
+<div
+  class="wooden-door"
+  [class.open-door]="openedDoor"
+  [style.backgroundColor]="bgColor"
+>
+  <audio src="assets/dooropen.mp3" class="openScrek"></audio>
+  <audio src="assets/noise.mp3" class="knock"></audio>
+  <div class="top" (mouseover)="knock()" (mouseleave)="stopKnock()">
     <div class="inner-panel"></div>
     <div class="inner-panel"></div>
   </div>
-  <app-right-handle (doorOpening)="openDoor()"></app-right-handle>
+  <app-right-handle (doorOpening)="openDoor()" [handleDown]="openedDoor">
+  </app-right-handle>
   <div class="bottom">
     <div class="inner-panel"></div>
     <div class="inner-panel"></div>

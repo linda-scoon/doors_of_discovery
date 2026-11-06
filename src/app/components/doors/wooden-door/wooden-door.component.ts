@@ -1,5 +1,4 @@
-import { style } from '@angular/animations';
-import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-wooden-door',
@@ -8,17 +7,25 @@ import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
 })
 export class WoodenDoorComponent implements OnInit {
   @Output() doorOpen = new EventEmitter<void>();
+  @Input() openedDoor: boolean = false;
+  @Input() bgColor: string = '';
+  audioElem: HTMLAudioElement | null = document.querySelector('.knock');
+  openingAudio: HTMLAudioElement | null = document.querySelector('.openScrek');
 
   constructor() {}
+
   ngOnInit(): void {}
 
   openDoor(): void {
-    document.querySelector('.wooden-door')?.classList.add('open-door');
-
-    this.emitDoorStatus();
+    // this.openingAudio?.play();
+    this.doorOpen.emit();
   }
 
-  emitDoorStatus(): void {
-    this.doorOpen.emit();
+  knock() {
+    // this.audioElem?.play();
+  }
+
+  stopKnock() {
+    // this.audioElem?.pause();
   }
 }

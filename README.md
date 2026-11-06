@@ -5,4 +5,4 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 It is a project to help me learn how to use angular. The site is a website of doors and cupboards that people can navigate around and open doors. 
 Each door shall have an API running that does something cool and interesting. 
 
-When i have decided on the API's that I shall be running I shall update this readme with more details
+When I have decided on the API's that I shall be running I shall update this readme with more details

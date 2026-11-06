@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-right-handle',
@@ -7,6 +7,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class RightHandleComponent implements OnInit {
   @Output() doorOpening = new EventEmitter<void>();
+  @Input() handleDown: boolean = false;
 
   constructor() {}
   ngOnInit(): void {}

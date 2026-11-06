@@ -1,0 +1,10 @@
+/* need to keep the container relative so that its door can stay absolute to it */
+.room {
+  position: relative;
+  min-height: 600px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

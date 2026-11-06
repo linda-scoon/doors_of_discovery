@@ -1,3 +1,9 @@
-.wrapper{
-    margin: 4px;
+.app-wrapper {
+  margin: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.app-room {
+ flex: 1;
 }

@@ -1,18 +1,22 @@
 .wooden-door {
   border-right: 3px ridge rgb(0, 0, 0);
-  background-color: rgb(202, 148, 49);
+  border-left: 1px solid rgb(0, 0, 0);
+  border-top: 4px double black;
+  border-bottom: 4px double black;
+  /* background-color: rgb(202, 148, 49); */
   position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 30%;
-  height: 90vh;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 999;
 
   /* for open door */
-  transition:transform 2s;
+  transition: transform 2s;
   transform-origin: left;
 }
 
@@ -33,7 +37,7 @@
 }
 
 .inner-panel {
-  border: 1px solid black;
+  border: 9px ridge ;
   margin: auto;
 }
 
@@ -48,35 +52,6 @@
 }
 
 /* open door */
-.open-door{
-  transform:rotateY(150deg);
-}
-
-/* resizing */
-@media only screen and (max-width: 1000px) {
-  .wooden-door {
-    width: 40%;
-    height: 600px;
-  }
-}
-
-@media only screen and (max-width: 700px) {
-  .wooden-door {
-    width: 50%;
-    height: 90vh;
-  }
-}
-
-@media only screen and (max-width: 550px) {
-  .wooden-door {
-    width: 65%;
-    height: 90vh;
-  }
-}
-
-@media only screen and (max-width: 400px) {
-  .wooden-door {
-    width: 98%;
-    height: 90vh;
-  }
+.open-door {
+  transform: rotateY(150deg);
 }

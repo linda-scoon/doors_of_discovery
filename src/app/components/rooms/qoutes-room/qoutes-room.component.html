@@ -1,0 +1,11 @@
+<app-room (mouseleave)="exitRoom()">
+  <app-wooden-door
+    (doorOpen)="enterRoom()"
+    [openedDoor]="openedDoor"
+    bgColor="#DEB887"
+  ></app-wooden-door>
+  <div class="room-container">
+    <p class="quote">{{ quote.quote_text }}</p>
+    <small class="author">{{ quote.author }}</small>
+  </div>
+</app-room>

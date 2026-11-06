@@ -1,1 +1,16 @@
-<div class="room"></div>
+<app-room (mouseleave)="exitRoom()">
+  <app-wooden-door
+    (doorOpen)="enterRoom()"
+    [openedDoor]="openedDoor"
+    bgColor="#C3B091"
+  ></app-wooden-door>
+  <div class="room-container" *ngIf="openedDoor">
+    <p class="title">
+      {{ track.title }} by {{track.artist.name}}
+    </p>
+    <div class="track">
+      <img [src]="track.album.cover" [alt]="track.title" />
+    </div>
+    <audio controls autoplay [src]="track.preview" type="audio/mpeg"></audio>
+  </div>
+</app-room>

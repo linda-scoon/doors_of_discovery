@@ -1,0 +1,12 @@
+<div (click)="openDoor()">
+  <div class="handle">
+    <div class="knob">
+      <div
+        [class.handle-bar-open]="handleDown"
+        [class.handle-bar]="!handleDown"
+      ></div>
+    </div>
+    <span class="keyhole-top"></span>
+    <span class="keyhole-bottom"></span>
+  </div>
+</div>
