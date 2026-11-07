@@ -24,12 +24,12 @@ describe('VideoRoomComponent', () => {
     room.server.expectOne('/api/videos/popular').flush({ results: [{ id: 7, title: 'A Film' }] });
     room.server.expectOne('/api/videos/trailer/7').flush({ results: [{ key: 'x', site: 'Vimeo', type: 'Trailer' }] });
 
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(VideoRoomComponent);
     failRequest(room.server, '/api/videos/popular');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

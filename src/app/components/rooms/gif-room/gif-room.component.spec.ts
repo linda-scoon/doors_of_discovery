@@ -40,6 +40,6 @@ describe('GifRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(GifRoomComponent);
     failRequest(room.server, /\/api\/gifs/);
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

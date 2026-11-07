@@ -17,6 +17,7 @@ import {
   characterForDoor,
   panelCountForDesign,
 } from './door-material';
+import { HandleComponent } from '../../handles/handle/handle.component';
 
 /** Which side of the door the handle is on — the hinge is on the other. */
 export type HandleSide = 'left' | 'right';
@@ -37,7 +38,7 @@ export type { OpenStyle } from './door-material';
   templateUrl: './door.component.html',
   styleUrls: ['./door.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [HandleComponent],
 })
 export class DoorComponent {
   @Input()

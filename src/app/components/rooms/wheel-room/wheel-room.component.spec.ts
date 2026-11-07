@@ -7,7 +7,7 @@ describe('WheelRoomComponent', () => {
     const wheel = TestBed.createComponent(WheelRoomComponent).componentInstance;
 
     wheel.spin();
-    expect(wheel.spinning()).toBeTrue();
+    expect(wheel.spinning()).toBe(true);
     expect(wheel.rotation()).toBeGreaterThan(360 * 3);
 
     // Where the pointer is, measured round the wheel from its top.

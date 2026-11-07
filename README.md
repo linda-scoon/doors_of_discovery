@@ -87,7 +87,7 @@ It reports a true/false per room and never prints a key.
 | `npm run dev` | Angular dev server on :4200, proxying `/api` to :3000 |
 | `npm run serve:api` | The API server on its own, on :3000 |
 | `npm run build` | Production build into `dist/web_of_doors/` |
-| `npm test` | Unit tests (Karma + Jasmine) |
+| `npm test` | Unit tests (Vitest), about three seconds |
 | `npm run test:server` | Server tests: security, caching, misuse |
 | `npm run watch` | Development build, rebuilding on change |
 

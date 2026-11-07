@@ -35,6 +35,6 @@ describe('TriviaRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(TriviaRoomComponent);
     failRequest(room.server, '/api/trivia');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

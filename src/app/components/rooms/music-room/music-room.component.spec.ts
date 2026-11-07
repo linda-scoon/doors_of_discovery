@@ -31,6 +31,6 @@ describe('MusicRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(MusicRoomComponent);
     failRequest(room.server, '/api/music');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

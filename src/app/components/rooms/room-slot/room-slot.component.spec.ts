@@ -1,13 +1,9 @@
-import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 
 import { RoomSlotComponent } from './room-slot.component';
-import { RoomComponent } from '../room/room.component';
-import { DoorComponent } from '../../doors/door/door.component';
-import { HandleComponent } from '../../handles/handle/handle.component';
 import { RoomDefinition } from '../../../rooms';
 import { DoorSoundService } from '../../../services/door-sound.service';
-import { BricksComponent } from '../../bricks/bricks.component';
 
 /** Stands in for a real room. */
 @Component({
@@ -30,6 +26,8 @@ class SilentSoundService {
 }
 
 describe('RoomSlotComponent', () => {
+  afterEach(() => vi.useRealTimers());
+
   let fixture: ComponentFixture<RoomSlotComponent>;
   let sound: SilentSoundService;
 
@@ -45,14 +43,8 @@ describe('RoomSlotComponent', () => {
     sound = new SilentSoundService();
 
     await TestBed.configureTestingModule({
-      declarations: [
-        RoomSlotComponent,
-        RoomComponent,
-        DoorComponent,
-        HandleComponent,
-        TestRoomContentComponent,
-      ],
-      imports: [BricksComponent],
+      declarations: [TestRoomContentComponent],
+      imports: [RoomSlotComponent],
       providers: [{ provide: DoorSoundService, useValue: sound }],
     }).compileComponents();
 
@@ -103,34 +95,36 @@ describe('RoomSlotComponent', () => {
     expect(fixture.nativeElement.querySelector('app-bricks')).toBeTruthy();
   });
 
-  it('takes the room down once the door has swung shut', fakeAsync(async () => {
+  it('takes the room down once the door has swung shut', async () => {
     await createWith(plainRoom);
     handle().click();
-    flushMicrotasks();
-    fixture.detectChanges();
+    await settle();
 
+    vi.useFakeTimers();
     leave();
     fixture.detectChanges();
     // Still there while the door swings closed over it.
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
 
-    tick(2000);
+    vi.advanceTimersByTime(2000);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.content')).toBeNull();
-  }));
+  });
 
-  it('keeps the room if the door is opened again before it is taken down', fakeAsync(async () => {
+  it('keeps the room if the door is opened again before it is taken down', async () => {
     await createWith(plainRoom);
     handle().click();
+    await settle();
+
+    vi.useFakeTimers();
     leave();
-    tick(500);
+    vi.advanceTimersByTime(500);
     handle().click();
-    tick(2000);
-    flushMicrotasks();
+    vi.advanceTimersByTime(2000);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
-  }));
+  });
 
   it('renders exactly one door', async () => {
     await createWith(plainRoom);
@@ -145,7 +139,7 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
 
     expect(door().classList).toContain('door--open');
-    expect(fixture.componentInstance.open).toBeTrue();
+    expect(fixture.componentInstance.open).toBe(true);
   });
 
   it('builds the door label from the room name', async () => {
@@ -233,21 +227,22 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
 
     expect(door().classList).not.toContain('door--open');
-    expect(fixture.componentInstance.open).toBeFalse();
+    expect(fixture.componentInstance.open).toBe(false);
   });
 
-  it('answers from inside and then lets you in', fakeAsync(async () => {
+  it('answers from inside and then lets you in', async () => {
     await createWith(plainRoom);
+    vi.useFakeTimers();
     // The surprise comes from the id, so set it directly for the test.
     fixture.componentInstance.character.surprise = 'answers';
 
     fixture.componentInstance.onTap('wood');
     expect(sound.played).toContain('callOut:coming');
-    expect(fixture.componentInstance.open).toBeFalse();
+    expect(fixture.componentInstance.open).toBe(false);
 
-    tick(1400);
-    expect(fixture.componentInstance.open).toBeTrue();
-  }));
+    vi.advanceTimersByTime(1400);
+    expect(fixture.componentInstance.open).toBe(true);
+  });
 
   it('hides the room until the door is open', async () => {
     await createWith(plainRoom);
@@ -287,6 +282,6 @@ describe('RoomSlotComponent', () => {
 
     fixture.componentInstance.onTap('wood');
 
-    expect(fixture.componentInstance.open).toBeTrue();
+    expect(fixture.componentInstance.open).toBe(true);
   });
 });

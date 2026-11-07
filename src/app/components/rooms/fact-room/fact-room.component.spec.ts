@@ -21,12 +21,12 @@ describe('FactRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(FactRoomComponent);
     failRequest(room.server, '/api/facts');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 
   it('treats an empty fact as a failure, not an empty room', async () => {
     const room = await openRoom(FactRoomComponent);
     room.server.expectOne('/api/facts').flush({ text: '  ' });
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

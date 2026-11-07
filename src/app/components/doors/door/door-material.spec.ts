@@ -62,7 +62,7 @@ describe('door numbers', () => {
     const unlucky = all.filter((door) => door.number === 13);
 
     expect(unlucky.length).toBeGreaterThan(0);
-    unlucky.forEach((door) => expect(isPlainDesign(door.design)).toBeTrue());
+    unlucky.forEach((door) => expect(isPlainDesign(door.design)).toBe(true));
   });
 
   it('gives every material a plain face to put a number on', () => {
@@ -76,9 +76,7 @@ describe('door numbers', () => {
     });
 
     ['wood', 'metal', 'glass', 'stone'].forEach((material) =>
-      expect(plainPerMaterial.get(material))
-        .withContext(`no plain ${material} door in 600`)
-        .toBeGreaterThan(0)
+      expect(plainPerMaterial.get(material), `no plain ${material} door in 600`).toBeGreaterThan(0)
     );
   });
 });
@@ -144,9 +142,7 @@ describe('graffiti placement', () => {
     );
 
     ['single', 'curtain', 'splash', 'soft'].forEach((style) =>
-      expect(counts.get(style))
-        .withContext(`no door got the ${style} drip`)
-        .toBeGreaterThan(0)
+      expect(counts.get(style), `no door got the ${style} drip`).toBeGreaterThan(0)
     );
 
     // A splash is only a surprise while most doors are not splashed.
@@ -192,9 +188,7 @@ describe('graffiti placement', () => {
       (door) => door.graffiti!.lines.length > 1 && door.graffiti!.lines[0].runs.length
     );
 
-    expect(fromTheTop.length)
-      .withContext('every run came off the last line')
-      .toBeGreaterThan(0);
+    expect(fromTheTop.length, 'every run came off the last line').toBeGreaterThan(0);
   });
 
   it('runs paint from an upper line far enough to pass the line below', () => {

@@ -5,30 +5,18 @@ import {
   withInterceptorsFromDi,
   withXhr,
 } from '@angular/common/http';
-import { RoomComponent } from './components/rooms/room/room.component';
-import { DoorComponent } from './components/doors/door/door.component';
-import { RoomSlotComponent } from './components/rooms/room-slot/room-slot.component';
-import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
-import { HandleComponent } from './components/handles/handle/handle.component';
-import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { BricksComponent } from './components/bricks/bricks.component';
 
+import { AppComponent } from './app.component';
+
+/*
+ * Every component is standalone and brings its own imports; this module
+ * only starts the app and provides what the whole of it shares.
+ */
 @NgModule({
-  // Rooms built as standalone components are not declared here: the wall
-  // creates them by type, and they bring their own imports.
-  declarations: [
-    AppComponent,
-    RoomComponent,
-    DoorComponent,
-    RoomSlotComponent,
-    EmptyRoomComponent,
-    HandleComponent,
-  ],
-  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
-    BricksComponent,
+    AppComponent,
 
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),
@@ -37,6 +25,7 @@ import { BricksComponent } from './components/bricks/bricks.component';
       registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
+  bootstrap: [AppComponent],
   providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())],
 })
 export class AppModule {}

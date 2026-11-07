@@ -19,7 +19,7 @@ const ownStory = {
 
 describe('BookRoomComponent', () => {
   it('recommends a book on one of the subjects, with its cover and a link', async () => {
-    spyOn(Math, 'random').and.returnValue(0.9); // A book, not our own.
+    vi.spyOn(Math, 'random').mockReturnValue(0.9); // A book, not our own.
     const room = await openRoom(BookRoomComponent);
     const request = room.server.expectOne((req) => req.url.startsWith('/api/books/'));
     expect(subjects.map((s) => s.slug)).toContain(request.request.url.split('/').pop()!);
@@ -33,7 +33,7 @@ describe('BookRoomComponent', () => {
   });
 
   it('now and then shows one of our own stories: its cover, title, 18+, synopsis, link', async () => {
-    spyOn(Math, 'random').and.returnValue(0.1);
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     const room = await openRoom(BookRoomComponent);
     room.server.expectOne('/api/silverfoot').flush({ stories: [ownStory] });
 
@@ -49,7 +49,7 @@ describe('BookRoomComponent', () => {
   });
 
   it('recommends a book instead if our own stories cannot be read', async () => {
-    spyOn(Math, 'random').and.returnValue(0.1);
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
     const room = await openRoom(BookRoomComponent);
     room.server.expectOne('/api/silverfoot').flush({}, { status: 502, statusText: 'Bad Gateway' });
     room.server.expectOne((req) => req.url.startsWith('/api/books/')).flush({ works: [work] });
@@ -58,12 +58,12 @@ describe('BookRoomComponent', () => {
   });
 
   it('is bricked up when no book can be found', async () => {
-    spyOn(Math, 'random').and.returnValue(0.9);
+    vi.spyOn(Math, 'random').mockReturnValue(0.9);
     const room = await openRoom(BookRoomComponent);
     room.server
       .expectOne((req) => req.url.startsWith('/api/books/'))
       .flush({}, { status: 502, statusText: 'Bad Gateway' });
 
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

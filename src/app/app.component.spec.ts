@@ -7,12 +7,13 @@ import { ROOM_KINDS } from './rooms';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent],
+      imports: [AppComponent],
+    })
       // The page is nothing but room slots. This is a unit test of the
       // wall itself, so they are left unresolved rather than dragged in
       // with their services and HTTP calls.
-      schemas: [NO_ERRORS_SCHEMA],
-    }).compileComponents();
+      .overrideComponent(AppComponent, { set: { imports: [], schemas: [NO_ERRORS_SCHEMA] } })
+      .compileComponents();
   });
 
   it('should create the app', () => {

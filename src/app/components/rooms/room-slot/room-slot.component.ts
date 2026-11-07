@@ -20,6 +20,10 @@ import {
   characterForDoor,
 } from '../../doors/door/door-material';
 import { DoorSoundService } from '../../../services/door-sound.service';
+import { NgComponentOutlet } from '@angular/common';
+import { RoomComponent } from '../room/room.component';
+import { DoorComponent } from '../../doors/door/door.component';
+import { BricksComponent } from '../../bricks/bricks.component';
 
 /**
  * A door and the room behind it.
@@ -50,7 +54,7 @@ const CLEAR_ROOM_DELAY = 1800;
   templateUrl: './room-slot.component.html',
   styleUrls: ['./room-slot.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [RoomComponent, DoorComponent, BricksComponent, NgComponentOutlet],
 })
 export class RoomSlotComponent implements OnInit, OnDestroy {
   private readonly sound = inject(DoorSoundService);

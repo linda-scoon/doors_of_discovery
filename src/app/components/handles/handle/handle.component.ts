@@ -21,7 +21,6 @@ export type HandleSide = 'left' | 'right';
   templateUrl: './handle.component.html',
   styleUrls: ['./handle.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class HandleComponent {
   @Input() side: HandleSide = 'right';

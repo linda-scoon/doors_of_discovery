@@ -13,6 +13,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   templateUrl: './empty-room.component.html',
   styleUrls: ['./empty-room.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class EmptyRoomComponent {}

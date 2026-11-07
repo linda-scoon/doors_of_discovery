@@ -22,6 +22,6 @@ describe('JokesRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(JokesRoomComponent);
     failRequest(room.server, '/api/jokes');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

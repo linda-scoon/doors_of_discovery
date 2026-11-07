@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { TicTacToeRoomComponent, houseMove, winnerOf } from './tic-tac-toe-room.component';
 
@@ -21,12 +21,17 @@ describe('noughts and crosses', () => {
     expect(houseMove([X, X, _, _, O, _, _, _, _], () => 0.5)).toBe(2);
   });
 
-  it('answers a move after a moment', fakeAsync(() => {
-    const game = TestBed.createComponent(TicTacToeRoomComponent).componentInstance;
-    game.play(0);
-    expect(game.board().filter(Boolean).length).toBe(1);
+  it('answers a move after a moment', () => {
+    vi.useFakeTimers();
+    try {
+      const game = TestBed.createComponent(TicTacToeRoomComponent).componentInstance;
+      game.play(0);
+      expect(game.board().filter(Boolean).length).toBe(1);
 
-    tick(500);
-    expect(game.board().filter((c) => c === 'O').length).toBe(1);
-  }));
+      vi.advanceTimersByTime(500);
+      expect(game.board().filter((c) => c === 'O').length).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
