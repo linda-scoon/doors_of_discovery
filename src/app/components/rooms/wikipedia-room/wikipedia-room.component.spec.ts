@@ -47,6 +47,54 @@ describe('WikipediaRoomComponent', () => {
     expect(room.text()).not.toContain('Zebari');
   });
 
+  it('prefers an article with a picture, like a good encyclopedia', async () => {
+    const room = await openRoom(WikipediaRoomComponent);
+    room.server.expectOne((req) => /^\/api\/wikipedia\/[A-Y][A-Z]$/.test(req.url)).flush({
+      query: {
+        pages: {
+          '1': {
+            title: 'Plain',
+            extract: 'An article with plenty to read but no picture at all to look at, sadly.',
+            canonicalurl: 'https://en.wikipedia.org/wiki/Plain',
+          },
+          '2': {
+            title: 'Dodo',
+            extract: 'The dodo is an extinct flightless bird that was endemic to the island of Mauritius.',
+            canonicalurl: 'https://en.wikipedia.org/wiki/Dodo',
+            thumbnail: { source: 'https://upload.wikimedia.org/dodo.jpg' },
+          },
+        },
+      },
+    });
+
+    expect(room.text()).toContain('Dodo');
+    expect(room.text()).toContain('Vol. D');
+    expect(room.fixture.nativeElement.querySelector('img').src).toContain('dodo.jpg');
+  });
+
+  it('takes the picture plate away if the picture will not load', async () => {
+    const room = await openRoom(WikipediaRoomComponent);
+    room.server.expectOne((req) => /^\/api\/wikipedia\/[A-Y][A-Z]$/.test(req.url)).flush({
+      query: {
+        pages: {
+          '1': {
+            title: 'Dodo',
+            extract: 'The dodo is an extinct flightless bird that was endemic to the island of Mauritius.',
+            canonicalurl: 'https://en.wikipedia.org/wiki/Dodo',
+            thumbnail: { source: 'https://upload.wikimedia.org/dodo.jpg' },
+          },
+        },
+      },
+    });
+    room.fixture.detectChanges();
+
+    room.fixture.nativeElement.querySelector('img').dispatchEvent(new Event('error'));
+    room.fixture.detectChanges();
+
+    expect(room.fixture.nativeElement.querySelector('figure')).toBeNull();
+    expect(room.text()).toContain('The dodo is an extinct flightless bird');
+  });
+
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(WikipediaRoomComponent);
     failRequest(room.server, /\/api\/wikipedia\//);

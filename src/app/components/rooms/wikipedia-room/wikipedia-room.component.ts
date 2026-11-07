@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 
@@ -22,8 +22,10 @@ interface WikiPage {
 const ENOUGH_TO_READ = 60;
 
 /**
- * One of Wikipedia's featured articles -- its best-written pages -- with its
- * title, a picture if it has one, and the first few sentences. Wikipedia's text is CC BY-SA, which asks for credit
+ * One of Wikipedia's featured articles -- its best-written pages -- laid out
+ * like a page from the encyclopedias people used to buy in shops: yellowed
+ * paper, a big picture plate, a drop capital, the volume at the top and a
+ * page number at the foot. Wikipedia's text is CC BY-SA, which asks for credit
  * and a link to the article.
  */
 @Component({
@@ -36,17 +38,30 @@ const ENOUGH_TO_READ = 60;
 export class WikipediaRoomComponent {
   private readonly http = inject(HttpClient);
 
+  /** Set if the picture will not load, so an empty plate is not left behind. */
+  readonly pictureMissing = signal(false);
+
   readonly page = roomLoad(() =>
     this.http.get<{ query: { pages: Record<string, WikiPage> } }>(`/api/wikipedia/${randomPrefix()}`).pipe(
       map((response) => {
-        const page = shuffled(Object.values(response?.query?.pages ?? {})).find(
+        const readable = shuffled(Object.values(response?.query?.pages ?? {})).filter(
           (p) =>
             p.title &&
             p.pageprops?.disambiguation === undefined &&
             (p.extract?.length ?? 0) >= ENOUGH_TO_READ
         );
+        // The pictures were half the joy of an encyclopedia, so one with a
+        // picture is preferred when there is one.
+        const page = readable.find((p) => p.thumbnail) ?? readable[0];
         if (!page) throw new Error('No readable article in the response');
-        return page;
+        this.pictureMissing.set(false);
+
+        const initial = page.title.charAt(0).toUpperCase();
+        return {
+          ...page,
+          volume: /[A-Z]/.test(initial) ? initial : '#',
+          folio: 1 + Math.floor(Math.random() * 960),
+        };
       })
     )
   );

@@ -132,7 +132,7 @@ const apis = [
       '&generator=categorymembers&gcmtitle=Category:Featured_articles' +
       '&gcmnamespace=0&gcmlimit=5&gcmstartsortkeyprefix=:prefix' +
       '&prop=extracts|pageimages|info|pageprops&ppprop=disambiguation&inprop=url' +
-      '&exintro=1&explaintext=1&exsentences=3&exlimit=5&piprop=thumbnail&pithumbsize=400',
+      '&exintro=1&explaintext=1&exsentences=3&exlimit=5&piprop=thumbnail&pithumbsize=640',
     auth: { style: AuthStyle.NONE },
     pathParams: ['prefix'],
     pathParamPatterns: { prefix: /^[A-Z]{2}$/ },
