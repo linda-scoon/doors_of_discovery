@@ -1,14 +1,22 @@
 <app-room-frame [status]="trailer.status()">
   @if (trailer.value(); as t) {
+    <app-theatre-curtains></app-theatre-curtains>
     <p class="room-words room-words--small">{{ t.title }}</p>
-    @if (t.url | safe; as trusted) {
+    <!--
+      The door opening is the play button: the trailer starts as the door
+      swings open, and is taken away -- sound and all -- the moment it
+      starts to close.
+    -->
+    @if (open() && (t.url | safe); as trusted) {
       <iframe
         class="video-room__player"
         [src]="trusted"
         [title]="'Trailer for ' + t.title"
-        allow="encrypted-media; picture-in-picture; fullscreen"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
         allowfullscreen
       ></iframe>
+    } @else {
+      <span class="video-room__player"></span>
     }
     <p class="room-credit">Films from TMDB</p>
   }

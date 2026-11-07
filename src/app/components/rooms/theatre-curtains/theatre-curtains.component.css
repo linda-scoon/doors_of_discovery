@@ -1,0 +1,83 @@
+:host {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* Velvet: deep folds and bright ridges, one pleat every 6cqi. */
+  --velvet:
+    repeating-linear-gradient(
+      90deg,
+      #4a060c 0,
+      #8e0f1a 1.8cqi,
+      #d42a36 3cqi,
+      #9c121d 4.2cqi,
+      #4a060c 6cqi
+    );
+}
+
+/*
+ * Each curtain is gathered where it is tied: full width at the top, pinched
+ * just past halfway down, flaring out again to the floor.
+ */
+.curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 21%;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 25%, transparent 70%, rgba(0, 0, 0, 0.5)),
+    var(--velvet);
+  clip-path: polygon(
+    0 0, 100% 0, 94% 6%, 78% 18%, 56% 34%, 38% 48%, 30% 57%,
+    36% 66%, 52% 80%, 70% 92%, 82% 100%, 0 100%
+  );
+  filter: drop-shadow(0.8cqi 0 1.5cqi rgba(0, 0, 0, 0.6));
+}
+
+/* The right one is the left one turned round. */
+.curtain--right {
+  left: auto;
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* A gold rope round each, where it is gathered. */
+.tieback {
+  position: absolute;
+  top: 55.5%;
+  left: 0;
+  width: 8cqi;
+  height: 2.6cqi;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, #fff0b0, #d8a531 50%, #8a6210);
+  box-shadow: 0 0.5cqi 1cqi rgba(0, 0, 0, 0.6);
+  transform: rotate(-8deg);
+}
+
+.tieback--right {
+  left: auto;
+  right: 0;
+  transform: rotate(8deg);
+}
+
+/*
+ * The pelmet across the top: the same velvet, pleated finer, with a gold
+ * trim and a scalloped hem.
+ */
+.pelmet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 13cqi;
+  background:
+    linear-gradient(to bottom, transparent calc(100% - 4.4cqi), #e3b038 calc(100% - 4.4cqi), #8a6210 calc(100% - 3.4cqi), transparent calc(100% - 3.4cqi)),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent 60%),
+    repeating-linear-gradient(90deg, #5c0810 0, #b51d28 2cqi, #6a0a12 4cqi);
+  /* Solid down to the trim, then a row of scallops. */
+  mask:
+    linear-gradient(#000, #000) top / 100% calc(100% - 3.4cqi) no-repeat,
+    radial-gradient(circle at 50% 0, #000 3.4cqi, transparent 3.5cqi) bottom / 8cqi 3.4cqi repeat-x;
+  filter: drop-shadow(0 1cqi 1.5cqi rgba(0, 0, 0, 0.6));
+}

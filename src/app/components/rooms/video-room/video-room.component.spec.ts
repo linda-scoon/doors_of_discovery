@@ -2,8 +2,9 @@ import { VideoRoomComponent } from './video-room.component';
 import { failRequest, openRoom } from '../room-frame/room-testing';
 
 describe('VideoRoomComponent', () => {
-  it('shows the trailer of a popular film', async () => {
+  it('plays the trailer of a popular film as soon as the door is open', async () => {
     const room = await openRoom(VideoRoomComponent);
+    room.fixture.componentRef.setInput('open', true);
     room.server.expectOne('/api/videos/popular').flush({ results: [{ id: 7, title: 'A Film' }] });
     room.server.expectOne('/api/videos/trailer/7').flush({
       results: [
@@ -13,7 +14,9 @@ describe('VideoRoomComponent', () => {
     });
 
     expect(room.text()).toContain('A Film');
-    expect(room.fixture.nativeElement.querySelector('iframe').src).toContain('/embed/trail');
+    const src = room.fixture.nativeElement.querySelector('iframe').src;
+    expect(src).toContain('/embed/trail');
+    expect(src).toContain('autoplay=1');
   });
 
   it('is bricked up when the film has nothing on YouTube', async () => {

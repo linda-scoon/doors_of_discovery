@@ -2,11 +2,14 @@
   display: contents;
 }
 
-/* An old picture house: dark, with red curtains drawn back at each side. */
+/* An old picture house: a dark stage between red velvet curtains. */
 app-room-frame {
+  position: relative;
+  /* Clear of the pelmet above and the curtains at each side. */
+  padding: 16cqi 15cqi 9cqi;
   background:
-    linear-gradient(to right, #7a0f16, #4a070c 5%, transparent 13%, transparent 87%, #4a070c 95%, #7a0f16),
-    radial-gradient(ellipse at 50% 20%, #1c1c1c, #050505 70%);
+    linear-gradient(to bottom, transparent 82%, #2b1a10 82%, #1a0f08),
+    radial-gradient(ellipse at 50% 35%, #2a2a2a, #070707 70%);
   color: #ece6dc;
 }
 

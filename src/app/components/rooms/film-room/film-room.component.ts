@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 
 import { RoomFrameComponent } from '../room-frame/room-frame.component';
 import { pickOne, roomLoad } from '../room-frame/room-load';
 import { SafePipe } from '../../../pipes/safe.pipe';
+import { TheatreCurtainsComponent } from '../theatre-curtains/theatre-curtains.component';
 
 interface ArchiveFilm {
   identifier: string;
@@ -21,13 +22,16 @@ const PAGES = 200;
  */
 @Component({
   selector: 'app-film-room',
-  imports: [RoomFrameComponent, SafePipe],
+  imports: [RoomFrameComponent, SafePipe, TheatreCurtainsComponent],
   templateUrl: './film-room.component.html',
   styleUrls: ['./film-room.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilmRoomComponent {
   private readonly http = inject(HttpClient);
+
+  /** Whether the door is open; the film only plays while it is. */
+  readonly open = input(false);
 
   readonly film = roomLoad(() => {
     const page = 1 + Math.floor(Math.random() * PAGES);
@@ -41,7 +45,7 @@ export class FilmRoomComponent {
           return {
             title: film.title || 'An old film',
             year: film.year,
-            embed: `https://archive.org/embed/${id}`,
+            embed: `https://archive.org/embed/${id}?autoplay=1`,
             link: `https://archive.org/details/${id}`,
           };
         })

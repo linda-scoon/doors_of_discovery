@@ -126,7 +126,13 @@ export const ROOM_KINDS: readonly RoomKind[] = [
   { kind: 'paintings', name: 'Gallery', component: PaintingRoomComponent, rarity: 'common' },
   { kind: 'photos', name: 'Photo Room', component: PhotoRoomComponent, rarity: 'common' },
   { kind: 'gifs', name: 'Gif Room', component: GifRoomComponent, rarity: 'common' },
-  { kind: 'videos', name: 'Video Room', component: VideoRoomComponent, rarity: 'common' },
+  {
+    kind: 'videos',
+    name: 'Video Room',
+    component: VideoRoomComponent,
+    rarity: 'common',
+    needsDoorState: true,
+  },
   {
     kind: 'music',
     name: 'Music Room',
@@ -153,7 +159,13 @@ export const ROOM_KINDS: readonly RoomKind[] = [
   { kind: 'story', name: 'Story Room', component: StoryRoomComponent, rarity: 'uncommon' },
   { kind: 'tarot', name: 'Fortune Teller', component: TarotRoomComponent, rarity: 'uncommon' },
   { kind: 'weather', name: 'Window Room', component: WeatherRoomComponent, rarity: 'uncommon' },
-  { kind: 'films', name: 'Cinema', component: FilmRoomComponent, rarity: 'uncommon' },
+  {
+    kind: 'films',
+    name: 'Cinema',
+    component: FilmRoomComponent,
+    rarity: 'uncommon',
+    needsDoorState: true,
+  },
 
   // Much the same every time, so only now and then.
   { kind: 'iss', name: 'Observatory', component: IssRoomComponent, rarity: 'rare' },

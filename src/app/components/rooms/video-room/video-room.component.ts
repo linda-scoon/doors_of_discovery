@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, switchMap } from 'rxjs';
 
 import { RoomFrameComponent } from '../room-frame/room-frame.component';
 import { pickOne, roomLoad } from '../room-frame/room-load';
 import { SafePipe } from '../../../pipes/safe.pipe';
+import { TheatreCurtainsComponent } from '../theatre-curtains/theatre-curtains.component';
 
 /** The fields of TMDB's popular-movies response that this room uses. */
 interface PopularMovies {
@@ -22,13 +23,16 @@ interface MovieVideos {
  */
 @Component({
   selector: 'app-video-room',
-  imports: [RoomFrameComponent, SafePipe],
+  imports: [RoomFrameComponent, SafePipe, TheatreCurtainsComponent],
   templateUrl: './video-room.component.html',
   styleUrls: ['./video-room.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoRoomComponent {
   private readonly http = inject(HttpClient);
+
+  /** Whether the door is open; the trailer only plays while it is. */
+  readonly open = input(false);
 
   readonly trailer = roomLoad(() =>
     this.http.get<PopularMovies>('/api/videos/popular').pipe(
@@ -37,9 +41,11 @@ export class VideoRoomComponent {
         this.http.get<MovieVideos>(`/api/videos/trailer/${movie.id}`).pipe(
           map((videos) => ({
             title: movie.title,
-            // No-cookie YouTube: nothing is stored on the visitor's machine
-            // until they press play.
-            url: `https://www.youtube-nocookie.com/embed/${youTubeTrailerKey(videos?.results)}`,
+            // No-cookie YouTube, playing straight away: opening the door
+            // was the press of play. Some phones still ask for a tap.
+            url:
+              `https://www.youtube-nocookie.com/embed/${youTubeTrailerKey(videos?.results)}` +
+              '?autoplay=1&playsinline=1&rel=0',
           }))
         )
       )
