@@ -2,6 +2,14 @@
   display: contents;
 }
 
+/* A 1950s front room: mint striped wallpaper. */
+app-room-frame {
+  background:
+    repeating-linear-gradient(to right, rgba(255, 255, 255, 0.35) 0 4cqi, transparent 4cqi 8cqi),
+    #bfe6d6;
+  color: #24352f;
+}
+
 /* An old wireless set, its dial glowing. */
 .radio-room__set {
   display: flex;

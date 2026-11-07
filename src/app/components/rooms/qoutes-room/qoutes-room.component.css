@@ -2,6 +2,14 @@
   display: contents;
 }
 
+/* Calm and elegant: a sheet of cream paper and a serif hand. */
+app-room-frame {
+  background:
+    radial-gradient(ellipse at 50% 40%, #fffdf7, #f3ecdc 80%);
+  color: #3a3530;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
 .qoutes-room__quote {
   display: flex;
   flex-direction: column;

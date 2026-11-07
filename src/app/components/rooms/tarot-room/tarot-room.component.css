@@ -1,5 +1,22 @@
+/* A fortune teller's tent: deep violet, gold, and a scatter of stars. */
 :host {
   display: contents;
+}
+
+app-room-frame {
+  background:
+    radial-gradient(1px 1px at 15% 18%, #f3e3b0, transparent),
+    radial-gradient(1px 1px at 80% 10%, #f3e3b0, transparent),
+    radial-gradient(1.5px 1.5px at 70% 75%, #f3e3b0, transparent),
+    radial-gradient(1px 1px at 25% 85%, #f3e3b0, transparent),
+    radial-gradient(ellipse at 50% 30%, #3b1a63, #170828 65%, #08030f);
+  color: #eadcff;
+}
+
+app-room-frame .room-words:not(.tarot-room__meaning) {
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: 0.03em;
+  color: #e6c46a;
 }
 
 /* A card that turns over: the back first, then the face. */
@@ -19,7 +36,7 @@
   height: 100%;
   border-radius: 2cqi;
   backface-visibility: hidden;
-  box-shadow: 0 2cqi 5cqi rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 6cqi rgba(230, 196, 106, 0.35), 0 2cqi 5cqi rgba(0, 0, 0, 0.6);
 }
 
 .tarot-room__back {
@@ -45,5 +62,5 @@
 
 .tarot-room__meaning {
   font-style: italic;
-  opacity: 0.85;
+  color: #d9c8f5;
 }

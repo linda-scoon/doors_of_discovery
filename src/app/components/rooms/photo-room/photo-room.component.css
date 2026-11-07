@@ -1,0 +1,27 @@
+:host {
+  display: contents;
+}
+
+/* A bright, clean wall with a print pinned to it. */
+app-room-frame {
+  background: radial-gradient(ellipse at 50% 30%, #ffffff, #e9ecef 75%);
+  color: #22262b;
+}
+
+.photo-room__print {
+  padding: 3cqi 3cqi 10cqi;
+  background: #fff;
+  box-shadow: 0 1.5cqi 4cqi rgba(0, 0, 0, 0.18);
+  transform: rotate(-1.5deg);
+}
+
+.photo-room__photo {
+  display: block;
+  max-width: 100%;
+  max-height: 62cqh;
+  object-fit: cover;
+}
+
+.photo-room__credit {
+  opacity: 0.75;
+}

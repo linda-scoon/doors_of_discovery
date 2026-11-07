@@ -2,6 +2,24 @@
   display: contents;
 }
 
+/* A page torn from a school notebook: ruled lines and a red margin. */
+app-room-frame {
+  background:
+    linear-gradient(to right, transparent 9cqi, rgba(220, 70, 70, 0.6) 9cqi 9.5cqi, transparent 9.5cqi),
+    repeating-linear-gradient(to bottom, transparent 0 7.5cqi, rgba(80, 130, 200, 0.28) 7.5cqi 7.8cqi),
+    #fffef8;
+  color: #1f2a44;
+}
+
+.fact-room__heading {
+  font-family: 'Caveat', 'Segoe Print', cursive;
+  font-size: clamp(0.95rem, 8cqi, 1.4rem);
+  letter-spacing: 0;
+  text-transform: none;
+  color: #c43c3c;
+  opacity: 1;
+}
+
 .fact-room__heading {
   letter-spacing: 0.12em;
   text-transform: uppercase;

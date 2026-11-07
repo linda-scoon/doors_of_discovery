@@ -1,11 +1,39 @@
+/*
+ * A storybook. Most stories are told on a bright page; the ones set at night
+ * or underground are told in the dark, by moonlight.
+ */
 :host {
   display: contents;
 }
 
+app-room-frame {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.9), transparent 60%),
+    linear-gradient(to bottom, #e9f4ff, #fdf8ee 45%);
+  color: #2d2a26;
+  transition: background 600ms ease, color 600ms ease;
+}
+
+app-room-frame.story-room--dark {
+  background:
+    radial-gradient(circle at 78% 12%, #f4f1e0 0 3cqi, rgba(244, 241, 224, 0.25) 3.5cqi, transparent 12cqi),
+    radial-gradient(1px 1px at 20% 20%, #fff, transparent),
+    radial-gradient(1px 1px at 60% 8%, #fff, transparent),
+    radial-gradient(1px 1px at 35% 40%, #cfd8ff, transparent),
+    radial-gradient(1px 1px at 85% 55%, #fff, transparent),
+    linear-gradient(to bottom, #0e1733, #05070f);
+  color: #dfe6f5;
+}
+
 .story-room__title {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-style: italic;
-  color: #f6c35b;
+  font-family: 'Dancing Script', Georgia, serif;
+  font-size: clamp(1.05rem, 9cqi, 1.6rem);
+  line-height: 1.15;
+  color: #2b4a8b;
+}
+
+app-room-frame.story-room--dark .story-room__title {
+  color: #a9c0ff;
 }
 
 .story-room__text {
@@ -24,9 +52,9 @@
 .story-room__name {
   width: 100%;
   padding: 0.45em 0.7em;
-  border: 1px solid rgba(242, 236, 228, 0.45);
+  border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   border-radius: 2cqi;
-  background: rgba(242, 236, 228, 0.08);
+  background: rgba(255, 255, 255, 0.7);
   color: inherit;
   /* 16px at least, or a phone zooms the page in when the box is tapped. */
   font: inherit;

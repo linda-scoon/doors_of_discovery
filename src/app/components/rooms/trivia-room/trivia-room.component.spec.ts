@@ -24,10 +24,10 @@ describe('TriviaRoomComponent', () => {
     room.fixture.detectChanges();
 
     const buttons: HTMLButtonElement[] = [...room.fixture.nativeElement.querySelectorAll('button')];
-    buttons.find((b) => b.textContent!.trim() === 'Salt')!.click();
+    buttons.find((b) => b.textContent!.trim().endsWith('Salt'))!.click();
 
-    expect(room.text()).toContain('Not quite.');
-    const right = buttons.find((b) => b.textContent!.trim() === 'Water')!;
+    expect(room.text()).toContain('it was Water');
+    const right = buttons.find((b) => b.textContent!.trim().endsWith('Water'))!;
     room.fixture.detectChanges();
     expect(right.classList).toContain('trivia-room__choice--right');
   });

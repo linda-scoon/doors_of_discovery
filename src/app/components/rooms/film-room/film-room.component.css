@@ -2,6 +2,14 @@
   display: contents;
 }
 
+/* An old picture house: dark, with red curtains drawn back at each side. */
+app-room-frame {
+  background:
+    linear-gradient(to right, #7a0f16, #4a070c 5%, transparent 13%, transparent 87%, #4a070c 95%, #7a0f16),
+    radial-gradient(ellipse at 50% 20%, #1c1c1c, #050505 70%);
+  color: #ece6dc;
+}
+
 .film-room__screen {
   display: block;
   width: 100%;

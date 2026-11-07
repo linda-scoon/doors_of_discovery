@@ -57,6 +57,11 @@ body {
 /*
  * Inside the rooms.
  *
+ * Each room dresses its own doorway to suit what it shows -- a gallery is
+ * white, a cinema dark, the wheel a casino -- by styling its app-room-frame.
+ * What is here is what every room shares, drawn in whatever text colour the
+ * room chose.
+ *
  * Global rather than per room, so twenty rooms read as one site. Sized in
  * cqi -- a share of the doorway's width -- because a room lives in a cell
  * about 170px wide on a phone and 260px on a desktop, and sizing against
@@ -88,20 +93,21 @@ body {
   color: inherit;
 }
 
+/* Drawn in the room's own text colour, so it suits a light room or a dark. */
 .room-button {
   font: inherit;
   font-size: clamp(0.7rem, 5cqi, 0.9rem);
   padding: 0.4em 1em;
-  border: 1px solid rgba(242, 236, 228, 0.45);
+  border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
   border-radius: 999px;
-  background: rgba(242, 236, 228, 0.08);
+  background: color-mix(in srgb, currentColor 8%, transparent);
   color: inherit;
   cursor: pointer;
 }
 
 .room-button:hover,
 .room-button:focus-visible {
-  background: rgba(242, 236, 228, 0.18);
+  background: color-mix(in srgb, currentColor 18%, transparent);
 }
 
 /*

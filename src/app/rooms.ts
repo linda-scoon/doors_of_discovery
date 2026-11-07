@@ -3,6 +3,7 @@ import { Type } from '@angular/core';
 import { FactRoomComponent } from './components/rooms/fact-room/fact-room.component';
 import { GifRoomComponent } from './components/rooms/gif-room/gif-room.component';
 import { PaintingRoomComponent } from './components/rooms/painting-room/painting-room.component';
+import { PhotoRoomComponent } from './components/rooms/photo-room/photo-room.component';
 import { JokesRoomComponent } from './components/rooms/jokes-room/jokes-room.component';
 import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
 import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.component';
@@ -123,6 +124,7 @@ export const ROOM_KINDS: readonly RoomKind[] = [
   { kind: 'facts', name: 'Fact Room', component: FactRoomComponent, rarity: 'common' },
   { kind: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent, rarity: 'common' },
   { kind: 'paintings', name: 'Gallery', component: PaintingRoomComponent, rarity: 'common' },
+  { kind: 'photos', name: 'Photo Room', component: PhotoRoomComponent, rarity: 'common' },
   { kind: 'gifs', name: 'Gif Room', component: GifRoomComponent, rarity: 'common' },
   { kind: 'videos', name: 'Video Room', component: VideoRoomComponent, rarity: 'common' },
   {

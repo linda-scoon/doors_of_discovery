@@ -5,6 +5,8 @@
 export interface Story {
   title: string;
   text: string;
+  /** A story set at night or underground is told in the dark. */
+  mood?: 'dark';
 }
 
 export const STORIES: readonly Story[] = [
@@ -18,6 +20,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Lighthouse That Forgot',
+    mood: 'dark',
     text: 'The old lighthouse had forgotten how to shine. Ships bumped about in the fog, grumbling. {name} climbed its two hundred stairs with a jar of fireflies and a very good idea. At the top, {name} let them out, and they swirled into the great glass lamp and lit it brighter than it had ever been. The ships blew their horns all night to say thank you.',
   },
   {
@@ -34,6 +37,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Underground Sea',
+    mood: 'dark',
     text: 'Behind the coal cellar, past a door marked DO NOT, there was a sea. Not a puddle, a proper sea, with waves and a pier and a little rowing boat with {name}\'s name already painted on the side. Glowing fish lit the water from below. {name} rowed out into the dark and sang to keep brave, and something enormous and friendly hummed back.',
   },
   {
@@ -50,10 +54,12 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Night the Museum Woke Up',
+    mood: 'dark',
     text: 'At midnight, the dinosaur in the museum yawned. The knights clanked down from the walls, the mummies stretched, and the paintings started arguing. {name}, who had fallen asleep behind a statue, was the only living person there. The dinosaur wanted to play fetch. The knights wanted a referee. By dawn, {name} had organised the best party the museum had ever seen.',
   },
   {
     title: 'The Snow Bear\'s Map',
+    mood: 'dark',
     text: 'Far in the north, where the snow squeaks underfoot, a bear knocked on {name}\'s door holding a map. "The northern lights have gone missing," it said. "We think they are hiding." {name} packed a flask of cocoa and followed the bear across the ice, to a cave where the lights were curled up, shy. {name} told them a joke, and they shimmered out laughing.',
   },
   {
@@ -94,6 +100,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Haunted Wardrobe',
+    mood: 'dark',
     text: 'The wardrobe at Gran\'s house rattled at night. Everyone was too frightened to look. {name} opened it with a torch and found a very small ghost wearing a very big coat. "It\'s cold being a ghost," it explained. {name} knitted it a scarf. Now the wardrobe hums happily at night, and Gran\'s socks are mysteriously always folded.',
   },
   {
@@ -106,6 +113,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Cave of Crystals',
+    mood: 'dark',
     text: 'Deep beneath the mountain, the crystals grow in every colour there is and a few there aren\'t. They are said to show you what you are brave enough to see. {name} climbed down, rope by rope, until the cave lit up around them. In the biggest crystal was a picture of {name}, standing on top of the mountain, grinning. So {name} went and did exactly that.',
   },
   {
@@ -122,14 +130,17 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Owl Who Couldn\'t Sleep',
+    mood: 'dark',
     text: 'Owls sleep in the day, but this owl could not. The sun was too bright, the birds too noisy, the bees too busy. {name} built it a little tent of leaves, hummed it a lullaby, and kept watch. When the owl woke at dusk, rested at last, it took {name} on a night flight over the woods and showed them every secret path.',
   },
   {
     title: 'The Ice Palace',
+    mood: 'dark',
     text: 'The ice palace only appears on the coldest night of the year, and only to people who are out walking when they should be in bed. {name} was one of those people. Inside, everything glittered, and the Snow Queen was terribly lonely. {name} taught her to make hot chocolate. It melted a wall or two, but she said it was worth it.',
   },
   {
     title: 'The Treasure Under the Bed',
+    mood: 'dark',
     text: 'Everyone has a monster under their bed. {name}\'s monster had a map. "There\'s treasure under every bed," it whispered, "if you know where to dig." Together they tunnelled through the dust bunnies, past a lost shoe and a forgotten biscuit, to a chest of gold coins. They were chocolate. {name} and the monster agreed it was the best kind.',
   },
   {
@@ -170,6 +181,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Night Market',
+    mood: 'dark',
     text: 'Once a year, when the moon is full, a market appears in the empty car park, run by foxes, badgers and a very old hedgehog. They sell bottled moonlight, maps to places that do not exist, and second-hand dreams. {name} had no money, so traded a really good joke. The hedgehog laughed so hard it gave {name} a lantern that never goes out.',
   },
   {
@@ -190,6 +202,7 @@ export const STORIES: readonly Story[] = [
   },
   {
     title: 'The Stargazer\'s Telescope',
+    mood: 'dark',
     text: 'The telescope in the attic was so old that it did not look at stars; it looked at what the stars were doing. Through it, {name} saw two stars playing chess, a constellation having a nap, and one small star, lost. {name} drew it a map in chalk on the roof. That night, a new star appeared in exactly the right place, and twinkled at {name}.',
   },
   {

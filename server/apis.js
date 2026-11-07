@@ -23,6 +23,8 @@ const AuthStyle = {
   RAPIDAPI_HEADER: 'rapidapi-header',
   /** Some APIs want the key as a query parameter instead. */
   QUERY_PARAM: 'query-param',
+  /** Some want it, as it is, in a header of their choosing. */
+  HEADER: 'header',
   /** Open APIs need nothing at all. */
   NONE: 'none',
 };
@@ -98,6 +100,16 @@ const apis = [
     auth: { style: AuthStyle.NONE },
   },
 
+  {
+    // Pexels' hand-picked photos, forty to a page. The free key allows 200
+    // calls an hour, so each page is kept for an hour and the room picks a
+    // photo from it. Pexels wants the key bare in the Authorization header.
+    id: 'photos',
+    url: 'https://api.pexels.com/v1/curated?per_page=40',
+    auth: { style: AuthStyle.HEADER, keyName: 'PEXELS_API_KEY', headerName: 'Authorization' },
+    queryParams: { page: { min: 1, max: 100 } },
+    cacheSeconds: 3600,
+  },
   {
     // Fifty quiz questions at a time; the room picks one. Open Trivia DB
     // allows one request every five seconds, so the list is kept a while.

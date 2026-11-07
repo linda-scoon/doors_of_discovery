@@ -60,6 +60,7 @@ host. A real environment variable always wins.
 |---|---|---|
 | `GIFS_API_KEY` | gif room | [Giphy](https://developers.giphy.com/dashboard/) |
 | `TMDB_API_KEY` | video room | [TMDB](https://www.themoviedb.org/settings/api) |
+| `PEXELS_API_KEY` | photo room | [Pexels](https://www.pexels.com/api/) |
 
 Every other room uses a free API that needs no key: jokes (JokeAPI), facts
 (Useless Facts), quotes (ZenQuotes), paintings (Art Institute of Chicago),
@@ -115,7 +116,7 @@ Each one matters:
   It says so in place of the page, and `/api/health` reports
   `"built": false`.
 
-Set `GIFS_API_KEY` and `TMDB_API_KEY` as environment
+Set `GIFS_API_KEY`, `TMDB_API_KEY` and `PEXELS_API_KEY` as environment
 variables in the panel. They are read only by the server process, so they
 never reach the public site.
 

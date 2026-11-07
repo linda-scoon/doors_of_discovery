@@ -2,13 +2,22 @@
   display: contents;
 }
 
+/* A record shop after hours: neon pink and blue on black. */
+app-room-frame {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 60, 180, 0.35), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(60, 200, 255, 0.3), transparent 45%),
+    #120821;
+  color: #fdf1ff;
+}
+
 /* A record turning while it plays. */
 .music-room__cover {
   width: 62cqi;
   aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 0 2cqi #111, 0 2cqi 6cqi rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 2cqi #111, 0 0 6cqi rgba(255, 60, 180, 0.6);
   animation: spin 6s linear infinite;
 }
 

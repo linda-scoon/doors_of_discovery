@@ -9,6 +9,8 @@
   justify-content: safe center;
   gap: 5cqi;
   width: 100%;
+  /* The doorway's own dark, until a room dresses it otherwise. */
+  color: #f2ece4;
   height: 100%;
   padding: 10cqi 8cqi;
   overflow-y: auto;
@@ -26,7 +28,7 @@
   width: 2.5cqi;
   height: 2.5cqi;
   border-radius: 50%;
-  background: rgba(242, 236, 228, 0.5);
+  background: currentColor;
   animation: footstep 1.2s ease-in-out infinite;
 }
 

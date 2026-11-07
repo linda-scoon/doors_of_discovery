@@ -2,6 +2,22 @@
   display: contents;
 }
 
+/* An encyclopedia page: white, black serif text, a rule under the title. */
+app-room-frame {
+  background: #fbfaf7;
+  color: #202122;
+}
+
+.wikipedia-room__title {
+  width: 100%;
+  padding-bottom: 1.5cqi;
+  border-bottom: 1px solid #a2a9b1;
+}
+
+app-room-frame .room-credit a {
+  color: #3366cc;
+}
+
 .wikipedia-room__picture {
   display: block;
   max-width: 100%;

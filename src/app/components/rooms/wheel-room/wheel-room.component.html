@@ -1,4 +1,5 @@
-<app-room-frame status="ready">
+<app-room-frame status="ready" [class.wheel-room--won]="result() === 'WIN'">
+  <p class="wheel-room__sign">Spin to win</p>
   <div class="wheel-room__stand">
     <span class="wheel-room__pointer" aria-hidden="true"></span>
     <div
@@ -16,12 +17,12 @@
   </div>
   <p class="room-words" aria-live="polite">
     @switch (result()) {
-      @case ('WIN') { You won! }
-      @case ('LOSE') { You lost. }
-      @default { {{ spinning() ? 'Round and round…' : 'Spin the wheel.' }} }
+      @case ('WIN') { WINNER! }
+      @case ('LOSE') { So close. You lost. }
+      @default { {{ spinning() ? 'Round and round she goes…' : 'Feeling lucky?' }} }
     }
   </p>
-  <button type="button" class="room-button" [disabled]="spinning()" (click)="spin()">
-    {{ result() ? 'Spin again' : 'Spin' }}
+  <button type="button" class="wheel-room__lever" [disabled]="spinning()" (click)="spin()">
+    {{ result() ? 'Spin again' : 'Spin!' }}
   </button>
 </app-room-frame>

@@ -64,6 +64,10 @@ function buildUpstreamUrl(api, req) {
 
 function buildUpstreamHeaders(api, upstreamUrl) {
   const headers = { ...(api.headers || {}) };
+
+  if (api.auth.style === AuthStyle.HEADER) {
+    return { ...headers, [api.auth.headerName]: process.env[api.auth.keyName] };
+  }
   if (api.auth.style !== AuthStyle.RAPIDAPI_HEADER) return headers;
 
   return {

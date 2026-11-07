@@ -2,6 +2,18 @@
   display: contents;
 }
 
+/* Up among the stars. */
+app-room-frame {
+  background:
+    radial-gradient(1px 1px at 12% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 8%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 88% 40%, #cfe0ff, transparent),
+    radial-gradient(1px 1px at 30% 70%, #fff, transparent),
+    radial-gradient(1px 1px at 55% 92%, #fff, transparent),
+    radial-gradient(ellipse at 50% 30%, #0f2347, #02040a 70%);
+  color: #e8eefc;
+}
+
 .iss-room__heading {
   letter-spacing: 0.12em;
   text-transform: uppercase;

@@ -1,4 +1,4 @@
-<app-room-frame status="ready">
+<app-room-frame status="ready" [class.story-room--dark]="told()?.dark">
   @if (told(); as story) {
     <p class="room-words story-room__title">{{ story.title }}</p>
     <p class="room-words room-words--small story-room__text">{{ story.text }}</p>

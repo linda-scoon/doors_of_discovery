@@ -2,9 +2,18 @@
   display: contents;
 }
 
+/* Sunny and silly. */
+app-room-frame {
+  background:
+    radial-gradient(circle at 50% 30%, #fff6b0, transparent 60%),
+    linear-gradient(to bottom, #ffe14d, #ffc61a);
+  color: #2b2100;
+}
+
 /* A beat after the setup, once the door is out of the way. */
 .jokes-room__punchline {
-  color: #f6c35b;
+  color: #a3125f;
+  font-weight: 700;
   animation: punchline 600ms ease-out 2.2s both;
 }
 

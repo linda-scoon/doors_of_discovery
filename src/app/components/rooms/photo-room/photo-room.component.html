@@ -1,0 +1,12 @@
+<app-room-frame [status]="photo.status()">
+  @if (photo.value(); as p) {
+    <figure class="photo-room__print">
+      <img class="photo-room__photo" [src]="p.image" [alt]="p.alt" />
+    </figure>
+    <p class="room-credit photo-room__credit">
+      <a [href]="p.link" target="_blank" rel="noopener">Photo</a> by
+      <a [href]="p.photographerUrl" target="_blank" rel="noopener">{{ p.photographer }}</a>
+      on <a href="https://www.pexels.com/" target="_blank" rel="noopener">Pexels</a>
+    </p>
+  }
+</app-room-frame>

@@ -32,7 +32,7 @@ export class StoryRoomComponent {
     const story = this.story();
     if (!story) return undefined;
     const fill = (text: string) => text.replaceAll('{name}', this.name());
-    return { title: fill(story.title), text: fill(story.text) };
+    return { title: fill(story.title), text: fill(story.text), dark: story.mood === 'dark' };
   });
 
   begin(typed: string): void {
