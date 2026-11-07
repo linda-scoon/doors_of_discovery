@@ -16,6 +16,10 @@
   background-color: var(--door-colour);
   border: 1px solid var(--door-frame);
 
+  /* Lets the lettering and furniture size themselves against the door
+     rather than the viewport, with cqw units. */
+  container-type: inline-size;
+
   transition: transform var(--swing-duration) var(--swing-easing);
   /* Hinged on the left, so it swings away from a right-hand handle. */
   transform-origin: left;
@@ -405,11 +409,10 @@
 
   border: 2px solid var(--door-furniture-dark);
   border-radius: 2px;
-  background: linear-gradient(
-    180deg,
-    var(--door-furniture),
-    var(--door-furniture-dark)
-  );
+  /* Solid, not a gradient. A gradient let the door show through the pale
+     end, so the flap looked like a sticker rather than a piece of metal. */
+  background-color: var(--door-furniture);
+  box-shadow: inset 0 -2px 0 var(--door-furniture-dark);
 }
 
 .door__kick-plate {
@@ -418,12 +421,10 @@
   height: 12%;
 
   border: 2px solid var(--door-furniture-dark);
-  background: linear-gradient(
-    180deg,
-    var(--door-furniture),
-    var(--door-furniture-dark)
-  );
-  opacity: 0.85;
+  /* Solid and fully opaque. It was translucent and gradient-filled, so the
+     door showed through and it read as painted on rather than screwed on. */
+  background-color: var(--door-furniture);
+  box-shadow: inset 0 -3px 0 var(--door-furniture-dark);
 }
 
 .door__peephole {
@@ -598,89 +599,91 @@
 
 /* =========================================================== graffiti */
 /*
- * Spray paint: loops and arcs, never anything legible. Each tag is a shape
- * with a thick coloured border and no fill, blurred very slightly so the
- * edges look sprayed rather than drawn.
+ * Lettering, not squiggles. A marker face, sprayed on at an angle, with a
+ * dark halo behind it so it reads on a door of any colour and a drip
+ * running off one letter.
  */
 
 .door__graffiti {
   position: absolute;
   inset: 0;
+  display: grid;
+  place-content: center;
+  pointer-events: none;
+  z-index: 3;
+
   /* Every tag is turned, shifted and sized differently, or the same mark
      appears on every tagged door and reads as a stamp. */
   translate: var(--tag-x, 0) var(--tag-y, 0);
-  rotate: var(--tag-rotate, 0deg);
+  rotate: var(--tag-rotate, -8deg);
   scale: var(--tag-scale, 1);
-  pointer-events: none;
-  overflow: hidden;
-  /* Paint sits on the surface, so it goes over panels and furniture. */
-  z-index: 3;
-  opacity: 0.85;
-  mix-blend-mode: screen;
 }
 
-.door__tag {
+.door__tag-text {
+  position: relative;
+  max-width: 88%;
+
+  font-family: 'Permanent Marker', 'Comic Sans MS', cursive;
+  font-size: clamp(13px, 17cqw, 30px);
+  line-height: 0.95;
+  text-align: center;
+  color: var(--tag-ink);
+
+  /* Paint sits proud of the door: a dark halo, then a soft bloom. */
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.55), -1px 1px 0 rgba(0, 0, 0, 0.45),
+    0 0 10px color-mix(in srgb, var(--tag-ink) 60%, transparent);
+}
+
+/* The signature is a different hand entirely -- a flourish, not a tag. */
+.door__graffiti--signature .door__tag-text {
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-size: clamp(22px, 30cqw, 54px);
+  font-weight: 700;
+  color: var(--tag-accent);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5),
+    0 0 16px color-mix(in srgb, var(--tag-accent) 70%, transparent);
+}
+
+/* Paint ran before it dried. */
+.door__drip {
   position: absolute;
-  border-style: solid;
-  border-color: transparent;
-  filter: blur(0.4px) drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
-}
-
-/* A big looping scrawl across the middle. */
-.door__tag--loop {
-  top: 32%;
-  left: 12%;
-  width: 56%;
-  height: 30%;
-  border-width: 7px;
-  border-color: var(--tag-loop) var(--tag-loop) transparent var(--tag-loop);
-  border-radius: 55% 45% 40% 60% / 60% 55% 45% 40%;
-  rotate: -8deg;
-}
-
-/* A sweep under it, in another colour, as a second hand would add. */
-.door__tag--arc {
-  top: 52%;
-  left: 22%;
-  width: 54%;
-  height: 22%;
-  border-width: 6px;
-  border-color: transparent transparent var(--tag-arc) var(--tag-arc);
-  border-radius: 0 0 60% 55% / 0 0 100% 100%;
-  rotate: 6deg;
-}
-
-/* A hard diagonal stroke. */
-.door__tag--slash {
-  top: 24%;
-  left: 46%;
-  width: 34%;
-  height: 5px;
-  border: none;
-  background: var(--tag-arc);
-  border-radius: 3px;
-  rotate: 38deg;
-}
-
-/* And a blown patch where the can was held too close, with a drip. */
-.door__tag--blob {
-  top: 66%;
-  left: 58%;
-  width: 16%;
-  aspect-ratio: 1;
-  border: none;
-  border-radius: 50% 50% 46% 54% / 48% 44% 56% 52%;
-  background: var(--tag-blob);
-  filter: blur(1px);
-}
-
-.door__tag--blob::after {
-  content: '';
-  position: absolute;
-  top: 80%;
-  left: 42%;
-  width: 4px;
-  height: 160%;
+  top: 62%;
+  left: 62%;
+  width: 3px;
+  height: 26%;
   border-radius: 0 0 3px 3px;
-  background: linear-gradient(var(--tag-blob), transparent);
+  background: linear-gradient(var(--tag-ink), transparent);
+  opacity: 0.8;
+}
+
+.door__graffiti--signature .door__drip {
+  left: 30%;
+  background: linear-gradient(var(--tag-accent), transparent);
+}
+
+/* --- the cat ------------------------------------------------------------- */
+
+.door__cat {
+  width: clamp(70px, 72cqw, 150px);
+  overflow: visible;
+  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 7px color-mix(in srgb, var(--tag-ink) 55%, transparent));
+}
+
+.door__cat-line {
+  fill: none;
+  stroke: var(--tag-ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Whiskers are drawn thinner than the body line. */
+.door__cat-line--fine {
+  stroke-width: 2.5;
+}
+
+.door__cat-dot {
+  fill: var(--tag-accent);
+  stroke: none;
 }

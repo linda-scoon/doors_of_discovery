@@ -65,11 +65,17 @@ export type Surprise = 'none' | 'crack' | 'fire' | 'monster' | 'knocks-back';
  * Without these every tagged door carried an identical mark in an identical
  * place, which reads as a stamp rather than as graffiti.
  */
+export type GraffitiKind = 'words' | 'signature' | 'cat';
+
 export interface GraffitiTag {
-  /** Hues for the three coloured strokes. */
-  hueLoop: number;
-  hueArc: number;
-  hueBlob: number;
+  /** Whether this one is a tag, a signature, or a drawing. */
+  kind: GraffitiKind;
+  /** The words sprayed, for a tag. Empty for a drawing. */
+  text: string;
+  /** The paint colour, and the darker outline sprayed behind it. */
+  hue: number;
+  /** A second colour, for the drip and the highlight. */
+  hueAccent: number;
   /** Where the whole tag sits, as a percentage offset. */
   shiftX: number;
   shiftY: number;
@@ -242,22 +248,37 @@ export function doorLayersFor(id: string): number {
   return 1;
 }
 
-/** How a particular door was tagged. */
+/**
+ * What a door was tagged with.
+ *
+ * Mostly the site's own name, sometimes a signature, now and then a cat.
+ * Real graffiti is lettering, so these are words in a marker hand rather
+ * than the abstract loops this used to draw — which looked like a decal.
+ */
+const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
+  ['words', 58],
+  ['cat', 24],
+  ['signature', 18],
+];
+
 function graffitiFor(id: string): GraffitiTag {
   const spread = (seed: string, from: number, to: number) =>
     Math.round(from + hashToFraction(`${id}:${seed}`) * (to - from));
 
+  const kind = pickWeighted(GRAFFITI_KINDS, `${id}:tagkind`);
+  const hue = spread('taghue', 0, 360);
+
   return {
-    hueLoop: spread('tagloop', 0, 360),
-    // The second and third strokes are offset round the wheel from the
-    // first, so a tag looks like one person's colours rather than three
-    // unrelated ones.
-    hueArc: (spread('tagloop', 0, 360) + spread('tagarc', 70, 180)) % 360,
-    hueBlob: (spread('tagloop', 0, 360) + spread('tagblob', 180, 300)) % 360,
-    shiftX: spread('tagx', -14, 14),
-    shiftY: spread('tagy', -16, 16),
-    rotate: spread('tagrot', -22, 22),
-    scale: 0.72 + hashToFraction(`${id}:tagscale`) * 0.5,
+    kind,
+    text: kind === 'signature' ? 'Linda' : 'web of doors',
+    hue,
+    // Offset round the wheel, so a tag looks like one person's two cans
+    // rather than two unrelated colours.
+    hueAccent: (hue + spread('tagaccent', 110, 250)) % 360,
+    shiftX: spread('tagx', -10, 10),
+    shiftY: spread('tagy', -14, 14),
+    rotate: spread('tagrot', -14, 14),
+    scale: 0.8 + hashToFraction(`${id}:tagscale`) * 0.4,
   };
 }
 

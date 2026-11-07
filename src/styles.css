@@ -22,11 +22,13 @@
   --swing-duration: 1.6s;
   --swing-easing: cubic-bezier(0.3, 0.8, 0.4, 1);
   /*
-   * Stops short of 90deg on purpose. Past 90 the door projects outside its
-   * own cell, where it is either clipped away to nothing or swings across
-   * the door next to it. At 78 it reads as wide open and stays home.
+   * Exactly 90deg: the door turns edge-on and disappears, leaving only the
+   * room. At 78 it stayed in view as a slab hanging in the doorway, which
+   * looked like it was floating rather than open. Going past 90 is worse --
+   * the door projects outside its own cell and is clipped away or swings
+   * over its neighbour.
    */
-  --swing-open-angle: 78deg;
+  --swing-open-angle: 90deg;
 
   /* type */
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
