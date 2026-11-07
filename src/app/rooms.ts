@@ -10,7 +10,8 @@ import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.
 import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
 import { VideoRoomComponent } from './components/rooms/video-room/video-room.component';
 
-import { HandleSide } from './components/doors/door/door.component';
+import { HandleSide, OpenStyle } from './components/doors/door/door.component';
+import { DoorMaterial } from './components/doors/door/door-material';
 
 /** One door, and what is behind it. */
 export interface RoomDefinition {
@@ -20,8 +21,28 @@ export interface RoomDefinition {
   /** Shown to people, and used to build the door's accessible name. */
   name: string;
 
-  /** The colour of this room's door. */
-  colour: string;
+  /**
+   * What the door is made of. Decides how it looks, and later how it sounds.
+   * Derived from the id when left out, so a new room needs nothing here.
+   */
+  material?: DoorMaterial;
+
+  /**
+   * The colour of this room's door. Derived from the id and material when
+   * left out, which is the usual case — there is no need to pick a hex code
+   * for a new room.
+   */
+  colour?: string;
+
+  /** How the door behaves when opened. Some doors are stuck and never do. */
+  openStyle?: OpenStyle;
+
+  /**
+   * How many doors stand between the visitor and the room. Derived from the
+   * id when left out, which gives most rooms one and a few of them two or
+   * three.
+   */
+  doorLayers?: number;
 
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;
@@ -50,19 +71,18 @@ export interface RoomDefinition {
  * line here.
  */
 export const ROOMS: RoomDefinition[] = [
-  { id: 'gifs', name: 'Gif Room', colour: '#A67B5B', component: GifRoomComponent },
-  { id: 'game', name: 'Game Room', colour: '#3D2B1F', component: GameRoomComponent },
-  { id: 'quotes', name: 'Quotes Room', colour: '#DEB887', component: QoutesRoomComponent },
-  { id: 'images', name: 'Image Room', colour: '#6F4E37', component: ImageRoomComponent },
-  { id: 'story', name: 'Story Room', colour: '#AF6F09', component: StoryRoomComponent },
-  { id: 'jokes', name: 'Jokes Room', colour: '#654321', component: JokesRoomComponent },
-  { id: 'videos', name: 'Video Room', colour: '#BA9238', component: VideoRoomComponent },
+  { id: 'gifs', name: 'Gif Room', component: GifRoomComponent },
+  { id: 'game', name: 'Game Room', component: GameRoomComponent, openStyle: 'stuck' },
+  { id: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent },
+  { id: 'images', name: 'Image Room', component: ImageRoomComponent },
+  { id: 'story', name: 'Story Room', component: StoryRoomComponent, openStyle: 'creak' },
+  { id: 'jokes', name: 'Jokes Room', component: JokesRoomComponent },
+  { id: 'videos', name: 'Video Room', component: VideoRoomComponent },
   {
     id: 'music',
     name: 'Music Room',
-    colour: '#C3B091',
     component: MusicRoomComponent,
     needsDoorState: true,
   },
-  { id: 'facts', name: 'Fact Room', colour: '#9F8170', component: FactRoomComponent },
+  { id: 'facts', name: 'Fact Room', component: FactRoomComponent },
 ];

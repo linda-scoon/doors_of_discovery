@@ -1,7 +1,14 @@
 <div class="app-wrapper">
-  <!-- One door per entry in the registry; see src/app/rooms.ts. -->
+  <!--
+    The rooms with an API behind them come first; everything after is
+    generated as the visitor scrolls. See src/app/rooms.ts.
+  -->
   @for (room of rooms; track room.id) {
     <app-room-slot class="app-room" [room]="room"></app-room-slot>
   }
 </div>
+
+<!-- Crossing this asks for another dozen doors. -->
+<div #endOfWall class="end-of-wall" aria-hidden="true"></div>
+
 <router-outlet></router-outlet>

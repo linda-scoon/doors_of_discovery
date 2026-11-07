@@ -1,10 +1,25 @@
-/* need to keep the container relative so that its door can stay absolute to it */
+/*
+ * A room is the space behind a door. It is the positioning context the door
+ * is absolutely placed against, which is why it must stay relative.
+ *
+ * Its height comes from its width via the aspect ratio, so doors stay
+ * door-shaped at every screen size instead of needing a fixed min-height.
+ */
 .room {
   position: relative;
-  min-height: 600px;
-  min-width: 300px;
+  aspect-ratio: var(--door-aspect);
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  /* What you see once the door is out of the way. */
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    #2a2118 0%,
+    var(--room-dark) 70%
+  );
+  color: #f2ece4;
 }

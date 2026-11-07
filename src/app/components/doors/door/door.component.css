@@ -1,29 +1,25 @@
 /*
- * The door covers its room completely and swings aside when opened. The room
- * component is position: relative, which is what these offsets resolve
- * against.
+ * A door covers its room entirely and swings aside when opened. The colour
+ * arrives as --door-colour, derived from the door's id; everything else here
+ * is built on top of it so one custom property changes the whole door.
  */
 .door {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
+  inset: 0;
+  /* Stacking comes from the slot, which knows how many doors there are. */
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  border-left: 1px solid rgb(0, 0, 0);
-  border-right: 3px ridge rgb(0, 0, 0);
-  border-top: 4px double black;
-  border-bottom: 4px double black;
+  background-color: var(--door-colour);
+  border: 1px solid var(--door-frame);
 
-  transition: transform 2s;
+  transition: transform var(--swing-duration) var(--swing-easing);
   /* Hinged on the left, so it swings away from a right-hand handle. */
   transform-origin: left;
+  transform-style: preserve-3d;
 }
 
 /* A left-hand handle means the hinge is on the right instead. */
@@ -32,49 +28,550 @@
 }
 
 /*
- * perspective() is what makes this read as a door swinging into the room
+ * perspective() is what makes this read as a door swinging into a room
  * rather than a flat horizontal squash.
  */
 .door--open {
-  transform: perspective(1400px) rotateY(150deg);
+  transform: perspective(1200px) rotateY(var(--swing-open-angle));
 }
 
 .door--hinge-right.door--open {
-  transform: perspective(1400px) rotateY(-150deg);
+  transform: perspective(1200px) rotateY(calc(-1 * var(--swing-open-angle)));
 }
 
-/* The two rows of inset panels that make it look like a panelled door. */
+/* A creaky door is slow to start and judders on the way round. */
+.door--creak.door--open {
+  animation: door-creak var(--swing-duration) var(--swing-easing) forwards;
+}
+
+@keyframes door-creak {
+  0% { transform: perspective(1200px) rotateY(0deg); }
+  18% { transform: perspective(1200px) rotateY(7deg); }
+  26% { transform: perspective(1200px) rotateY(5deg); }
+  45% { transform: perspective(1200px) rotateY(48deg); }
+  52% { transform: perspective(1200px) rotateY(44deg); }
+  100% { transform: perspective(1200px) rotateY(var(--swing-open-angle)); }
+}
+
+/* A stuck door gives a little and stays shut. */
+.door--refusing {
+  animation: door-refuse 400ms ease-in-out;
+}
+
+@keyframes door-refuse {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px) rotateY(2deg); }
+  40% { transform: translateX(3px) rotateY(-1deg); }
+  60% { transform: translateX(-2px) rotateY(1deg); }
+  80% { transform: translateX(2px); }
+}
+
+/* ---------------------------------------------------------------- wood */
+
+.door--wood {
+  border-right: 3px ridge var(--door-frame);
+  border-top: 4px double var(--door-frame);
+  border-bottom: 4px double var(--door-frame);
+  /* Faint vertical grain, dark enough to read as timber up close. */
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 0 6px,
+    rgba(0, 0, 0, 0.05) 6px 7px
+  );
+}
+
+/* --------------------------------------------------------------- metal */
+
+.door--metal {
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  /* Brushed sheen: fine vertical striping plus a broad highlight. */
+  background-image: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0) 38%,
+      rgba(0, 0, 0, 0.18) 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0 2px,
+      rgba(0, 0, 0, 0.05) 2px 4px
+    );
+}
+
+/* --------------------------------------------------------------- stone */
+
+.door--stone {
+  border: 3px solid rgba(0, 0, 0, 0.5);
+  /*
+   * Layered mottling and a chiselled edge, so the slab reads as cut rock
+   * rather than a grey rectangle. Several soft blotches at different scales
+   * beat one big gradient, which just looks like a lighting bug.
+   */
+  background-image: radial-gradient(
+      ellipse 40% 25% at 28% 18%,
+      rgba(255, 255, 255, 0.14),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 30% 20% at 72% 70%,
+      rgba(0, 0, 0, 0.25),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 22% 14% at 55% 42%,
+      rgba(255, 255, 255, 0.08),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 18% 30% at 12% 80%,
+      rgba(0, 0, 0, 0.2),
+      transparent 70%
+    ),
+    repeating-linear-gradient(
+      28deg,
+      rgba(0, 0, 0, 0) 0 11px,
+      rgba(0, 0, 0, 0.05) 11px 13px
+    );
+  box-shadow: inset 0 0 0 6px rgba(0, 0, 0, 0.12),
+    inset 0 0 22px rgba(0, 0, 0, 0.35);
+}
+
+/* Horizontal courses, as if the slab were cut from blocks. */
+.door__courses {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0 23%,
+    rgba(0, 0, 0, 0.22) 23% calc(23% + 2px)
+  );
+}
+
+/* --------------------------------------------------------------- glass */
+
+.door--glass {
+  /* Translucent, so the room behind shows through as a suggestion. */
+  background-color: color-mix(in srgb, var(--door-colour) 55%, transparent);
+  border: 6px solid color-mix(in srgb, var(--door-colour) 80%, black);
+  backdrop-filter: blur(6px);
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    rgba(255, 255, 255, 0.22) 55%,
+    rgba(255, 255, 255, 0) 80%
+  );
+}
+
+.door__panes {
+  position: absolute;
+  inset: 8%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6%;
+}
+
+.door__pane {
+  border: 3px solid color-mix(in srgb, var(--door-colour) 70%, black);
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+}
+
+/* ===================================================== the face of the door */
+/*
+ * Panels are laid out by a grid whose shape comes from the design, so one
+ * set of rules covers two, four and six panel doors.
+ */
 .door__panels {
-  display: flex;
-  justify-content: space-around;
-  width: 70%;
+  position: absolute;
+  inset: 7% 12%;
+  display: grid;
+  gap: 7%;
 }
 
-.door__panels--top {
-  height: 40%;
+.door--two-panel .door__panels {
+  grid-template-rows: 1fr 1.6fr;
 }
 
-.door__panels--bottom {
-  height: 60%;
+.door--four-panel .door__panels {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1.7fr;
+}
+
+.door--six-panel .door__panels {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1.3fr;
 }
 
 .door__panel {
-  border: 9px ridge;
-  margin: auto;
-  width: 40%;
+  border: 7px ridge color-mix(in srgb, var(--door-colour) 68%, white);
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(0, 0, 0, 0.1)
+  );
 }
 
-.door__panels--top .door__panel {
-  height: 70%;
+/* --- glazed top: a window above, panels below ---------------------------- */
+
+.door--glazed-top .door__glazing {
+  position: absolute;
+  inset: 7% 12% 52%;
+  border: 6px solid color-mix(in srgb, var(--door-colour) 60%, black);
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(210, 235, 245, 0.25) 45%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
 }
 
-.door__panels--bottom .door__panel {
-  height: 90%;
+.door--glazed-top .door__panels {
+  inset: 54% 12% 7%;
+  grid-template-columns: 1fr 1fr;
 }
 
-/* A two-second swing is a long time to wait if motion makes you unwell. */
-@media (prefers-reduced-motion: reduce) {
-  .door {
-    transition-duration: 0.01ms;
-  }
+/* --- porthole: one round window ------------------------------------------ */
+
+.door__porthole {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  translate: -50% 0;
+  width: 54%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+
+  border: 8px solid color-mix(in srgb, var(--door-colour) 55%, black);
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.5),
+    rgba(120, 150, 165, 0.35) 60%,
+    rgba(40, 60, 70, 0.4)
+  );
+}
+
+/* --- planked: vertical boards, no joinery -------------------------------- */
+
+.door--planked {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.22) 0 2px,
+    rgba(255, 255, 255, 0.05) 2px 6px,
+    rgba(0, 0, 0, 0) 6px 16.6%
+  );
+}
+
+/* --- z-brace: planks with a diagonal, like a cottage door ---------------- */
+
+.door--z-brace {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.22) 0 2px,
+    rgba(255, 255, 255, 0.04) 2px 6px,
+    rgba(0, 0, 0, 0) 6px 20%
+  );
+}
+
+.door__rail {
+  position: absolute;
+  left: 6%;
+  width: 88%;
+  height: 9%;
+  background: color-mix(in srgb, var(--door-colour) 72%, black);
+  border-block: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.door__rail--top {
+  top: 14%;
+}
+
+.door__rail--bottom {
+  bottom: 14%;
+}
+
+.door__brace {
+  position: absolute;
+  top: 14%;
+  left: 6%;
+  width: 88%;
+  height: 72%;
+  background: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 7%),
+    color-mix(in srgb, var(--door-colour) 72%, black) calc(50% - 7%),
+    color-mix(in srgb, var(--door-colour) 72%, black) calc(50% + 7%),
+    transparent calc(50% + 7%)
+  );
+}
+
+/* --- studded: riveted metal ---------------------------------------------- */
+
+.door__studs {
+  position: absolute;
+  inset: 7%;
+  border: 3px solid color-mix(in srgb, var(--door-colour) 55%, black);
+  /*
+   * Rivets around the edge of a plate, not across the whole face — close
+   * spacing over the full door reads as pegboard rather than metalwork.
+   * One strip per edge, each a repeating gradient.
+   */
+  background-image: var(--stud), var(--stud), var(--stud), var(--stud);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-size: 15% 14px, 15% 14px, 14px 13%, 14px 13%;
+  background-position: 6px 6px, 6px calc(100% - 6px), 6px 6px,
+    calc(100% - 6px) 6px;
+}
+
+.door--studded {
+  /* A single rivet, reused by each of the four edge strips above. */
+  --stud: radial-gradient(
+    circle at 7px 7px,
+    rgba(255, 255, 255, 0.7) 0 2px,
+    rgba(255, 255, 255, 0.25) 2px 3.5px,
+    rgba(0, 0, 0, 0.55) 3.5px 5px,
+    transparent 5px
+  );
+}
+
+/* --- arched: a stone doorway --------------------------------------------- */
+
+.door--arched {
+  border-radius: 48% 48% 0 0 / 22% 22% 0 0;
+}
+
+/* --- glass panes ---------------------------------------------------------- */
+
+.door__panes {
+  position: absolute;
+  inset: 8%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6%;
+}
+
+.door__pane {
+  border: 3px solid color-mix(in srgb, var(--door-colour) 70%, black);
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+}
+
+/* ==================================================== metal finishes */
+/*
+ * One custom property, set per finish, that the handle, knocker, letterbox
+ * and number plate all read. Changing a door's finish changes all of them.
+ */
+.door--finish-brass {
+  --door-furniture: #c9a227;
+  --door-furniture-dark: #7d6315;
+}
+.door--finish-chrome {
+  --door-furniture: #dfe3e6;
+  --door-furniture-dark: #8b9196;
+}
+.door--finish-iron {
+  --door-furniture: #4a4a4e;
+  --door-furniture-dark: #232326;
+}
+.door--finish-nickel {
+  --door-furniture: #b9b6bc;
+  --door-furniture-dark: #6e6b72;
+}
+
+/* ========================================================= furniture */
+
+.door__knocker {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  translate: -50% 0;
+  width: 17%;
+  aspect-ratio: 1;
+
+  border: 3px solid var(--door-furniture-dark);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--door-furniture),
+    var(--door-furniture-dark)
+  );
+  /* Hollow in the middle, like a ring knocker. */
+  mask: radial-gradient(circle, transparent 36%, #000 37%);
+}
+
+.door__letterbox {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  translate: -50% 0;
+  width: 42%;
+  height: 5.5%;
+
+  border: 2px solid var(--door-furniture-dark);
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg,
+    var(--door-furniture),
+    var(--door-furniture-dark)
+  );
+}
+
+.door__number {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  translate: -50% 0;
+
+  font-size: clamp(9px, 7cqw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--door-furniture);
+  text-shadow: 0 1px 0 var(--door-furniture-dark);
+}
+
+/* ============================================================== wear */
+
+.door--wear-scuffed::after,
+.door--wear-peeling::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Grime gathered where hands and weather reach. */
+.door--wear-scuffed::after {
+  background: radial-gradient(
+      ellipse 50% 18% at 50% 100%,
+      rgba(0, 0, 0, 0.3),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 28% 12% at 82% 48%,
+      rgba(0, 0, 0, 0.18),
+      transparent 70%
+    );
+}
+
+/* Paint lifting in flakes, showing darker timber beneath. */
+.door--wear-peeling::after {
+  background-image: radial-gradient(
+      ellipse 7% 4% at 22% 31%,
+      rgba(0, 0, 0, 0.4),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 5% 7% at 68% 19%,
+      rgba(0, 0, 0, 0.35),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 9% 5% at 41% 73%,
+      rgba(0, 0, 0, 0.3),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 6% 9% at 85% 84%,
+      rgba(0, 0, 0, 0.32),
+      transparent 70%
+    );
+}
+
+/* ====================================================== extra faces */
+
+/* Leaded: a grid of small panes with heavy cames between them. */
+.door__panes--leaded {
+  inset: 10%;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4%;
+}
+
+.door__panes--leaded .door__pane {
+  border-width: 4px;
+  border-color: rgba(40, 40, 45, 0.75);
+}
+
+/* Frosted: glass you cannot see through at all. */
+.door--frosted {
+  backdrop-filter: blur(14px) saturate(0.7);
+  background-image: repeating-linear-gradient(
+      95deg,
+      rgba(255, 255, 255, 0.12) 0 3px,
+      rgba(255, 255, 255, 0.02) 3px 7px
+    ),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05));
+}
+
+/* Carved: a sunken relief panel in stone. */
+.door__carving {
+  position: absolute;
+  inset: 13% 16%;
+  border-radius: 46% 46% 4% 4% / 18% 18% 4% 4%;
+  box-shadow: inset 0 0 0 5px rgba(0, 0, 0, 0.22),
+    inset 0 7px 16px rgba(0, 0, 0, 0.4),
+    inset 0 -4px 10px rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================ cracks */
+/*
+ * Drawn with conic gradients so each crack is a thin wedge radiating from
+ * the point of impact. Tapping again adds another.
+ */
+.door__cracks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+[data-cracks='1'] .door__cracks {
+  background-image: conic-gradient(
+    from 20deg at 52% 46%,
+    rgba(0, 0, 0, 0.75) 0 0.6deg,
+    transparent 0.6deg 61deg,
+    rgba(0, 0, 0, 0.6) 61deg 61.5deg,
+    transparent 61.5deg
+  );
+}
+
+[data-cracks='2'] .door__cracks {
+  background-image: conic-gradient(
+    from 20deg at 52% 46%,
+    rgba(0, 0, 0, 0.8) 0 0.7deg,
+    transparent 0.7deg 61deg,
+    rgba(0, 0, 0, 0.7) 61deg 61.6deg,
+    transparent 61.6deg 142deg,
+    rgba(0, 0, 0, 0.65) 142deg 142.6deg,
+    transparent 142.6deg 221deg,
+    rgba(0, 0, 0, 0.6) 221deg 221.5deg,
+    transparent 221.5deg
+  );
+}
+
+[data-cracks='3'] .door__cracks {
+  background-image: conic-gradient(
+      from 8deg at 52% 46%,
+      rgba(0, 0, 0, 0.85) 0 0.9deg,
+      transparent 0.9deg 38deg,
+      rgba(0, 0, 0, 0.8) 38deg 38.8deg,
+      transparent 38.8deg 79deg,
+      rgba(0, 0, 0, 0.75) 79deg 79.7deg,
+      transparent 79.7deg 126deg,
+      rgba(0, 0, 0, 0.8) 126deg 126.8deg,
+      transparent 126.8deg 183deg,
+      rgba(0, 0, 0, 0.7) 183deg 183.7deg,
+      transparent 183.7deg 244deg,
+      rgba(0, 0, 0, 0.75) 244deg 244.8deg,
+      transparent 244.8deg 300deg,
+      rgba(0, 0, 0, 0.7) 300deg 300.7deg,
+      transparent 300.7deg
+    ),
+    radial-gradient(circle 7% at 52% 46%, rgba(0, 0, 0, 0.55), transparent 70%);
 }

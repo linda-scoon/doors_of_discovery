@@ -1,5 +1,61 @@
-* {
-  padding: 0px;
-  margin: 0px;
+/*
+ * Design tokens.
+ *
+ * Components should reach for these rather than hard-coding values, so that
+ * changing the feel of the site happens here and not in fifteen files.
+ */
+:root {
+  /* spacing */
+  --space-page: 1rem;
+  --space-door-gap: 0.75rem;
+
+  /* doors */
+  --door-aspect: 1 / 1.9;
+  --door-frame: #1a1208;
+  --door-furniture: #b9b6bc;
+  --door-furniture-dark: #6e6b72;
+
+  /* what you see when a door stands open */
+  --room-dark: #140f0a;
+
+  /* motion. A door that swings should feel heavier than a UI transition. */
+  --swing-duration: 1.6s;
+  --swing-easing: cubic-bezier(0.3, 0.8, 0.4, 1);
+  /*
+   * Stops short of 90deg on purpose. Past 90 the door projects outside its
+   * own cell, where it is either clipped away to nothing or swings across
+   * the door next to it. At 78 it reads as wide open and stays home.
+   */
+  --swing-open-angle: 78deg;
+
+  /* type */
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--room-dark);
+}
+
+/*
+ * A door swinging open is a large movement. Honour the system setting rather
+ * than making people unwell to show off an animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

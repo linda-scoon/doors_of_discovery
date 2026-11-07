@@ -32,10 +32,16 @@ export class HandleComponent {
   /** What the door opens into, used to build the button's accessible name. */
   @Input() label: string = 'this room';
 
+  /** A stuck door's handle still moves, but the door never opens. */
+  @Input() stuck: boolean = false;
+
   /** Raised when the handle is used, by click or by keyboard. */
   @Output() used = new EventEmitter<void>();
 
-  onClick(): void {
+  onClick(event: MouseEvent): void {
+    // The door behind this button treats a click as a tap on its surface.
+    // Using the handle is a different act, so it stops here.
+    event.stopPropagation();
     this.used.emit();
   }
 }

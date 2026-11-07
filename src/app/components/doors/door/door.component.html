@@ -1,23 +1,93 @@
+<!--
+  The door itself is tappable: tapping tells you what it is made of. Opening
+  it is the handle's job, which is why the handle stops the tap going through.
+  A div rather than a button, because the handle inside it is the control —
+  tapping is flavour, and the keyboard path to the room is the handle.
+-->
 <div
-  class="door"
+  [class]="
+    'door door--' + resolvedMaterial +
+    ' door--' + resolvedDesign +
+    ' door--wear-' + wear +
+    ' door--finish-' + finish
+  "
   [class.door--open]="open"
-  [class.door--hinge-right]="handleSide === 'left'"
-  [style.backgroundColor]="colour"
+  [class.door--hinge-right]="resolvedHandleSide === 'left'"
+  [class.door--creak]="resolvedOpenStyle === 'creak'"
+  [class.door--refusing]="refusing"
+  [attr.data-cracks]="cracks || null"
+  [style.--door-colour]="resolvedColour"
+  (click)="onTap()"
 >
-  <div class="door__panels door__panels--top">
-    <div class="door__panel"></div>
-    <div class="door__panel"></div>
-  </div>
+  <!-- The face. Designs drawn entirely in CSS need no markup. -->
+  @switch (resolvedDesign) {
+    @case ('glazed-top') {
+      <span class="door__glazing"></span>
+      <div class="door__panels">
+        @for (panel of panels; track $index) {
+          <span class="door__panel"></span>
+        }
+      </div>
+    }
+    @case ('panes') {
+      <div class="door__panes">
+        @for (pane of panels; track $index) {
+          <span class="door__pane"></span>
+        }
+      </div>
+    }
+    @case ('leaded') {
+      <div class="door__panes door__panes--leaded">
+        @for (pane of panels; track $index) {
+          <span class="door__pane"></span>
+        }
+      </div>
+    }
+    @case ('porthole') {
+      <span class="door__porthole"></span>
+    }
+    @case ('z-brace') {
+      <span class="door__rail door__rail--top"></span>
+      <span class="door__brace"></span>
+      <span class="door__rail door__rail--bottom"></span>
+    }
+    @case ('studded') {
+      <span class="door__studs"></span>
+    }
+    @case ('carved') {
+      <span class="door__carving"></span>
+    }
+    @default {
+      @if (panels.length) {
+        <div class="door__panels">
+          @for (panel of panels; track $index) {
+            <span class="door__panel"></span>
+          }
+        </div>
+      }
+    }
+  }
+
+  <!-- Furniture. Which of these a door has is decided by its id. -->
+  @if (hasKnocker) {
+    <span class="door__knocker" aria-hidden="true"></span>
+  }
+  @if (hasLetterbox) {
+    <span class="door__letterbox" aria-hidden="true"></span>
+  }
+  @if (doorNumber !== null) {
+    <span class="door__number" aria-hidden="true">{{ doorNumber }}</span>
+  }
+
+  @if (cracks) {
+    <span class="door__cracks" aria-hidden="true"></span>
+  }
 
   <app-handle
-    [side]="handleSide"
+    [side]="resolvedHandleSide"
     [pressed]="open"
     [label]="label"
+    [stuck]="isStuck"
     (used)="onHandleUsed()"
   ></app-handle>
-
-  <div class="door__panels door__panels--bottom">
-    <div class="door__panel"></div>
-    <div class="door__panel"></div>
-  </div>
 </div>

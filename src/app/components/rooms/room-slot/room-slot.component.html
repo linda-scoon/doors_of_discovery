@@ -1,13 +1,49 @@
-<app-room (mouseleave)="closeDoor()">
-  <app-door
-    [open]="open"
-    (opened)="openDoor()"
-    [colour]="room.colour"
-    [handleSide]="room.handleSide ?? 'right'"
-    [label]="doorLabel"
-  ></app-door>
+<app-room (mouseleave)="closeDoors()">
+  <!-- The doorway's own theatrics, behind the doors so they are revealed. -->
+  @if (burning) {
+    <span class="doorway-fire" aria-hidden="true">
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+    </span>
+  }
+  @if (lunging) {
+    <span class="doorway-monster" aria-hidden="true">
+      <span class="doorway-monster__eye"></span>
+      <span class="doorway-monster__eye"></span>
+      <span class="doorway-monster__maw"></span>
+    </span>
+  }
 
-  <ng-container
-    *ngComponentOutlet="room.component; inputs: contentInputs"
-  ></ng-container>
+  <!--
+    Outermost first. Each layer gets its own id, so a door behind a door
+    looks nothing like the one that was hiding it.
+  -->
+  @for (layer of layers; track layer.id) {
+    <app-door
+      [id]="layer.id"
+      [open]="isOpen(layer)"
+      (opened)="openDoor(layer)"
+      (tapped)="onTap($event)"
+      (refused)="onRefused(layer, $event)"
+      [colour]="layer.depth === 0 ? room.colour : undefined"
+      [material]="layer.depth === 0 ? room.material : undefined"
+      [openStyle]="layer.depth === 0 ? room.openStyle : undefined"
+      [handleSide]="layer.depth === 0 ? room.handleSide : undefined"
+      [label]="doorLabel(layer)"
+      [style.zIndex]="stackingOrder(layer)"
+    ></app-door>
+  }
+
+  <!--
+    The room's own contents step aside while something is happening in the
+    doorway, so a jump scare is not captioned "nothing in here yet".
+  -->
+  <span class="room-content" [class.room-content--upstaged]="burning || lunging">
+    <ng-container
+      *ngComponentOutlet="room.component; inputs: contentInputs"
+    ></ng-container>
+  </span>
 </app-room>
