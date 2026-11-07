@@ -5,78 +5,131 @@
     <!-- Pip. Stroke, poke, or bring it something to eat. -->
     <svg
       #pet
-      class="pip"
       [class]="'pip pip--' + mood()"
-      viewBox="0 0 200 190"
+      viewBox="0 0 240 262"
       role="img"
-      aria-label="Pip, a small round fluffy creature. Stroke it, poke it, or drag food to it."
+      aria-label="Pip, a baby cheetah. Stroke it, poke it, or drag food to it."
       (pointerdown)="onPetDown($event)"
       (pointermove)="onPetMove($event)"
       (pointerup)="onPetUp()"
       (pointercancel)="onPetUp()"
     >
-      <ellipse class="pip__shadow" cx="100" cy="178" rx="62" ry="9" />
-      <path class="pip__tail" d="M160 140 C 196 136, 198 96, 176 86 C 168 82, 162 92, 172 96 C 184 102, 180 126, 156 128 Z" />
-      <g class="pip__body">
-        <path class="pip__ear" d="M48 74 L 40 18 Q 44 12, 52 18 L 86 52 Z" />
-        <path class="pip__ear" d="M152 74 L 160 18 Q 156 12, 148 18 L 114 52 Z" />
-        <path class="pip__ear-inner" d="M54 62 L 48 28 L 76 52 Z" />
-        <path class="pip__ear-inner" d="M146 62 L 152 28 L 124 52 Z" />
-        <ellipse class="pip__fur" cx="100" cy="112" rx="72" ry="64" />
-        <ellipse class="pip__belly" cx="100" cy="136" rx="44" ry="34" />
-        <ellipse class="pip__foot" cx="70" cy="172" rx="16" ry="9" />
-        <ellipse class="pip__foot" cx="130" cy="172" rx="16" ry="9" />
+      <ellipse class="pip__shadow" cx="120" cy="252" rx="86" ry="8" />
 
-        <g class="pip__face">
-          <!-- Eyes: open, shut happy, or wide with surprise. -->
+      <!-- The tail: long, curled up at the end, ringed, with a white tip. -->
+      <g class="pip__tail">
+        <path class="pip__tail-fur" d="M150 228 C 200 234, 224 204, 208 164 C 200 144, 210 128, 224 122" />
+        <path class="pip__tail-rings" d="M150 228 C 200 234, 224 204, 208 164 C 200 144, 210 128, 224 122" />
+        <circle class="pip__tail-tip" cx="225" cy="121" r="8" />
+      </g>
+
+      <g class="pip__body">
+        <!-- Back legs, folded under, and the body sitting up between them. -->
+        <ellipse class="pip__fur" cx="80" cy="218" rx="36" ry="30" />
+        <ellipse class="pip__fur" cx="160" cy="218" rx="36" ry="30" />
+        <path class="pip__fur" d="M86 118 C 70 150, 60 192, 70 234 L 170 234 C 180 192, 170 150, 154 118 Z" />
+        <ellipse class="pip__chest" cx="120" cy="164" rx="24" ry="34" />
+
+        <!-- Front legs and paws. -->
+        <rect class="pip__fur" x="92" y="158" width="20" height="84" rx="10" />
+        <rect class="pip__fur" x="128" y="158" width="20" height="84" rx="10" />
+        <ellipse class="pip__paw" cx="102" cy="243" rx="15" ry="8" />
+        <ellipse class="pip__paw" cx="138" cy="243" rx="15" ry="8" />
+        <path class="pip__toes" d="M97 240 v5 M103 239 v6 M109 240 v5 M133 240 v5 M139 239 v6 M145 240 v5" />
+
+        <!-- Spots. -->
+        <g class="pip__spots">
+          <circle cx="76" cy="200" r="3.6" /><circle cx="90" cy="216" r="3" /><circle cx="68" cy="224" r="2.6" />
+          <circle cx="62" cy="206" r="2.4" /><circle cx="84" cy="232" r="2.2" />
+          <circle cx="164" cy="200" r="3.6" /><circle cx="150" cy="216" r="3" /><circle cx="172" cy="224" r="2.6" />
+          <circle cx="178" cy="206" r="2.4" /><circle cx="156" cy="232" r="2.2" />
+          <circle cx="88" cy="146" r="3" /><circle cx="152" cy="146" r="3" />
+          <circle cx="80" cy="172" r="2.8" /><circle cx="160" cy="172" r="2.8" />
+          <circle cx="86" cy="190" r="2.2" /><circle cx="154" cy="190" r="2.2" />
+          <circle cx="101" cy="180" r="2.2" /><circle cx="103" cy="204" r="2" /><circle cx="100" cy="224" r="1.8" />
+          <circle cx="139" cy="180" r="2.2" /><circle cx="137" cy="204" r="2" /><circle cx="140" cy="224" r="1.8" />
+        </g>
+
+        <!-- The head, on its own so it can tilt. -->
+        <g class="pip__head">
+          <circle class="pip__ear" cx="80" cy="66" r="15" />
+          <circle class="pip__ear" cx="160" cy="66" r="15" />
+          <circle class="pip__ear-inner" cx="81" cy="68" r="8" />
+          <circle class="pip__ear-inner" cx="159" cy="68" r="8" />
+          <ellipse class="pip__fur" cx="120" cy="100" rx="48" ry="42" />
+          <!-- A cub's fluffy grey mane, standing up along the top of the head. -->
+          <path class="pip__mane" d="M96 66 Q 98 56, 103 52 Q 104 60, 108 62 Q 110 50, 116 46 Q 117 56, 121 58 Q 124 47, 131 46 Q 130 56, 133 60 Q 138 52, 143 53 Q 141 60, 142 66 Q 120 58, 96 66 Z" />
+          <g class="pip__spots">
+            <circle cx="104" cy="72" r="2.2" /><circle cx="120" cy="68" r="2.6" /><circle cx="136" cy="72" r="2.2" />
+            <circle cx="112" cy="80" r="1.8" /><circle cx="128" cy="80" r="1.8" />
+            <circle cx="80" cy="100" r="2" /><circle cx="160" cy="100" r="2" />
+          </g>
+          <ellipse class="pip__muzzle" cx="120" cy="120" rx="25" ry="17" />
+          <ellipse class="pip__cheek" cx="90" cy="117" rx="9" ry="6" />
+          <ellipse class="pip__cheek" cx="150" cy="117" rx="9" ry="6" />
+
+          <!-- Eyes: open and amber, shut happy, wide with surprise, or cross. -->
           @switch (mood()) {
             @case ('purring') {
-              <path class="pip__eye-shut" d="M62 96 Q 72 86, 82 96" />
-              <path class="pip__eye-shut" d="M118 96 Q 128 86, 138 96" />
+              <path class="pip__line" d="M90 101 Q 100 92, 110 101" />
+              <path class="pip__line" d="M130 101 Q 140 92, 150 101" />
             }
             @case ('happy') {
-              <path class="pip__eye-shut" d="M62 96 Q 72 86, 82 96" />
-              <path class="pip__eye-shut" d="M118 96 Q 128 86, 138 96" />
+              <path class="pip__line" d="M90 101 Q 100 92, 110 101" />
+              <path class="pip__line" d="M130 101 Q 140 92, 150 101" />
             }
             @case ('grumpy') {
-              <path class="pip__brow" d="M60 82 L 84 90" />
-              <path class="pip__brow" d="M140 82 L 116 90" />
-              <ellipse class="pip__eye" cx="72" cy="98" rx="7" ry="6" />
-              <ellipse class="pip__eye" cx="128" cy="98" rx="7" ry="6" />
+              <path class="pip__line" d="M88 88 L 110 95" />
+              <path class="pip__line" d="M152 88 L 130 95" />
+              <ellipse class="pip__iris" cx="100" cy="101" rx="8" ry="5" />
+              <ellipse class="pip__iris" cx="140" cy="101" rx="8" ry="5" />
+              <circle class="pip__pupil" cx="100" cy="101" r="3" />
+              <circle class="pip__pupil" cx="140" cy="101" r="3" />
             }
             @case ('surprised') {
-              <circle class="pip__eye" cx="72" cy="96" r="12" />
-              <circle class="pip__eye" cx="128" cy="96" r="12" />
-              <circle class="pip__glint" cx="76" cy="91" r="4" />
-              <circle class="pip__glint" cx="132" cy="91" r="4" />
+              <circle class="pip__iris" cx="100" cy="99" r="12" />
+              <circle class="pip__iris" cx="140" cy="99" r="12" />
+              <circle class="pip__pupil" cx="100" cy="99" r="6" />
+              <circle class="pip__pupil" cx="140" cy="99" r="6" />
+              <circle class="pip__glint" cx="104" cy="95" r="2.6" />
+              <circle class="pip__glint" cx="144" cy="95" r="2.6" />
             }
             @default {
               <g class="pip__eyes-open">
-                <ellipse class="pip__eye" cx="72" cy="96" rx="10" ry="12" />
-                <ellipse class="pip__eye" cx="128" cy="96" rx="10" ry="12" />
-                <circle class="pip__glint" cx="76" cy="91" r="3.5" />
-                <circle class="pip__glint" cx="132" cy="91" r="3.5" />
+                <ellipse class="pip__iris" cx="100" cy="100" rx="10" ry="9" />
+                <ellipse class="pip__iris" cx="140" cy="100" rx="10" ry="9" />
+                <ellipse class="pip__pupil" cx="100" cy="101" rx="4" ry="6" />
+                <ellipse class="pip__pupil" cx="140" cy="101" rx="4" ry="6" />
+                <circle class="pip__glint" cx="103" cy="97" r="2.4" />
+                <circle class="pip__glint" cx="143" cy="97" r="2.4" />
               </g>
             }
           }
-          <ellipse class="pip__cheek" cx="54" cy="116" rx="11" ry="7" />
-          <ellipse class="pip__cheek" cx="146" cy="116" rx="11" ry="7" />
-          <path class="pip__nose" d="M95 108 L 105 108 L 100 114 Z" />
-          <!-- Mouth: a little w, open to eat or to squeak, turned down to sulk. -->
+
+          <!-- The cheetah's tear lines, from the eyes down to the mouth. -->
+          <path class="pip__tear" d="M105 104 Q 101 115, 94 126 Q 97 128, 99 126 Q 105 116, 109 106 Z" />
+          <path class="pip__tear" d="M135 104 Q 139 115, 146 126 Q 143 128, 141 126 Q 135 116, 131 106 Z" />
+          <path class="pip__nose" d="M112 112 Q 120 107, 128 112 Q 125 119, 120 120 Q 115 119, 112 112 Z" />
+
+          <!-- Mouth: open to eat or to chirp, turned down to sulk. -->
           @switch (mood()) {
             @case ('eating') {
-              <ellipse class="pip__mouth-open pip__mouth-chew" cx="100" cy="124" rx="9" ry="7" />
+              <ellipse class="pip__mouth-open pip__mouth-chew" cx="120" cy="129" rx="8" ry="6" />
             }
             @case ('surprised') {
-              <ellipse class="pip__mouth-open" cx="100" cy="125" rx="5" ry="6" />
+              <ellipse class="pip__mouth-open" cx="120" cy="130" rx="4.5" ry="5.5" />
             }
             @case ('grumpy') {
-              <path class="pip__mouth" d="M88 128 Q 100 118, 112 128" />
+              <path class="pip__line" d="M110 132 Q 120 124, 130 132" />
             }
             @default {
-              <path class="pip__mouth" d="M88 118 Q 94 126, 100 118 Q 106 126, 112 118" />
+              <path class="pip__line" d="M110 125 Q 115 131, 120 125 Q 125 131, 130 125" />
             }
           }
+          <g class="pip__whiskers">
+            <circle cx="103" cy="121" r="0.9" /><circle cx="106" cy="126" r="0.9" />
+            <circle cx="137" cy="121" r="0.9" /><circle cx="134" cy="126" r="0.9" />
+          </g>
         </g>
       </g>
     </svg>

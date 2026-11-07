@@ -22,7 +22,7 @@ describe('PetRoomComponent', () => {
     expect(pip.mood()).toBe('content');
   });
 
-  it('squeaks when poked, and sulks when poked too often', () => {
+  it('chirps when poked, and sulks when poked too often', () => {
     const { pip } = open();
     pip.poke();
     expect(pip.mood()).toBe('surprised');
@@ -50,9 +50,9 @@ describe('PetRoomComponent', () => {
 
   it('can be fed from the keyboard', () => {
     const { fixture, pip } = open();
-    const cookie: HTMLElement = fixture.nativeElement.querySelector('[aria-label="Give Pip a cookie"]');
+    const fish: HTMLElement = fixture.nativeElement.querySelector('[aria-label="Give Pip a fish"]');
 
-    cookie.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    fish.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
 
     expect(pip.mood()).toBe('eating');
   });

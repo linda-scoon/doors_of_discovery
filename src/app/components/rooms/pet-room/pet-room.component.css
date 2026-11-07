@@ -1,6 +1,6 @@
 /*
  * A cosy playroom: a soft peach wall, a wooden floor, a round rug, and
- * Pip on it. Whimsical and warm.
+ * Pip, a baby cheetah, sitting on it. Whimsical and warm.
  */
 :host {
   display: contents;
@@ -40,9 +40,9 @@ app-room-frame {
 .pip {
   position: absolute;
   left: 50%;
-  bottom: 18%;
-  width: 82%;
-  max-height: 72%;
+  bottom: 16%;
+  height: 80%;
+  max-width: 96%;
   transform: translateX(-50%);
   overflow: visible;
   touch-action: none;
@@ -51,35 +51,72 @@ app-room-frame {
 }
 
 .pip__shadow { fill: rgba(80, 40, 20, 0.18); }
-.pip__fur, .pip__ear, .pip__tail { fill: #f7b267; }
-.pip__belly { fill: #fde4c3; }
-.pip__ear-inner { fill: #f4978e; }
-.pip__foot { fill: #e89a4f; }
-.pip__eye { fill: #2b1d16; }
+.pip__fur { fill: #e8b25f; }
+.pip__chest, .pip__muzzle { fill: #fbf1dc; }
+.pip__paw { fill: #f3dcae; }
+.pip__toes { stroke: #b98a45; stroke-width: 1.6; stroke-linecap: round; }
+.pip__spots { fill: #2a1f17; }
+.pip__mane { fill: #e9e5dc; }
+.pip__ear { fill: #2a1f17; }
+.pip__ear-inner { fill: #e8b25f; }
+.pip__cheek { fill: #f4978e; opacity: 0.35; }
+.pip__iris { fill: #e3a22a; }
+.pip__pupil { fill: #1d1612; }
 .pip__glint { fill: #ffffff; }
-.pip__cheek { fill: #f4978e; opacity: 0.6; }
-.pip__nose { fill: #b5525a; }
-.pip__mouth, .pip__eye-shut, .pip__brow {
-  fill: none;
-  stroke: #2b1d16;
-  stroke-width: 4;
-  stroke-linecap: round;
-}
+.pip__nose { fill: #2b1d16; }
+.pip__whiskers { fill: #2b1d16; }
 .pip__mouth-open { fill: #7a2b34; }
+.pip__line {
+  fill: none;
+  stroke: #1d1612;
+  stroke-linecap: round;
+  stroke-width: 3.5;
+}
+.pip__tear { fill: #1d1612; }
 
+.pip__tail-fur, .pip__tail-rings { fill: none; }
+.pip__tail-fur { stroke: #e8b25f; stroke-width: 15; stroke-linecap: round; }
+/* Separate black rings towards the end of the tail, square-ended so they
+   stay apart. */
+.pip__tail-rings {
+  stroke: #2a1f17;
+  stroke-width: 15.5;
+  stroke-linecap: butt;
+  stroke-dasharray: 0 74 5 11 5 11 5 11 5 200;
+}
+.pip__tail-tip { fill: #fbf1dc; }
+
+/* Breathing, and the tail swaying, all the time. */
 .pip__body {
-  transform-origin: 100px 176px;
+  transform-origin: 120px 250px;
   transform-box: view-box;
   animation: breathe 3.2s ease-in-out infinite;
 }
 
 @keyframes breathe {
-  50% { transform: scale(1.02, 0.98); }
+  50% { transform: scale(1.015, 0.985); }
+}
+
+.pip__tail {
+  transform-origin: 150px 228px;
+  transform-box: view-box;
+  animation: sway 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(5deg); }
+}
+
+.pip__head {
+  transform-origin: 120px 135px;
+  transform-box: view-box;
+  transition: transform 300ms ease;
 }
 
 /* Blinking now and then, when doing nothing in particular. */
 .pip__eyes-open {
-  transform-origin: 100px 96px;
+  transform-origin: 120px 100px;
   transform-box: view-box;
   animation: blink 4.5s infinite;
 }
@@ -89,33 +126,38 @@ app-room-frame {
   97% { transform: scaleY(0.1); }
 }
 
-.pip--purring .pip__body {
-  animation: snuggle 0.5s ease-in-out infinite alternate;
+/* Stroked: the head leans into it and rocks. */
+.pip--purring .pip__head {
+  animation: lean 0.6s ease-in-out infinite alternate;
 }
 
-@keyframes snuggle {
-  from { transform: rotate(-3deg); }
-  to { transform: rotate(3deg); }
+@keyframes lean {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(4deg); }
 }
+
+.pip--purring .pip__tail { animation-duration: 0.9s; }
 
 .pip--surprised .pip__body {
   animation: squash 0.4s ease-out;
 }
 
 @keyframes squash {
-  30% { transform: scale(1.15, 0.82); }
-  60% { transform: scale(0.94, 1.08); }
+  30% { transform: scale(1.08, 0.9); }
+  60% { transform: scale(0.97, 1.04); }
 }
 
-.pip--grumpy .pip__fur { fill: #f09d4f; }
-.pip--grumpy .pip__body { animation: huff 0.6s ease-in-out 2; }
+.pip--grumpy .pip__head { transform: rotate(-4deg) translateY(3px); }
+.pip--grumpy .pip__tail { animation: lash 0.25s ease-in-out infinite alternate; }
 
-@keyframes huff {
-  50% { transform: scale(1.06); }
+@keyframes lash {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(10deg); }
 }
 
+.pip--eating .pip__head { transform: translateY(6px) rotate(3deg); }
 .pip--eating .pip__mouth-chew {
-  transform-origin: 100px 124px;
+  transform-origin: 120px 129px;
   transform-box: view-box;
   animation: chew 0.22s ease-in-out infinite alternate;
 }
@@ -129,7 +171,7 @@ app-room-frame {
 }
 
 @keyframes hop {
-  50% { transform: translateY(-14px) scale(1.03, 0.97); }
+  50% { transform: translateY(-12px); }
 }
 
 /* -------------------------------------------------------- hearts, food */

@@ -12,22 +12,28 @@ export class PetSounds {
     return this.context;
   }
 
-  /** A short rising squeak, for a poke. */
-  squeak(): void {
+  /**
+   * Two quick bird-like chirps, for a poke. Cheetahs chirp rather than
+   * meow -- the cubs especially.
+   */
+  chirp(): void {
     const ctx = this.audio();
     if (!ctx) return;
-    const now = ctx.currentTime;
-    const tone = ctx.createOscillator();
-    const level = ctx.createGain();
-    tone.type = 'sine';
-    tone.frequency.setValueAtTime(900, now);
-    tone.frequency.exponentialRampToValueAtTime(1700, now + 0.12);
-    level.gain.setValueAtTime(0.0001, now);
-    level.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
-    level.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
-    tone.connect(level).connect(ctx.destination);
-    tone.start(now);
-    tone.stop(now + 0.2);
+    for (let note = 0; note < 2; note += 1) {
+      const now = ctx.currentTime + note * 0.13;
+      const tone = ctx.createOscillator();
+      const level = ctx.createGain();
+      tone.type = 'sine';
+      tone.frequency.setValueAtTime(1800, now);
+      tone.frequency.exponentialRampToValueAtTime(2600, now + 0.04);
+      tone.frequency.exponentialRampToValueAtTime(1500, now + 0.09);
+      level.gain.setValueAtTime(0.0001, now);
+      level.gain.exponentialRampToValueAtTime(0.1, now + 0.015);
+      level.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+      tone.connect(level).connect(ctx.destination);
+      tone.start(now);
+      tone.stop(now + 0.11);
+    }
   }
 
   /** A grumble, lower and buzzier, for one poke too many. */

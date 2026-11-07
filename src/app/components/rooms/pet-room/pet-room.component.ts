@@ -37,7 +37,7 @@ interface Heart {
 const SAYS: Record<Mood, string> = {
   content: 'Pip is pleased to see you.',
   purring: 'Purrrrr…',
-  surprised: 'Eep!',
+  surprised: 'Chirp!',
   grumpy: 'Hey! Stop poking!',
   eating: 'Nom nom nom…',
   happy: 'Yum! Pip loves you.',
@@ -50,9 +50,10 @@ const POKE_MEMORY_MS = 2_500;
 const STROKE_DISTANCE = 30;
 
 /**
- * A playroom with Pip in it: stroke Pip and it purrs, poke it and it
- * squeaks -- too often and it sulks -- and drag a snack to it and it eats
- * and is happy. Pip and its noises are this site's own.
+ * A playroom with Pip in it, a baby cheetah: stroke Pip and it purrs, poke
+ * it and it chirps -- as cheetah cubs do -- too often and it sulks, and drag
+ * a snack to it and it eats and is happy. Pip and its noises are this
+ * site's own.
  */
 @Component({
   selector: 'app-pet-room',
@@ -69,9 +70,9 @@ export class PetRoomComponent {
   readonly says = computed(() => SAYS[this.mood()]);
   readonly hearts = signal<Heart[]>([]);
   readonly foods = signal<Food[]>([
-    { id: 1, emoji: '🐟', name: 'a fish', home: 18, dx: 0, dy: 0, dragging: false, eaten: false },
-    { id: 2, emoji: '🍪', name: 'a cookie', home: 50, dx: 0, dy: 0, dragging: false, eaten: false },
-    { id: 3, emoji: '🍓', name: 'a strawberry', home: 82, dx: 0, dy: 0, dragging: false, eaten: false },
+    { id: 1, emoji: '🍖', name: 'some meat', home: 20, dx: 0, dy: 0, dragging: false, eaten: false },
+    { id: 2, emoji: '🐟', name: 'a fish', home: 50, dx: 0, dy: 0, dragging: false, eaten: false },
+    { id: 3, emoji: '🥛', name: 'some milk', home: 80, dx: 0, dy: 0, dragging: false, eaten: false },
   ]);
 
   private readonly pet = viewChild<ElementRef<SVGElement>>('pet');
@@ -124,7 +125,7 @@ export class PetRoomComponent {
     this.settleIn(1_600);
   }
 
-  /** Poked: a squeak -- and a sulk, if it keeps happening. */
+  /** Poked: a chirp -- and a sulk, if it keeps happening. */
   poke(): void {
     if (this.mood() === 'eating') return;
     const now = Date.now();
@@ -136,7 +137,7 @@ export class PetRoomComponent {
       this.settleIn(2_200);
     } else {
       this.mood.set('surprised');
-      this.sounds.squeak();
+      this.sounds.chirp();
       this.settleIn(700);
     }
   }
