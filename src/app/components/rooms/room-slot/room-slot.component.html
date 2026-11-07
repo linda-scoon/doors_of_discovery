@@ -17,15 +17,15 @@
     </span>
   }
 
-  <!-- Some doorways are curtained rather than empty. -->
+  <!--
+    A net curtain across the doorway. It hides the room without concealing
+    it: you can see that something is in there, but not what.
+  -->
   @if (hasCurtain) {
-    <span
-      class="doorway-curtain"
-      aria-hidden="true"
-      [style.--curtain-colour]="curtainColour"
-    >
-      <span class="doorway-curtain__half doorway-curtain__half--left"></span>
-      <span class="doorway-curtain__half doorway-curtain__half--right"></span>
+    <span class="doorway-curtain" aria-hidden="true">
+      @for (strip of curtainStrips; track $index) {
+        <span class="doorway-curtain__strip" [style.--strip]="$index"></span>
+      }
     </span>
   }
 

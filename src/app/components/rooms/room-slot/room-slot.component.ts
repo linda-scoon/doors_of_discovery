@@ -74,9 +74,13 @@ export class RoomSlotComponent implements OnInit {
     return this.character.hasCurtain;
   }
 
-  get curtainColour(): string {
-    return `hsl(${this.character.curtainHue} 38% 26%)`;
-  }
+  /**
+   * The curtain is drawn as vertical strips rather than one sheet. Each
+   * strip moves on a slightly later beat than the one before it, which is
+   * what makes a ripple travel across the fabric instead of the whole
+   * thing swinging as a board.
+   */
+  readonly curtainStrips = Array.from({ length: 11 }, (_unused, i) => i);
 
   /**
    * Tapping a door tells you what it is made of. A few do more: some swing

@@ -133,54 +133,76 @@
 .doorway-curtain {
   position: absolute;
   inset: 0;
+  display: flex;
   pointer-events: none;
-  overflow: hidden;
+  /* Over the room's contents, under the door. */
+  z-index: 1;
+
+  /*
+   * The curtain is barely there. What hides the room is not the fabric's
+   * opacity but the blur behind it: you can see that something is in there,
+   * and roughly where, but not what it is.
+   */
+  /*
+   * Light in the doorway, as if the room beyond has a window. Painted on
+   * the container, so it sits behind the fabric. Without it the rooms are
+   * nearly black and white netting at low opacity just reads as grey.
+   */
+  background-color: rgba(255, 253, 248, 0.3);
+  background-image: radial-gradient(
+    ellipse 75% 60% at 50% 40%,
+    rgba(255, 248, 235, 0.45),
+    rgba(255, 248, 235, 0.14) 55%,
+    transparent 78%
+  );
+
+  /* What hides the room is the blur, not the fabric's opacity: you can see
+     that something is in there, and roughly where, but not what. */
+  backdrop-filter: blur(7px) brightness(1.6) saturate(0.75);
+  -webkit-backdrop-filter: blur(7px) brightness(1.6) saturate(0.75);
 }
 
 /*
- * Drawn back to the sides rather than closed across the opening. A curtain
- * that covers the doorway hides the room, which defeats the point of
- * opening the door at all.
+ * One strip per fold. Each runs the same animation a beat later than the
+ * one before, so a ripple travels across the curtain rather than the whole
+ * sheet swinging like a board.
  */
-.doorway-curtain__half {
-  position: absolute;
-  top: 0;
-  width: 38%;
+.doorway-curtain__strip {
+  flex: 1;
   height: 100%;
   transform-origin: top center;
 
-  background-color: var(--curtain-colour, #5d2436);
-  /* Pleats, and the fold shadows between them. */
-  background-image: repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.34) 0 2px,
-      rgba(255, 255, 255, 0.08) 2px 8px,
-      rgba(0, 0, 0, 0.16) 8px 17px
-    ),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 26%);
-  /* A hem that hangs rather than being cut straight. */
-  border-radius: 0 0 45% 45% / 0 0 7% 7%;
+  background: rgba(255, 255, 255, 0.46);
+  /* The shaded edge of each fold. */
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset -4px 0 8px rgba(255, 255, 255, 0.12);
 
-  animation: curtain-drift 7s ease-in-out infinite alternate;
+  animation: curtain-wave 3.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--strip) * -0.26s);
 }
 
-.doorway-curtain__half--left {
-  left: 0;
+/* Every other fold hangs a little deeper and catches less light. */
+.doorway-curtain__strip:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.36);
 }
 
-/* Mirrored, and on its own clock, so the two do not move as one sheet. */
-.doorway-curtain__half--right {
-  right: 0;
-  scale: -1 1;
-  animation-duration: 9.5s;
-  animation-delay: -3s;
-}
-
-@keyframes curtain-drift {
+/*
+ * Never narrower than its slot. Scaling below 1 opened gaps between the
+ * folds, and the near-black room showed through them as hard dark lines,
+ * which is why the netting read as grey rather than white.
+ */
+@keyframes curtain-wave {
   from {
-    transform: skewX(0deg) translateX(0);
+    transform: translateX(-4%) skewX(-3.5deg) scaleX(1);
   }
   to {
-    transform: skewX(2.4deg) translateX(3%);
+    transform: translateX(4%) skewX(3.5deg) scaleX(1.14);
+  }
+}
+
+/* A curtain that thrashes is worse than one that does not move at all. */
+@media (prefers-reduced-motion: reduce) {
+  .doorway-curtain__strip {
+    animation: none;
   }
 }

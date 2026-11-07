@@ -107,10 +107,8 @@ export interface DoorCharacter {
   hasLetterbox: boolean;
   hasKickPlate: boolean;
   hasPeephole: boolean;
-  /** A curtain hangs in the doorway, stirring in the draught. */
+  /** A net curtain hangs across the doorway, stirring in the draught. */
   hasCurtain: boolean;
-  /** The hue of that curtain. Deep fabric colours, not door colours. */
-  curtainHue: number;
   /** Someone has been at this one with a spray can. */
   hasGraffiti: boolean;
   /** How that particular tag was sprayed. Null when the door is clean. */
@@ -378,7 +376,6 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     hasKickPlate: chance(`${id}:kickplate`, 0.33),
     hasPeephole: chance(`${id}:peephole`, 0.3),
     hasCurtain: chance(`${id}:curtain`, 0.16),
-    curtainHue: Math.round(hashToFraction(`${id}:curtainhue`) * 360),
     hasGraffiti: chance(`${id}:graffiti`, 0.12),
     graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id, ordinal) : null,
     number,

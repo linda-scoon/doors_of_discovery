@@ -6,7 +6,12 @@
 .door {
   position: absolute;
   inset: 0;
-  /* Stacking comes from the slot, which knows how many doors there are. */
+  /*
+   * The doorway stacks: room contents at the bottom, then the curtain, then
+   * the door over both. Left to document order the room's contents would
+   * paint over the door, since they come after it in the template.
+   */
+  z-index: 2;
 
   display: flex;
   flex-direction: column;
