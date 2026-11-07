@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { GifsService } from './gifs.service';
 
 @Component({
   selector: 'app-gif-room',
   templateUrl: './gif-room.component.html',
   styleUrls: ['./gif-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class GifRoomComponent implements OnInit {
   // input from app component

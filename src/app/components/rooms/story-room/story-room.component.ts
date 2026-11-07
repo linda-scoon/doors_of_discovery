@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
-  FormBuilder,
+  UntypedFormBuilder,
   FormControl,
-  FormGroup,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 
@@ -10,12 +10,14 @@ import {
   selector: 'app-story-room',
   templateUrl: './story-room.component.html',
   styleUrls: ['./story-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class StoryRoomComponent {
   // input from app component
   openedDoor: boolean = false;
 
-  storyFillers: FormGroup;
+  storyFillers: UntypedFormGroup;
   showStory: boolean = false;
   textColourField: string = '';
   dessertField: string = '';
@@ -30,7 +32,7 @@ export class StoryRoomComponent {
   colourField: string = '';
   years: string = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
     this.storyFillers = fb.group({
       textColour: ['#008B8B', Validators.required],
       dessert: ['', Validators.required],

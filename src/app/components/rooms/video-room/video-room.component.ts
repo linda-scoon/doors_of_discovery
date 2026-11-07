@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { VideosService } from './videos.service';
 
 @Component({
   selector: 'app-video-room',
   templateUrl: './video-room.component.html',
   styleUrls: ['./video-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class VideoRoomComponent implements OnInit {
   // input from app component

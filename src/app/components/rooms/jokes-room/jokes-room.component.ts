@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { JokesService } from './jokes.service';
 import {
   animate,
@@ -21,12 +21,14 @@ import {
           query('.setup', [style({ opacity: 0 }), animate(2000)]),
           query(
             '.punch-line',
-            stagger(1000, [style({ opacity: 0 }), animate(10000)])
+            stagger(1000, [style({ opacity: 0 }), animate(10000)]),
           ),
         ]),
       ]),
     ]),
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class JokesRoomComponent implements OnInit {
   // input from app component

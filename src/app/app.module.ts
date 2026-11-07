@@ -1,7 +1,11 @@
 import { SafePipe } from './pipes/safe.pipe';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  withXhr,
+} from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { WoodenDoorComponent } from './components/doors/wooden-door/wooden-door.component';
 import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
@@ -40,14 +44,13 @@ import { ReactiveFormsModule } from '@angular/forms';
     HandleComponent,
     SafePipe,
   ],
+  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent],
+  providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())],
 })
 export class AppModule {}
