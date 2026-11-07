@@ -205,20 +205,6 @@ const apis = [
     url: 'https://www.themealdb.com/api/json/v1/1/random.php',
     auth: { style: AuthStyle.NONE },
   },
-  {
-    // Old films from the Internet Archive's Prelinger collection: adverts,
-    // public information films, home movies. Fifty to a page.
-    id: 'films',
-    url:
-      'https://archive.org/advancedsearch.php' +
-      '?q=collection%3Aprelinger+AND+mediatype%3Amovies' +
-      '&fl[]=identifier&fl[]=title&fl[]=year&rows=50&output=json',
-    auth: { style: AuthStyle.NONE },
-    // About ten thousand films, so two hundred pages of fifty.
-    queryParams: { page: { min: 1, max: 200 } },
-    cacheSeconds: 86400,
-  },
-
   // The video room needs two calls: pick a popular movie, then find its
   // trailer. Replaces imdb-api.com, which shut down.
   {
