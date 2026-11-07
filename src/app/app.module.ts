@@ -19,6 +19,7 @@ import { GameRoomComponent } from './components/rooms/game-room/game-room.compon
 import { FactRoomComponent } from './components/rooms/fact-room/fact-room.component';
 import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
 import { DoorComponent } from './components/doors/door/door.component';
+import { RoomSlotComponent } from './components/rooms/room-slot/room-slot.component';
 import { HandleComponent } from './components/handles/handle/handle.component';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -37,6 +38,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     FactRoomComponent,
     StoryRoomComponent,
     DoorComponent,
+    RoomSlotComponent,
     HandleComponent,
     SafePipe,
   ],

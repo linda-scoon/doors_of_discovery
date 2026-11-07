@@ -9,8 +9,6 @@ import { FactsService } from './facts.service';
   standalone: false,
 })
 export class FactRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
   randomFact: any = {};
 
   constructor(private factStream: FactsService) {}
@@ -19,12 +17,5 @@ export class FactRoomComponent implements OnInit {
     this.factStream.loadData().subscribe((data) => {
       this.randomFact = data;
     });
-  }
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 }

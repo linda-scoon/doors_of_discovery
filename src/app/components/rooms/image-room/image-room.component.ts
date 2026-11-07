@@ -9,8 +9,6 @@ import { ImagesService } from './images.service';
   standalone: false,
 })
 export class ImageRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
   image: any = {};
   imageIdx: number = 0;
 
@@ -23,11 +21,4 @@ export class ImageRoomComponent implements OnInit {
     });
   }
 
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
-  }
 }

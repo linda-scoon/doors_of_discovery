@@ -14,8 +14,6 @@ import {
   standalone: false,
 })
 export class StoryRoomComponent {
-  // input from app component
-  openedDoor: boolean = false;
 
   storyFillers: UntypedFormGroup;
   showStory: boolean = false;
@@ -84,14 +82,6 @@ export class StoryRoomComponent {
   }
   get vehicle() {
     return this.storyFillers.get('vehicle');
-  }
-
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 
   /**

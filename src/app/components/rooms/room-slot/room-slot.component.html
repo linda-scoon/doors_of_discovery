@@ -1,0 +1,13 @@
+<app-room (mouseleave)="closeDoor()">
+  <app-door
+    [open]="open"
+    (opened)="openDoor()"
+    [colour]="room.colour"
+    [handleSide]="room.handleSide ?? 'right'"
+    [label]="doorLabel"
+  ></app-door>
+
+  <ng-container
+    *ngComponentOutlet="room.component; inputs: contentInputs"
+  ></ng-container>
+</app-room>

@@ -31,8 +31,6 @@ import {
   standalone: false,
 })
 export class JokesRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
   joke: any = {};
 
   constructor(private jokeStream: JokesService) {}
@@ -41,12 +39,5 @@ export class JokesRoomComponent implements OnInit {
     this.jokeStream.loadData().subscribe((data) => {
       this.joke = data;
     });
-  }
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 }

@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
+import { ROOMS } from './rooms';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,4 +11,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 })
 export class AppComponent {
   title: string = 'web_of_doors';
+
+  /** The doors to show, in order. Add one in rooms.ts. */
+  readonly rooms = ROOMS;
 }

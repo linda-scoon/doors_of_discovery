@@ -9,8 +9,6 @@ import { GifsService } from './gifs.service';
   standalone: false,
 })
 export class GifRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
   gif: any = {};
 
   constructor(private gifStream: GifsService) {}
@@ -19,12 +17,5 @@ export class GifRoomComponent implements OnInit {
     this.gifStream.loadData().subscribe((data) => {
       this.gif = data.data.images.downsized_medium;
     });
-  }
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 }

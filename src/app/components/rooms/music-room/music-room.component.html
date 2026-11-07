@@ -1,17 +1,9 @@
-<app-room (mouseleave)="exitRoom()">
-  <app-door
-    [open]="openedDoor"
-    (opened)="enterRoom()"
-    colour="#C3B091"
-    label="the music room"
-  ></app-door>
-  @if (openedDoor) {
-    <div class="room-container">
-      <p class="title">{{ track.title }} by {{ track.artist.name }}</p>
-      <div class="track">
-        <img [src]="track.album.cover" [alt]="track.title" />
-      </div>
-      <audio controls autoplay [src]="track.preview" type="audio/mpeg"></audio>
+@if (open) {
+  <div class="room-container">
+    <p class="title">{{ track.title }} by {{ track.artist.name }}</p>
+    <div class="track">
+      <img [src]="track.album.cover" [alt]="track.title" />
     </div>
-  }
-</app-room>
+    <audio controls autoplay [src]="track.preview" type="audio/mpeg"></audio>
+  </div>
+}

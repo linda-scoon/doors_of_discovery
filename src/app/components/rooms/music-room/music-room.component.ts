@@ -16,8 +16,13 @@ import { MusicService } from './music.service';
   standalone: false,
 })
 export class MusicRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
+  /**
+   * Whether this room's door is open. The audio element is only created once
+   * it is, so nothing plays from behind a closed door. Supplied by
+   * RoomSlotComponent because the registry marks this room needsDoorState.
+   */
+  @Input() open: boolean = false;
+
   track: any = {};
   trackNum: number = 0;
 
@@ -29,12 +34,5 @@ export class MusicRoomComponent implements OnInit {
       this.trackNum = Math.round(Math.random() * (data.nb_tracks - 1));
       this.track = data.tracks.data[this.trackNum];
     });
-  }
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 }
