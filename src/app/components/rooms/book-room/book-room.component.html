@@ -1,0 +1,36 @@
+<app-room-frame [status]="pick.status()">
+  @if (pick.value(); as p) {
+    @if (p.kind === 'book') {
+      <p class="book-room__sign">Staff pick</p>
+      @if (p.cover) {
+        <img class="book-room__cover" [src]="p.cover" [alt]="'Cover of ' + p.title" />
+      } @else {
+        <span class="book-room__cover book-room__cover--cloth">{{ p.title }}</span>
+      }
+      <div class="book-room__card">
+        <p class="book-room__title">{{ p.title }}</p>
+        <p class="room-words room-words--small">{{ p.author }}{{ p.year ? ', ' + p.year : '' }}</p>
+        <p class="room-credit">
+          If you like {{ p.about }} ·
+          <a [href]="p.link" target="_blank" rel="noopener">Open Library</a>
+        </p>
+      </div>
+    } @else {
+      <p class="book-room__sign book-room__sign--own">From our own shelf</p>
+      @if (showOwnCovers && p.cover) {
+        <img class="book-room__cover" [src]="p.cover" [alt]="'Cover of ' + p.title" />
+      }
+      <div class="book-room__card book-room__card--own">
+        <p class="book-room__badge">18+ · Paranormal romance</p>
+        <p class="book-room__title">{{ p.title }}</p>
+        @if (p.blurb) {
+          <p class="room-words room-words--small book-room__blurb">{{ p.blurb }}</p>
+        }
+        <a class="room-button book-room__read" [href]="p.link" target="_blank" rel="noopener">
+          Read the first half free
+        </a>
+        <p class="room-credit">at Silver Footfalls</p>
+      </div>
+    }
+  }
+</app-room-frame>

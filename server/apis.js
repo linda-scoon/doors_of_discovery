@@ -10,6 +10,7 @@
  */
 
 const cities = require('../shared/cities.json');
+const bookSubjects = require('../shared/book-subjects.json');
 
 /**
  * Some APIs ask callers to say who they are. Wikimedia refuses requests
@@ -102,6 +103,19 @@ const apis = [
     auth: { style: AuthStyle.NONE },
   },
 
+  {
+    // Books on a subject from Open Library, fifty at a time from a random
+    // point in the list; the room picks one. Only the subjects in
+    // shared/book-subjects.json, so the room cannot be pointed elsewhere.
+    id: 'books',
+    url: 'https://openlibrary.org/subjects/:subject.json?limit=50',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+    pathParams: ['subject'],
+    pathParamPatterns: { subject: new RegExp(`^(${bookSubjects.map((s) => s.slug).join('|')})$`) },
+    queryParams: { offset: { min: 0, max: 200, step: 50 } },
+    cacheSeconds: 86400,
+  },
   {
     // Pexels' hand-picked photos, forty to a page. The free key allows 200
     // calls an hour, so each page is kept for an hour and the room picks a

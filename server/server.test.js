@@ -166,3 +166,42 @@ test('a visitor cannot dodge the limit by forging where they came from', async (
   assert.equal(app.get('trust proxy fn')('127.0.0.1', 0), true);
   assert.equal(app.get('trust proxy fn')('1.2.3.4', 0), false);
 });
+
+test('books are only fetched on the subjects the room knows', async () => {
+  assert.equal((await get('/api/books/dragons?offset=50')).status, 200);
+  assert.match(upstreamCalls[0].url, /openlibrary\.org\/subjects\/dragons\.json/);
+  assert.equal((await get('/api/books/anything-else')).status, 400);
+  assert.equal((await get('/api/books/dragons?offset=25')).status, 400);
+});
+
+test('the owner\'s stories are read from the sitemap and each page\'s tags', async () => {
+  upstreamReply = (url) => {
+    const pages = {
+      'https://silverfootfalls.com/sitemap.xml':
+        '<sitemapindex><sitemap><loc>https://silverfootfalls.com/sitemaps/stories-1.xml</loc></sitemap></sitemapindex>',
+      'https://silverfootfalls.com/sitemaps/stories-1.xml':
+        '<urlset><url><loc>https://silverfootfalls.com/story/well-then</loc></url>' +
+        '<url><loc>https://silverfootfalls.com/read/abc</loc></url>' +
+        '<url><loc>https://elsewhere.example/story/x</loc></url></urlset>',
+      'https://silverfootfalls.com/story/well-then':
+        '<meta property="og:title" content="Well Then"/>' +
+        '<meta property="og:description" content="Clara&#x27;s marriage&hellip;"/>' +
+        '<img src="/covers/well_then.webp">',
+    };
+    return new Response(pages[url] ?? 'missing', { status: pages[url] ? 200 : 404 });
+  };
+
+  const res = await get('/api/silverfoot');
+  const { stories } = await res.json();
+
+  assert.equal(stories.length, 1);
+  assert.deepEqual(stories[0], {
+    title: 'Well Then',
+    description: "Clara's marriage…",
+    url: 'https://silverfootfalls.com/story/well-then',
+    cover: 'https://silverfootfalls.com/covers/well_then.webp',
+  });
+  // Only story pages on the owner's own site are ever fetched.
+  assert.ok(upstreamCalls.every((call) => call.url.startsWith('https://silverfootfalls.com/')));
+  assert.ok(!upstreamCalls.some((call) => call.url.includes('/read/')));
+});

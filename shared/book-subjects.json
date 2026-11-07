@@ -1,0 +1,66 @@
+[
+ {
+  "slug": "dragons",
+  "label": "a dragon story"
+ },
+ {
+  "slug": "pirates",
+  "label": "a pirate tale"
+ },
+ {
+  "slug": "ghost_stories",
+  "label": "a ghost story"
+ },
+ {
+  "slug": "mystery_and_detective_stories",
+  "label": "a mystery"
+ },
+ {
+  "slug": "fantasy",
+  "label": "a fantasy"
+ },
+ {
+  "slug": "science_fiction",
+  "label": "science fiction"
+ },
+ {
+  "slug": "adventure_stories",
+  "label": "an adventure"
+ },
+ {
+  "slug": "historical_fiction",
+  "label": "historical fiction"
+ },
+ {
+  "slug": "humor",
+  "label": "something funny"
+ },
+ {
+  "slug": "magic",
+  "label": "a story of magic"
+ },
+ {
+  "slug": "fairy_tales",
+  "label": "a fairy tale"
+ },
+ {
+  "slug": "time_travel",
+  "label": "a time-travel tale"
+ },
+ {
+  "slug": "space",
+  "label": "a book about space"
+ },
+ {
+  "slug": "cats",
+  "label": "a book about cats"
+ },
+ {
+  "slug": "poetry",
+  "label": "poetry"
+ },
+ {
+  "slug": "short_stories",
+  "label": "short stories"
+ }
+]

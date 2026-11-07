@@ -25,6 +25,7 @@ const { loadEnvFile } = require('./load-env');
 const { apis } = require('./apis');
 const { createHandler } = require('./proxy');
 const { imageSources, createImageHandler } = require('./images');
+const { handleStories } = require('./plugs');
 const {
   contentSecurityPolicy,
   inlineScriptHashes,
@@ -79,6 +80,9 @@ for (const api of apis) {
   const segments = [`/api/${api.id}`, ...(api.pathParams || []).map((p) => `:${p}`)];
   app.get(segments.join('/'), createHandler(api));
 }
+
+// The site owner's own stories, for the books room to recommend; see plugs.js.
+app.get('/api/silverfoot', handleStories);
 
 // Pictures fetched on the browser's behalf; see images.js.
 for (const source of imageSources) {

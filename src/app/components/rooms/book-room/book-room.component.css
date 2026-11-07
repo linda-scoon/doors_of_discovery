@@ -1,0 +1,99 @@
+/*
+ * A bookshop: shelves of coloured spines all round, and a book face out on
+ * the counter with a handwritten staff-pick card. The owner's own stories
+ * get a card of their own, in midnight and silver.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  gap: 3cqi;
+  background:
+    /* The shelf boards. */
+    repeating-linear-gradient(to bottom, transparent 0 22cqi, #6b4527 22cqi 24.5cqi, #3e2614 24.5cqi 25cqi),
+    /* The spines: every colour a bookshop is. */
+    repeating-linear-gradient(
+      90deg,
+      #8c2f39 0 4cqi, #2f5d62 4cqi 7cqi, #d9a441 7cqi 9.5cqi, #3b3561 9.5cqi 13cqi,
+      #e8dcc0 13cqi 15cqi, #5a7d3a 15cqi 19cqi, #a14d2a 19cqi 21.5cqi, #1f3b57 21.5cqi 25cqi
+    );
+  color: #2a1d12;
+}
+
+.book-room__sign {
+  padding: 0.5cqi 3cqi;
+  border-radius: 1cqi;
+  background: #fff6dc;
+  font-family: 'Caveat', 'Segoe Print', cursive;
+  font-size: clamp(0.9rem, 7cqi, 1.3rem);
+  color: #8c2f39;
+  box-shadow: 0 1cqi 2cqi rgba(0, 0, 0, 0.35);
+  transform: rotate(-3deg);
+}
+
+.book-room__sign--own {
+  background: #10162b;
+  color: #d8dff0;
+}
+
+.book-room__cover {
+  display: block;
+  width: 44cqi;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 0 1cqi 1cqi 0;
+  box-shadow: -1cqi 0 0 rgba(0, 0, 0, 0.25) inset, 0 2cqi 5cqi rgba(0, 0, 0, 0.55);
+}
+
+/* No cover: a plain cloth binding with the title stamped on it. */
+.book-room__cover--cloth {
+  display: grid;
+  place-items: center;
+  padding: 4cqi;
+  background: linear-gradient(to right, #5b1f26 0 3cqi, #7d2a34 3cqi);
+  color: #e6c46a;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.65rem, 4.5cqi, 0.9rem);
+  text-align: center;
+}
+
+.book-room__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2cqi;
+  width: 100%;
+  padding: 3cqi 4cqi;
+  border-radius: 1.5cqi;
+  background: #fffaf0;
+  box-shadow: 0 1.5cqi 4cqi rgba(0, 0, 0, 0.45);
+}
+
+.book-room__card--own {
+  background: linear-gradient(to bottom, #1a2342, #0c1124);
+  color: #e3e8f5;
+}
+
+.book-room__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.9rem, 7cqi, 1.3rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.book-room__badge {
+  font-size: clamp(0.55rem, 3.6cqi, 0.7rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b9c5e6;
+}
+
+.book-room__blurb {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.book-room__read {
+  text-decoration: none;
+}
