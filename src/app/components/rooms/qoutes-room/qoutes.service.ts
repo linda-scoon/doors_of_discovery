@@ -14,7 +14,7 @@ export class QoutesService {
     method: 'GET',
     headers: {
       'X-RapidAPI-Host': 'quotelibapi.p.rapidapi.com',
-      'X-RapidAPI-Key': environment.factsApiKey,
+      'X-RapidAPI-Key': environment.rapidApiKey,
     },
   };
     return this.http.get<any>(
