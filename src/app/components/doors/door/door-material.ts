@@ -57,7 +57,16 @@ export type Wear = 'clean' | 'scuffed' | 'peeling';
  * Most doors are ordinary. These are rare on purpose: a surprise that
  * happens on every third door is not a surprise.
  */
-export type Surprise = 'none' | 'crack' | 'fire' | 'monster' | 'knocks-back';
+export type Surprise =
+  | 'none'
+  | 'crack'
+  | 'fire'
+  | 'monster'
+  | 'knocks-back'
+  /** Somebody inside calls out, and then lets you in. */
+  | 'answers'
+  /** No handle needed: touch it and it swings. */
+  | 'opens-on-tap';
 
 /**
  * The variables that make one tag different from the next.
@@ -98,6 +107,10 @@ export interface DoorCharacter {
   hasLetterbox: boolean;
   hasKickPlate: boolean;
   hasPeephole: boolean;
+  /** A curtain hangs in the doorway, stirring in the draught. */
+  hasCurtain: boolean;
+  /** The hue of that curtain. Deep fabric colours, not door colours. */
+  curtainHue: number;
   /** Someone has been at this one with a spray can. */
   hasGraffiti: boolean;
   /** How that particular tag was sprayed. Null when the door is clean. */
@@ -184,18 +197,28 @@ const MATERIAL_LOOK: Record<
   stone: { hueFrom: 0, hueTo: 300, saturation: 11, lightness: 46 },
 };
 
+/*
+ * Most doors just open. A creak is a small event and a stuck door is an
+ * annoyance, so both should be uncommon — at a quarter and a twelfth of
+ * every door they had stopped being either.
+ */
 const OPEN_STYLE_WEIGHTS: ReadonlyArray<[OpenStyle, number]> = [
-  ['swing', 68],
-  ['creak', 24],
-  ['stuck', 8],
+  ['swing', 90],
+  ['creak', 9],
+  // Barely any door is stuck for no reason. Most of the ones that will not
+  // open are the knocking kind, which are worth meeting; a door that simply
+  // refuses and does nothing else is only an obstacle.
+  ['stuck', 1],
 ];
 
 const SURPRISE_WEIGHTS: ReadonlyArray<[Surprise, number]> = [
-  ['none', 74],
-  ['crack', 9],
-  ['fire', 7],
-  ['monster', 6],
+  ['none', 72],
+  ['crack', 8],
+  ['fire', 6],
+  ['monster', 5],
   ['knocks-back', 4],
+  ['answers', 3],
+  ['opens-on-tap', 2],
 ];
 
 const FINISHES: readonly Finish[] = ['brass', 'chrome', 'iron', 'nickel'];
@@ -231,21 +254,14 @@ export function colourForDoor(id: string, material: DoorMaterial): string {
  */
 function openStyleForDoor(id: string, surprise: Surprise): OpenStyle {
   if (surprise === 'knocks-back') return 'stuck';
+
+  // A surprise has to be reachable, so none of these are ever stuck, and a
+  // door that opens itself does not also creak its way round.
+  if (surprise === 'opens-on-tap' || surprise === 'answers') return 'swing';
   if (surprise === 'fire' || surprise === 'monster') {
-    return pickWeighted([['swing', 70], ['creak', 30]], `${id}:open`);
+    return pickWeighted([['swing', 80], ['creak', 20]], `${id}:open`);
   }
   return pickWeighted(OPEN_STYLE_WEIGHTS, `${id}:open`);
-}
-
-/**
- * How many doors stand between the visitor and the room. Usually one; now
- * and then you open a door and find another behind it.
- */
-export function doorLayersFor(id: string): number {
-  const roll = hashToFraction(`${id}:layers`);
-  if (roll > 0.9) return 3;
-  if (roll > 0.74) return 2;
-  return 1;
 }
 
 /**
@@ -253,7 +269,7 @@ export function doorLayersFor(id: string): number {
  *
  * Mostly the site's own name, sometimes a signature, now and then a cat.
  * Real graffiti is lettering, so these are words in a marker hand rather
- * than the abstract loops this used to draw — which looked like a decal.
+ * than abstract loops, which looked like a decal.
  */
 const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
   ['words', 58],
@@ -261,12 +277,17 @@ const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
   ['signature', 18],
 ];
 
-function graffitiFor(id: string): GraffitiTag {
+function graffitiFor(id: string, ordinal: number): GraffitiTag {
   const spread = (seed: string, from: number, to: number) =>
     Math.round(from + hashToFraction(`${id}:${seed}`) * (to - from));
 
   const kind = pickWeighted(GRAFFITI_KINDS, `${id}:tagkind`);
-  const hue = spread('taghue', 0, 360);
+
+  // Stepping round the colour wheel by position rather than hashing it. A
+  // hash clumps, so several tags in view came out much the same pink. A
+  // stride of 47 degrees is coprime with 360, which puts consecutive tags
+  // far apart and uses every hue on the wheel before any repeats.
+  const hue = (ordinal * 47) % 360;
 
   return {
     kind,
@@ -294,8 +315,7 @@ const SKIPPED_NUMBERS = new Set([14, 18, 88]);
  * Taken from position rather than a hash so that no two doors in a long run
  * share a number: multiplying by a value coprime with the range steps
  * through every number once before repeating, which scatters them instead
- * of counting up. Walking down the wall gives 138, 276, 15, 153 — numbers
- * that look like a street rather than a list.
+ * of counting up.
  */
 function numberForDoor(ordinal: number): number | null {
   const range = 499;
@@ -357,8 +377,10 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     hasLetterbox: chance(`${id}:letterbox`, 0.4),
     hasKickPlate: chance(`${id}:kickplate`, 0.33),
     hasPeephole: chance(`${id}:peephole`, 0.3),
+    hasCurtain: chance(`${id}:curtain`, 0.16),
+    curtainHue: Math.round(hashToFraction(`${id}:curtainhue`) * 360),
     hasGraffiti: chance(`${id}:graffiti`, 0.12),
-    graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id) : null,
+    graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id, ordinal) : null,
     number,
     surprise,
   };

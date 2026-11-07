@@ -70,6 +70,64 @@ export class DoorSoundService {
     });
   }
 
+  /**
+   * Somebody inside calls out before opening the door.
+   *
+   * Uses the browser's own speech synthesis, which costs nothing to ship
+   * and genuinely says the word. Not every browser has a voice ready, so
+   * when there is none a muffled call is played instead — two soft tones
+   * through a door, which reads as somebody answering even without words.
+   */
+  callOut(words: string): void {
+    const canSpeak =
+      typeof speechSynthesis !== 'undefined' &&
+      speechSynthesis.getVoices().length > 0;
+
+    if (canSpeak) {
+      const utterance = new SpeechSynthesisUtterance(words);
+      // Slightly low and unhurried, like someone crossing a room.
+      utterance.rate = 0.95;
+      utterance.pitch = 0.85;
+      utterance.volume = 0.6;
+      speechSynthesis.speak(utterance);
+      return;
+    }
+
+    this.mutteredReply();
+  }
+
+  /** Two soft tones behind a door: somebody answering, words unclear. */
+  private mutteredReply(): void {
+    const context = this.ensureContext();
+    if (!context) return;
+
+    const throughTheDoor = context.createBiquadFilter();
+    throughTheDoor.type = 'lowpass';
+    throughTheDoor.frequency.value = 520;
+    throughTheDoor.connect(context.destination);
+
+    [
+      { at: 0, frequency: 240, length: 0.22 },
+      { at: 0.3, frequency: 190, length: 0.3 },
+    ].forEach(({ at, frequency, length }) => {
+      const now = context.currentTime + at;
+
+      const voice = context.createOscillator();
+      voice.type = 'sawtooth';
+      voice.frequency.setValueAtTime(frequency, now);
+      voice.frequency.exponentialRampToValueAtTime(frequency * 0.82, now + length);
+
+      const level = context.createGain();
+      level.gain.setValueAtTime(0.0001, now);
+      level.gain.exponentialRampToValueAtTime(this.volume * 0.7, now + 0.05);
+      level.gain.exponentialRampToValueAtTime(0.0001, now + length);
+
+      voice.connect(level).connect(throughTheDoor);
+      voice.start(now);
+      voice.stop(now + length);
+    });
+  }
+
   /** The drawn-out complaint of a hinge that wants oiling. */
   creak(): void {
     const context = this.ensureContext();

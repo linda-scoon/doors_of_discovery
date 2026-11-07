@@ -1,5 +1,5 @@
-<app-room (mouseleave)="closeDoors()">
-  <!-- The doorway's own theatrics, behind the doors so they are revealed. -->
+<app-room (mouseleave)="closeDoor()">
+  <!-- The doorway's own theatrics, behind the door so they are revealed. -->
   @if (burning) {
     <span class="doorway-fire" aria-hidden="true">
       <span class="doorway-fire__flame"></span>
@@ -17,26 +17,31 @@
     </span>
   }
 
-  <!--
-    Outermost first. Each layer gets its own id, so a door behind a door
-    looks nothing like the one that was hiding it.
-  -->
-  @for (layer of layers; track layer.id) {
-    <app-door
-      [id]="layer.id"
-      [ordinal]="ordinal + layer.depth"
-      [open]="isOpen(layer)"
-      (opened)="openDoor(layer)"
-      (tapped)="onTap($event)"
-      (refused)="onRefused(layer, $event)"
-      [colour]="layer.depth === 0 ? room.colour : undefined"
-      [material]="layer.depth === 0 ? room.material : undefined"
-      [openStyle]="layer.depth === 0 ? room.openStyle : undefined"
-      [handleSide]="layer.depth === 0 ? room.handleSide : undefined"
-      [label]="doorLabel(layer)"
-      [style.zIndex]="stackingOrder(layer)"
-    ></app-door>
+  <!-- Some doorways are curtained rather than empty. -->
+  @if (hasCurtain) {
+    <span
+      class="doorway-curtain"
+      aria-hidden="true"
+      [style.--curtain-colour]="curtainColour"
+    >
+      <span class="doorway-curtain__half doorway-curtain__half--left"></span>
+      <span class="doorway-curtain__half doorway-curtain__half--right"></span>
+    </span>
   }
+
+  <app-door
+    [id]="room.id"
+    [ordinal]="ordinal"
+    [open]="open"
+    (opened)="openDoor()"
+    (tapped)="onTap($event)"
+    (refused)="onRefused($event)"
+    [colour]="room.colour"
+    [material]="room.material"
+    [openStyle]="room.openStyle"
+    [handleSide]="room.handleSide"
+    [label]="doorLabel"
+  ></app-door>
 
   <!--
     The room's own contents step aside while something is happening in the

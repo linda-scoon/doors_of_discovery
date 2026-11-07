@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Component } from '@angular/core';
 
 import { RoomSlotComponent } from './room-slot.component';
@@ -6,6 +6,7 @@ import { RoomComponent } from '../room/room.component';
 import { DoorComponent } from '../../doors/door/door.component';
 import { HandleComponent } from '../../handles/handle/handle.component';
 import { RoomDefinition } from '../../../rooms';
+import { DoorSoundService } from '../../../services/door-sound.service';
 
 /** Stands in for a real room. */
 @Component({
@@ -17,17 +18,31 @@ class TestRoomContentComponent {
   open = false;
 }
 
+/** Records what the door asked to be played, without making any noise. */
+class SilentSoundService {
+  played: string[] = [];
+  tap = () => this.played.push('tap');
+  knockBack = () => this.played.push('knockBack');
+  creak = () => this.played.push('creak');
+  shriek = () => this.played.push('shriek');
+  callOut = (words: string) => this.played.push(`callOut:${words}`);
+}
+
 describe('RoomSlotComponent', () => {
   let fixture: ComponentFixture<RoomSlotComponent>;
+  let sound: SilentSoundService;
 
-  const oneDoor: RoomDefinition = {
+  const plainRoom: RoomDefinition = {
     id: 'test',
     name: 'Fact Room',
     component: TestRoomContentComponent,
-    doorLayers: 1,
+    // Pinned so the test does not depend on what the id happens to generate.
+    openStyle: 'swing',
   };
 
   async function createWith(room: RoomDefinition) {
+    sound = new SilentSoundService();
+
     await TestBed.configureTestingModule({
       declarations: [
         RoomSlotComponent,
@@ -36,6 +51,7 @@ describe('RoomSlotComponent', () => {
         HandleComponent,
         TestRoomContentComponent,
       ],
+      providers: [{ provide: DoorSoundService, useValue: sound }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RoomSlotComponent);
@@ -43,105 +59,111 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
   }
 
-  const doors = () => fixture.nativeElement.querySelectorAll('.door');
-  const handles = () => fixture.nativeElement.querySelectorAll('button.handle');
-  const openDoors = () => fixture.nativeElement.querySelectorAll('.door--open');
+  const door = () => fixture.nativeElement.querySelector('.door');
+  const handle = () => fixture.nativeElement.querySelector('button.handle');
 
   it('renders the room component behind the door', async () => {
-    await createWith(oneDoor);
+    await createWith(plainRoom);
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
   });
 
-  it('starts shut and opens when the handle is used', async () => {
-    await createWith(oneDoor);
-    expect(openDoors().length).toBe(0);
+  it('renders exactly one door', async () => {
+    await createWith(plainRoom);
+    expect(fixture.nativeElement.querySelectorAll('.door').length).toBe(1);
+  });
 
-    handles()[0].click();
+  it('starts shut and opens when the handle is used', async () => {
+    await createWith(plainRoom);
+    expect(door().classList).not.toContain('door--open');
+
+    handle().click();
     fixture.detectChanges();
 
-    expect(openDoors().length).toBe(1);
-    expect(fixture.componentInstance.roomIsOpen).toBeTrue();
+    expect(door().classList).toContain('door--open');
+    expect(fixture.componentInstance.open).toBeTrue();
   });
 
   it('builds the door label from the room name', async () => {
-    await createWith(oneDoor);
-    expect(handles()[0].getAttribute('aria-label')).toBe('Open the fact room');
+    await createWith(plainRoom);
+    expect(handle().getAttribute('aria-label')).toBe('Open the fact room');
+  });
+
+  it('makes a sound when the door itself is tapped', async () => {
+    await createWith(plainRoom);
+
+    door().click();
+
+    expect(sound.played).toContain('tap');
+  });
+
+  it('shuts again when the pointer leaves', async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    fixture.nativeElement
+      .querySelector('app-room')
+      .dispatchEvent(new MouseEvent('mouseleave'));
+    fixture.detectChanges();
+
+    expect(door().classList).not.toContain('door--open');
   });
 
   it('withholds the door state from rooms that did not ask for it', async () => {
-    await createWith(oneDoor);
+    await createWith(plainRoom);
     expect(fixture.componentInstance.contentInputs).toBeUndefined();
   });
 
   it('passes the door state to rooms that asked for it', async () => {
-    await createWith({ ...oneDoor, needsDoorState: true });
+    await createWith({ ...plainRoom, needsDoorState: true });
     expect(fixture.componentInstance.contentInputs).toEqual({ open: false });
 
     // No detectChanges here: contentInputs is plain state, and re-rendering
     // after mutating it directly trips Angular's changed-after-checked guard.
-    fixture.componentInstance.openDoor(fixture.componentInstance.layers[0]);
+    fixture.componentInstance.openDoor();
 
     expect(fixture.componentInstance.contentInputs).toEqual({ open: true });
   });
 
-  describe('a room with more than one door', () => {
-    const twoDoors: RoomDefinition = { ...oneDoor, doorLayers: 2 };
+  it('creaks on the way open when the door is a creaky one', async () => {
+    await createWith({ ...plainRoom, openStyle: 'creak' });
 
-    it('renders a door per layer', async () => {
-      await createWith(twoDoors);
-      expect(doors().length).toBe(2);
-    });
+    handle().click();
 
-    it('is not open until every door has been opened', async () => {
-      await createWith(twoDoors);
+    expect(sound.played).toContain('creak');
+  });
 
-      handles()[0].click();
-      fixture.detectChanges();
-      expect(fixture.componentInstance.roomIsOpen).toBeFalse();
+  it('does not open a stuck door, however often it is tried', async () => {
+    await createWith({ ...plainRoom, openStyle: 'stuck' });
 
-      handles()[1].click();
-      fixture.detectChanges();
-      expect(fixture.componentInstance.roomIsOpen).toBeTrue();
-    });
+    handle().click();
+    fixture.detectChanges();
+    handle().click();
+    fixture.detectChanges();
 
-    it('ignores an inner door until the one in front of it is open', async () => {
-      await createWith(twoDoors);
+    expect(door().classList).not.toContain('door--open');
+    expect(fixture.componentInstance.open).toBeFalse();
+  });
 
-      handles()[1].click();
-      fixture.detectChanges();
+  it('answers from inside and then lets you in', fakeAsync(async () => {
+    await createWith(plainRoom);
+    // The surprise comes from the id, so set it directly for the test.
+    fixture.componentInstance.character.surprise = 'answers';
 
-      expect(openDoors().length).toBe(0);
-    });
+    fixture.componentInstance.onTap('wood');
+    expect(sound.played).toContain('callOut:coming');
+    expect(fixture.componentInstance.open).toBeFalse();
 
-    it('says that an inner door is not the way in', async () => {
-      await createWith(twoDoors);
-      expect(handles()[1].getAttribute('aria-label')).toBe(
-        'Open the next door into the fact room'
-      );
-    });
+    tick(1400);
+    expect(fixture.componentInstance.open).toBeTrue();
+  }));
 
-    it('gives each layer its own identity, so they do not look alike', async () => {
-      await createWith(twoDoors);
-      const [outer, inner] = fixture.componentInstance.layers;
-      expect(outer.id).not.toBe(inner.id);
-    });
+  it('opens to a tap when that is the kind of door it is', async () => {
+    await createWith(plainRoom);
+    fixture.componentInstance.character.surprise = 'opens-on-tap';
 
-    it('shuts every door again when the pointer leaves', async () => {
-      await createWith(twoDoors);
-      handles()[0].click();
-      handles()[1].click();
-      fixture.detectChanges();
-      expect(openDoors().length).toBe(2);
+    fixture.componentInstance.onTap('wood');
 
-      // Dispatch the real event rather than calling closeDoors() directly:
-      // mutating state outside Angular's own handling and then forcing a
-      // render trips the changed-after-checked guard.
-      fixture.nativeElement
-        .querySelector('app-room')
-        .dispatchEvent(new MouseEvent('mouseleave'));
-      fixture.detectChanges();
-
-      expect(openDoors().length).toBe(0);
-    });
+    expect(fixture.componentInstance.open).toBeTrue();
   });
 });

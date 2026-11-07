@@ -37,12 +37,6 @@ export interface RoomDefinition {
   /** How the door behaves when opened. Some doors are stuck and never do. */
   openStyle?: OpenStyle;
 
-  /**
-   * How many doors stand between the visitor and the room. Derived from the
-   * id when left out, which gives most rooms one and a few of them two or
-   * three.
-   */
-  doorLayers?: number;
 
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;

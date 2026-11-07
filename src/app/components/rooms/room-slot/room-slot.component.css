@@ -121,3 +121,66 @@
     opacity: 0;
   }
 }
+
+/* ---------------------------------------------------------- curtains */
+/*
+ * A curtain hanging in the doorway, behind the door. Two halves, each with
+ * its own drift, so they do not move as one sheet. Pleats are a repeating
+ * gradient; the sway is a slow skew from the rail, which is where a hanging
+ * fabric actually pivots.
+ */
+
+.doorway-curtain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/*
+ * Drawn back to the sides rather than closed across the opening. A curtain
+ * that covers the doorway hides the room, which defeats the point of
+ * opening the door at all.
+ */
+.doorway-curtain__half {
+  position: absolute;
+  top: 0;
+  width: 38%;
+  height: 100%;
+  transform-origin: top center;
+
+  background-color: var(--curtain-colour, #5d2436);
+  /* Pleats, and the fold shadows between them. */
+  background-image: repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.34) 0 2px,
+      rgba(255, 255, 255, 0.08) 2px 8px,
+      rgba(0, 0, 0, 0.16) 8px 17px
+    ),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent 26%);
+  /* A hem that hangs rather than being cut straight. */
+  border-radius: 0 0 45% 45% / 0 0 7% 7%;
+
+  animation: curtain-drift 7s ease-in-out infinite alternate;
+}
+
+.doorway-curtain__half--left {
+  left: 0;
+}
+
+/* Mirrored, and on its own clock, so the two do not move as one sheet. */
+.doorway-curtain__half--right {
+  right: 0;
+  scale: -1 1;
+  animation-duration: 9.5s;
+  animation-delay: -3s;
+}
+
+@keyframes curtain-drift {
+  from {
+    transform: skewX(0deg) translateX(0);
+  }
+  to {
+    transform: skewX(2.4deg) translateX(3%);
+  }
+}
