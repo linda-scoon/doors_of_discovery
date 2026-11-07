@@ -5,8 +5,6 @@ import {
   withInterceptorsFromDi,
   withXhr,
 } from '@angular/common/http';
-import { AppRoutingModule } from './app-routing.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RoomComponent } from './components/rooms/room/room.component';
 import { DoorComponent } from './components/doors/door/door.component';
 import { RoomSlotComponent } from './components/rooms/room-slot/room-slot.component';
@@ -30,8 +28,6 @@ import { BricksComponent } from './components/bricks/bricks.component';
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
     BricksComponent,
 
     ServiceWorkerModule.register('ngsw-worker.js', {

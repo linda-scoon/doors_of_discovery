@@ -119,7 +119,8 @@ app.use('/api', (_req, res) => {
  *     expired.
  *   - Everything else -- icons, lettering, sounds -- for a week.
  */
-const FINGERPRINTED = /\.[0-9a-f]{16,}\.(js|css)$/;
+// main-EZHG4BLR.js, chunk-BE-nQdEx.js, styles-TYU6QRRS.css.
+const FINGERPRINTED = /^(main|polyfills|styles|chunk)-[\w-]{8}\.(js|css)$/;
 const ALWAYS_CHECK = new Set([
   'index.html',
   'ngsw.json',

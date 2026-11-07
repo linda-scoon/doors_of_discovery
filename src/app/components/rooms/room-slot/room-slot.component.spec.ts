@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flushMicrotasks, tick } from '@angular/core/testing';
 import { Component } from '@angular/core';
 
 import { RoomSlotComponent } from './room-slot.component';
@@ -7,6 +7,7 @@ import { DoorComponent } from '../../doors/door/door.component';
 import { HandleComponent } from '../../handles/handle/handle.component';
 import { RoomDefinition } from '../../../rooms';
 import { DoorSoundService } from '../../../services/door-sound.service';
+import { BricksComponent } from '../../bricks/bricks.component';
 
 /** Stands in for a real room. */
 @Component({
@@ -35,7 +36,7 @@ describe('RoomSlotComponent', () => {
   const plainRoom: RoomDefinition = {
     id: 'test',
     name: 'Fact Room',
-    component: TestRoomContentComponent,
+    load: () => Promise.resolve(TestRoomContentComponent),
     // Pinned so the test does not depend on what the id happens to generate.
     openStyle: 'swing',
   };
@@ -51,6 +52,7 @@ describe('RoomSlotComponent', () => {
         HandleComponent,
         TestRoomContentComponent,
       ],
+      imports: [BricksComponent],
       providers: [{ provide: DoorSoundService, useValue: sound }],
     }).compileComponents();
 
@@ -66,20 +68,45 @@ describe('RoomSlotComponent', () => {
       .querySelector('app-room')
       .dispatchEvent(new PointerEvent('pointerleave', { pointerType }));
 
+  /** Lets the room's code arrive, then renders. */
+  async function settle() {
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
   it('builds the room behind the door only once it is opened', async () => {
-    await createWith(plainRoom);
-    // Nothing is fetched for a door nobody opens.
+    let fetched = 0;
+    await createWith({
+      ...plainRoom,
+      load: () => {
+        fetched += 1;
+        return Promise.resolve(TestRoomContentComponent);
+      },
+    });
+    // Nothing is fetched for a door nobody opens -- not even its code.
     expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+    expect(fetched).toBe(0);
 
     handle().click();
-    fixture.detectChanges();
+    await settle();
 
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+    expect(fetched).toBe(1);
+  });
+
+  it('bricks up the doorway if the room cannot be fetched', async () => {
+    await createWith({ ...plainRoom, load: () => Promise.reject(new Error('offline')) });
+
+    handle().click();
+    await settle();
+
+    expect(fixture.nativeElement.querySelector('app-bricks')).toBeTruthy();
   });
 
   it('takes the room down once the door has swung shut', fakeAsync(async () => {
     await createWith(plainRoom);
     handle().click();
+    flushMicrotasks();
     fixture.detectChanges();
 
     leave();
@@ -99,6 +126,7 @@ describe('RoomSlotComponent', () => {
     tick(500);
     handle().click();
     tick(2000);
+    flushMicrotasks();
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
@@ -162,7 +190,7 @@ describe('RoomSlotComponent', () => {
   it('is not shut by a tap inside its own room', async () => {
     await createWith(plainRoom);
     handle().click();
-    fixture.detectChanges();
+    await settle();
 
     fixture.nativeElement
       .querySelector('.content')

@@ -1,27 +1,6 @@
 import { Type } from '@angular/core';
 
-import { FactRoomComponent } from './components/rooms/fact-room/fact-room.component';
-import { GifRoomComponent } from './components/rooms/gif-room/gif-room.component';
-import { PaintingRoomComponent } from './components/rooms/painting-room/painting-room.component';
-import { PhotoRoomComponent } from './components/rooms/photo-room/photo-room.component';
-import { BookRoomComponent } from './components/rooms/book-room/book-room.component';
-import { JokesRoomComponent } from './components/rooms/jokes-room/jokes-room.component';
-import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
-import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.component';
-import { VideoRoomComponent } from './components/rooms/video-room/video-room.component';
 import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
-import { TriviaRoomComponent } from './components/rooms/trivia-room/trivia-room.component';
-import { WikipediaRoomComponent } from './components/rooms/wikipedia-room/wikipedia-room.component';
-import { OnThisDayRoomComponent } from './components/rooms/on-this-day-room/on-this-day-room.component';
-import { IssRoomComponent } from './components/rooms/iss-room/iss-room.component';
-import { WeatherRoomComponent } from './components/rooms/weather-room/weather-room.component';
-import { AnimalRoomComponent } from './components/rooms/animal-room/animal-room.component';
-import { RadioRoomComponent } from './components/rooms/radio-room/radio-room.component';
-import { RecipeRoomComponent } from './components/rooms/recipe-room/recipe-room.component';
-import { TarotRoomComponent } from './components/rooms/tarot-room/tarot-room.component';
-import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
-import { WheelRoomComponent } from './components/rooms/wheel-room/wheel-room.component';
-import { TicTacToeRoomComponent } from './components/rooms/tic-tac-toe-room/tic-tac-toe-room.component';
 
 import { HandleSide, OpenStyle } from './components/doors/door/door.component';
 import { DoorMaterial } from './components/doors/door/door-material';
@@ -62,8 +41,12 @@ export interface RoomDefinition {
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;
 
-  /** The component that presents whatever is behind the door. */
-  component: Type<unknown>;
+  /**
+   * Fetches the component that presents whatever is behind the door. Each
+   * room's code is its own small file, loaded the first time one of its
+   * doors is opened, so the page does not download two dozen rooms up front.
+   */
+  load: () => Promise<Type<unknown>>;
 
   /**
    * Set when the room's component needs to know whether its door is open —
@@ -98,7 +81,8 @@ export interface RoomKind {
   /** Shown to people, and used to build the door's accessible name. */
   name: string;
 
-  component: Type<unknown>;
+  /** See RoomDefinition. */
+  load: () => Promise<Type<unknown>>;
 
   rarity: Rarity;
 
@@ -116,60 +100,171 @@ export interface RoomKind {
  * rarity and the same for that door on every visit. Add an entry and doors
  * start opening onto it; remove one and they stop.
  *
- * A new room needs a component to present what it shows, a line here, and,
- * if it calls an API, an entry in server/apis.js.
+ * A new room needs a component to present what it shows, a line here that
+ * loads it, and, if it calls an API, an entry in server/apis.js.
  */
 export const ROOM_KINDS: readonly RoomKind[] = [
-  { kind: 'jokes', name: 'Jokes Room', component: JokesRoomComponent, rarity: 'common' },
-  { kind: 'facts', name: 'Fact Room', component: FactRoomComponent, rarity: 'common' },
-  { kind: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent, rarity: 'common' },
-  { kind: 'paintings', name: 'Gallery', component: PaintingRoomComponent, rarity: 'common' },
-  { kind: 'photos', name: 'Photo Room', component: PhotoRoomComponent, rarity: 'common' },
-  { kind: 'books', name: 'Bookshop', component: BookRoomComponent, rarity: 'common' },
-  { kind: 'gifs', name: 'Gif Room', component: GifRoomComponent, rarity: 'common' },
+  {
+    kind: 'jokes',
+    name: 'Jokes Room',
+    load: () =>
+      import('./components/rooms/jokes-room/jokes-room.component').then((m) => m.JokesRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'facts',
+    name: 'Fact Room',
+    load: () =>
+      import('./components/rooms/fact-room/fact-room.component').then((m) => m.FactRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'quotes',
+    name: 'Quotes Room',
+    load: () =>
+      import('./components/rooms/qoutes-room/qoutes-room.component').then((m) => m.QoutesRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'paintings',
+    name: 'Gallery',
+    load: () =>
+      import('./components/rooms/painting-room/painting-room.component').then((m) => m.PaintingRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'photos',
+    name: 'Photo Room',
+    load: () =>
+      import('./components/rooms/photo-room/photo-room.component').then((m) => m.PhotoRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'books',
+    name: 'Bookshop',
+    load: () =>
+      import('./components/rooms/book-room/book-room.component').then((m) => m.BookRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'gifs',
+    name: 'Gif Room',
+    load: () =>
+      import('./components/rooms/gif-room/gif-room.component').then((m) => m.GifRoomComponent),
+    rarity: 'common',
+  },
   {
     kind: 'videos',
     name: 'Video Room',
-    component: VideoRoomComponent,
+    load: () =>
+      import('./components/rooms/video-room/video-room.component').then((m) => m.VideoRoomComponent),
     rarity: 'common',
     needsDoorState: true,
   },
   {
     kind: 'music',
     name: 'Music Room',
-    component: MusicRoomComponent,
+    load: () =>
+      import('./components/rooms/music-room/music-room.component').then((m) => m.MusicRoomComponent),
     rarity: 'common',
     needsDoorState: true,
   },
-  { kind: 'trivia', name: 'Quiz Room', component: TriviaRoomComponent, rarity: 'common' },
-  { kind: 'wikipedia', name: 'Library', component: WikipediaRoomComponent, rarity: 'common' },
-  { kind: 'onthisday', name: 'History Room', component: OnThisDayRoomComponent, rarity: 'common' },
-  { kind: 'animals', name: 'Pet Room', component: AnimalRoomComponent, rarity: 'common' },
+  {
+    kind: 'trivia',
+    name: 'Quiz Room',
+    load: () =>
+      import('./components/rooms/trivia-room/trivia-room.component').then((m) => m.TriviaRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'wikipedia',
+    name: 'Library',
+    load: () =>
+      import('./components/rooms/wikipedia-room/wikipedia-room.component').then((m) => m.WikipediaRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'onthisday',
+    name: 'History Room',
+    load: () =>
+      import('./components/rooms/on-this-day-room/on-this-day-room.component').then((m) => m.OnThisDayRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'animals',
+    name: 'Pet Room',
+    load: () =>
+      import('./components/rooms/animal-room/animal-room.component').then((m) => m.AnimalRoomComponent),
+    rarity: 'common',
+  },
   {
     kind: 'radio',
     name: 'Radio Room',
-    component: RadioRoomComponent,
+    load: () =>
+      import('./components/rooms/radio-room/radio-room.component').then((m) => m.RadioRoomComponent),
     rarity: 'common',
     needsDoorState: true,
   },
-  { kind: 'recipe', name: 'Kitchen', component: RecipeRoomComponent, rarity: 'common' },
+  {
+    kind: 'recipe',
+    name: 'Kitchen',
+    load: () =>
+      import('./components/rooms/recipe-room/recipe-room.component').then((m) => m.RecipeRoomComponent),
+    rarity: 'common',
+  },
 
   // A set that comes round again: 78 cards, fifty stories, fifty-odd cities.
-  { kind: 'story', name: 'Story Room', component: StoryRoomComponent, rarity: 'uncommon' },
-  { kind: 'tarot', name: 'Fortune Teller', component: TarotRoomComponent, rarity: 'uncommon' },
-  { kind: 'weather', name: 'Window Room', component: WeatherRoomComponent, rarity: 'uncommon' },
+  {
+    kind: 'story',
+    name: 'Story Room',
+    load: () =>
+      import('./components/rooms/story-room/story-room.component').then((m) => m.StoryRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'tarot',
+    name: 'Fortune Teller',
+    load: () =>
+      import('./components/rooms/tarot-room/tarot-room.component').then((m) => m.TarotRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'weather',
+    name: 'Window Room',
+    load: () =>
+      import('./components/rooms/weather-room/weather-room.component').then((m) => m.WeatherRoomComponent),
+    rarity: 'uncommon',
+  },
 
   // Much the same every time, so only now and then.
-  { kind: 'iss', name: 'Observatory', component: IssRoomComponent, rarity: 'rare' },
-  { kind: 'wheel', name: 'Wheel Room', component: WheelRoomComponent, rarity: 'rare' },
-  { kind: 'tictactoe', name: 'Games Room', component: TicTacToeRoomComponent, rarity: 'rare' },
+  {
+    kind: 'iss',
+    name: 'Observatory',
+    load: () =>
+      import('./components/rooms/iss-room/iss-room.component').then((m) => m.IssRoomComponent),
+    rarity: 'rare',
+  },
+  {
+    kind: 'wheel',
+    name: 'Wheel Room',
+    load: () =>
+      import('./components/rooms/wheel-room/wheel-room.component').then((m) => m.WheelRoomComponent),
+    rarity: 'rare',
+  },
+  {
+    kind: 'tictactoe',
+    name: 'Games Room',
+    load: () =>
+      import('./components/rooms/tic-tac-toe-room/tic-tac-toe-room.component').then((m) => m.TicTacToeRoomComponent),
+    rarity: 'rare',
+  },
 
   // Kept, rarely: an empty room is a pause in the wall, and it is where the
   // next room goes.
   {
     kind: 'empty',
     name: 'Empty Room',
-    component: EmptyRoomComponent,
+    load: () => Promise.resolve(EmptyRoomComponent),
     rarity: 'rare',
     isEmpty: true,
   },

@@ -157,7 +157,7 @@ export class Deck {
         room: {
           id,
           name: kind.name,
-          component: kind.component,
+          load: kind.load,
           isEmpty: kind.isEmpty,
           needsDoorState: kind.needsDoorState,
         },

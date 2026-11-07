@@ -7,7 +7,9 @@ import {
   OnDestroy,
   OnInit,
   ChangeDetectionStrategy,
+  Type,
   inject,
+  signal,
 } from '@angular/core';
 
 import { RoomDefinition } from '../../../rooms';
@@ -79,6 +81,12 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
   furnished = false;
 
   private clearRoomTimer?: ReturnType<typeof setTimeout>;
+
+  /** The room's component, once its code has been fetched. */
+  readonly roomComponent = signal<Type<unknown> | undefined>(undefined);
+
+  /** Set if the room's code could not be fetched -- offline, say. */
+  readonly roomUnavailable = signal(false);
 
   /** Set while the doorway is alight, for a door that hides fire. */
   burning = false;
@@ -163,6 +171,7 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
     this.open = true;
     clearTimeout(this.clearRoomTimer);
     this.furnished = true;
+    this.fetchRoom();
     this.refreshContentInputs();
 
     if (this.character.openStyle === 'creak') {
@@ -209,6 +218,22 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.cancelPending();
     clearTimeout(this.clearRoomTimer);
+  }
+
+  /**
+   * Fetches the room's code the first time the door opens; it is kept after
+   * that. The door takes over a second to swing, which covers the wait. If
+   * it cannot be fetched, the doorway is bricked up, as for any room that
+   * cannot get what it shows; opening the door again tries again.
+   */
+  private fetchRoom(): void {
+    if (this.roomComponent()) return;
+
+    this.roomUnavailable.set(false);
+    this.room.load().then(
+      (component) => this.roomComponent.set(component),
+      () => this.roomUnavailable.set(true)
+    );
   }
 
   /**

@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
 import { ROOM_KINDS } from './rooms';
@@ -8,7 +7,6 @@ import { ROOM_KINDS } from './rooms';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
       declarations: [AppComponent],
       // The page is nothing but room slots. This is a unit test of the
       // wall itself, so they are left unresolved rather than dragged in

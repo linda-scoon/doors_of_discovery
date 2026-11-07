@@ -52,10 +52,10 @@
     [class.room-content--hidden]="!open"
     [class.room-content--upstaged]="upstaged"
   >
-    @if (furnished) {
-      <ng-container
-        *ngComponentOutlet="room.component; inputs: contentInputs"
-      ></ng-container>
+    @if (furnished && roomComponent(); as component) {
+      <ng-container *ngComponentOutlet="component; inputs: contentInputs"></ng-container>
+    } @else if (furnished && roomUnavailable()) {
+      <app-bricks [doorway]="true" label="This doorway is bricked up."></app-bricks>
     }
   </span>
 </app-room>
