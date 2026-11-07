@@ -11,7 +11,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  */
 @Component({
   selector: 'app-bricks',
-  template: `@if (label()) {<span class="bricks__label">{{ label() }}</span>}`,
+  template: `@for (course of courses; track $index) {<span class="bricks__course"></span>}
+    @if (label()) {<span class="bricks__label">{{ label() }}</span>}`,
   styleUrls: ['./bricks.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -25,4 +26,11 @@ export class BricksComponent {
 
   /** Read out by screen readers, which cannot see the bricks. */
   readonly label = input<string>();
+
+  /**
+   * One per course of bricks. A course is a ninth of the width tall, and a
+   * door-shaped cell is 1.9 widths tall, so eighteen fill it with a little
+   * to spare.
+   */
+  protected readonly courses = new Array(18);
 }

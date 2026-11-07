@@ -1,29 +1,67 @@
 /*
- * The bricks are one tile of two staggered courses, drawn as an SVG and
- * repeated. Sized as a share of the width, so a wall has about the same
- * number of bricks across on a phone as on a desktop, only smaller.
+ * A wall six bricks wide, laid a course at a time.
+ *
+ * The sides are ragged. Every other course is offset by half a brick, and
+ * rather than cut a half brick at each end it stops a half brick short, so
+ * alternate courses stick out and the edge looks broken off rather than
+ * sliced. Each course is its own strip, sized to exactly six or five whole
+ * bricks, so the edge comes out right at any width; one repeating pattern
+ * over the whole wall drifted out of line by the far side.
  */
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   position: relative;
   overflow: hidden;
+  container-type: inline-size;
+}
+
+/* Two bricks to a tile, in two shades, with the mortar round them. */
+.bricks__course {
+  flex: none;
+  display: block;
+  width: 100%;
+  height: calc(100cqw / 9);
+  margin-inline: auto;
   background-color: #5e554d;
-  background-image:
-    /* Light from above, and grime gathering low down. */
-    linear-gradient(to bottom, rgba(255, 240, 220, 0.08), rgba(0, 0, 0, 0.35)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='40' viewBox='0 0 60 40'%3E%3Crect width='60' height='40' fill='%235e554d'/%3E%3Crect x='1' y='1' width='28' height='18' rx='1' fill='%239a4a33'/%3E%3Crect x='31' y='1' width='28' height='18' rx='1' fill='%238c432f'/%3E%3Crect x='-14' y='21' width='28' height='18' rx='1' fill='%23a3543b'/%3E%3Crect x='16' y='21' width='28' height='18' rx='1' fill='%23914630'/%3E%3Crect x='46' y='21' width='28' height='18' rx='1' fill='%23a3543b'/%3E%3C/svg%3E");
-  background-size: 100% 100%, 34% auto;
-  border: 1px solid var(--door-frame);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='20' viewBox='0 0 60 20'%3E%3Crect width='60' height='20' fill='%235e554d'/%3E%3Crect x='1' y='1' width='28' height='18' rx='1' fill='%239a4a33'/%3E%3Crect x='31' y='1' width='28' height='18' rx='1' fill='%238c432f'/%3E%3C/svg%3E");
+  background-size: calc(100% / 3) 100%;
+}
+
+/* The offset courses: five whole bricks, centred. */
+.bricks__course:nth-child(even) {
+  width: calc(100% * 5 / 6);
+  background-size: calc(100% * 2 / 5) 100%;
+}
+
+/* Grime gathering low down. Multiplied, so it darkens the bricks and
+   leaves the gaps at the edges as dark as whatever is behind them. */
+:host::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 30%, rgba(0, 0, 0, 0.35));
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 /* Bricked up behind a door: set back in the doorway, so darker and shaded
-   from the top and sides. */
+   from the top. */
 :host(.bricks--doorway) {
   position: absolute;
   inset: 0;
-  border: 0;
+}
+
+:host(.bricks--doorway) .bricks__course {
   filter: brightness(0.7);
-  box-shadow: inset 0 6cqi 8cqi rgba(0, 0, 0, 0.7), inset 0 0 6cqi rgba(0, 0, 0, 0.6);
+}
+
+:host(.bricks--doorway)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 8cqw 10cqw rgba(0, 0, 0, 0.7);
+  pointer-events: none;
 }
 
 /* For screen readers only. */
