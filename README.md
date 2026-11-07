@@ -87,21 +87,25 @@ Hostinger builds from `master` automatically on every push.
 
 ### Settings it needs
 
-| Setting | Value | Why |
-|---|---|---|
-| Framework | **Express** | |
-| Build script | **`build`** | |
-| Output directory | leave blank | Express deploys the whole repository |
-| Entry file | **`server/index.js`** | |
+| Setting | Value |
+|---|---|
+| Framework preset | **Express** |
+| Entry file | **`server/index.js`** |
+| Package manager | npm |
+
+There is no build setting for Express: Hostinger installs dependencies and
+starts the entry file. The build runs anyway, from `postinstall` (see
+`scripts/build-on-install.js`), so installing is what produces `dist/`.
+Set `SKIP_BUILD=1` to install without building.
 
 Each one matters:
 
 - With the framework set to **Angular**, Hostinger serves `dist` as static
   files and never starts the server — the doors appear, but **`/api/*` does
   not exist**, so no room can load anything.
-- With **Express** but no build script, the server starts but `dist` was
-  never built, so every page is missing. The server says so in place of the
-  page, and `/api/health` reports `"built": false`.
+- If `dist` is missing, the server still starts but has no page to serve.
+  It says so in place of the page, and `/api/health` reports
+  `"built": false`.
 
 Set `RAPID_API_KEY`, `GIFS_API_KEY` and `TMDB_API_KEY` as environment
 variables in the panel. They are read only by the server process, so they

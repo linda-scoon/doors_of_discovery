@@ -7,6 +7,7 @@
     "dev": "ng serve --proxy-config proxy.conf.json",
     "serve:api": "node server/index.js",
     "build": "ng build",
+    "postinstall": "node scripts/build-on-install.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
