@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { GifsService } from './gifs.service';
 
 @Component({
-  selector: 'app-gif-room',
-  templateUrl: './gif-room.component.html',
-  styleUrls: ['./gif-room.component.css'],
+    selector: 'app-gif-room',
+    templateUrl: './gif-room.component.html',
+    styleUrls: ['./gif-room.component.css'],
+    standalone: false
 })
 export class GifRoomComponent implements OnInit {
   // input from app component

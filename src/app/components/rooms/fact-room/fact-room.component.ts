@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FactsService } from './facts.service';
 
 @Component({
-  selector: 'app-fact-room',
-  templateUrl: './fact-room.component.html',
-  styleUrls: ['./fact-room.component.css'],
+    selector: 'app-fact-room',
+    templateUrl: './fact-room.component.html',
+    styleUrls: ['./fact-room.component.css'],
+    standalone: false
 })
 export class FactRoomComponent implements OnInit {
   // input from app component

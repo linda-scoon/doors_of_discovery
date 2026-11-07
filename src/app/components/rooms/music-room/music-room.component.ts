@@ -2,9 +2,10 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { MusicService } from './music.service';
 
 @Component({
-  selector: 'app-music-room',
-  templateUrl: './music-room.component.html',
-  styleUrls: ['./music-room.component.css'],
+    selector: 'app-music-room',
+    templateUrl: './music-room.component.html',
+    styleUrls: ['./music-room.component.css'],
+    standalone: false
 })
 export class MusicRoomComponent implements OnInit {
   // input from app component

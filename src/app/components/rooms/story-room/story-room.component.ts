@@ -7,9 +7,10 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-story-room',
-  templateUrl: './story-room.component.html',
-  styleUrls: ['./story-room.component.css'],
+    selector: 'app-story-room',
+    templateUrl: './story-room.component.html',
+    styleUrls: ['./story-room.component.css'],
+    standalone: false
 })
 export class StoryRoomComponent {
   // input from app component
