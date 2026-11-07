@@ -1,0 +1,22 @@
+<app-room-frame status="ready">
+  <p class="moon-room__heading">Tonight's moon</p>
+  <svg class="moon-room__moon" [attr.viewBox]="'0 0 ' + 2 * r + ' ' + 2 * r" role="img"
+       [attr.aria-label]="moon.phase + ', ' + percent + ' per cent lit'">
+    <circle class="moon-room__dark" [attr.cx]="r" [attr.cy]="r" [attr.r]="r" />
+    <path class="moon-room__lit" [attr.d]="lit" />
+  </svg>
+  <p class="moon-room__phase">{{ moon.phase }} in {{ moon.sign }}</p>
+  <p class="room-credit">{{ percent }}% lit</p>
+
+  <div class="moon-room__reading">
+    <p class="moon-room__stars" [attr.aria-label]="'Luck: ' + reading.stars + ' out of 5'">
+      @for (star of stars; track star) {
+        <span [class.moon-room__star--on]="star <= reading.stars">★</span>
+      }
+    </p>
+    <p class="room-words room-words--small">{{ reading.message }}</p>
+    <p class="room-credit moon-room__lucky">
+      Lucky number {{ reading.number }} · lucky colour {{ reading.colour }}
+    </p>
+  </div>
+</app-room-frame>

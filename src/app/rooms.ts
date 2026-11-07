@@ -223,6 +223,13 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'uncommon',
   },
 
+  {
+    kind: 'moon',
+    name: 'Moon Room',
+    load: () => import('./components/rooms/moon-room/moon-room.component').then((m) => m.MoonRoomComponent),
+    rarity: 'uncommon',
+  },
+
   // Much the same every time, so only now and then.
   {
     kind: 'iss',

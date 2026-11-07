@@ -1,0 +1,74 @@
+/*
+ * A night sky over an observatory dome: deep indigo, a scatter of stars,
+ * and the moon as it really is tonight, glowing.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  gap: 3cqi;
+  background:
+    radial-gradient(1px 1px at 12% 14%, #fff, transparent),
+    radial-gradient(1px 1px at 78% 9%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 90% 34%, #e6ecff, transparent),
+    radial-gradient(1px 1px at 22% 46%, #fff, transparent),
+    radial-gradient(1px 1px at 64% 58%, #dfe7ff, transparent),
+    radial-gradient(1px 1px at 8% 80%, #fff, transparent),
+    radial-gradient(ellipse at 50% 25%, #23285c, #0d0f2b 60%, #05060f);
+  color: #e9ecff;
+}
+
+.moon-room__heading {
+  font-size: clamp(0.55rem, 3.6cqi, 0.7rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #b8c0f0;
+}
+
+.moon-room__moon {
+  width: 52cqi;
+  overflow: visible;
+  filter: drop-shadow(0 0 5cqi rgba(255, 246, 214, 0.45));
+}
+
+/* The unlit side is still faintly there: earthshine. */
+.moon-room__dark {
+  fill: #2a2d4a;
+}
+
+.moon-room__lit {
+  fill: #fff4d6;
+}
+
+.moon-room__phase {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.95rem, 7.5cqi, 1.35rem);
+}
+
+.moon-room__reading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5cqi;
+  width: 100%;
+  padding: 3cqi 4cqi;
+  border: 1px solid rgba(184, 192, 240, 0.35);
+  border-radius: 2cqi;
+  background: rgba(10, 12, 40, 0.55);
+}
+
+.moon-room__stars {
+  font-size: clamp(0.9rem, 7cqi, 1.3rem);
+  letter-spacing: 0.15em;
+  color: rgba(233, 236, 255, 0.25);
+}
+
+.moon-room__star--on {
+  color: #ffd56b;
+  text-shadow: 0 0 2cqi rgba(255, 213, 107, 0.6);
+}
+
+.moon-room__lucky {
+  opacity: 0.75;
+}
