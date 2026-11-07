@@ -112,44 +112,96 @@ describe('graffiti placement', () => {
     );
   });
 
-  it('gives each kind of drip the right number of marks', () => {
-    doors.forEach((door) => {
-      const { drip, marks } = door.graffiti!;
+  it('starts every run on a letter, never on a space or past the words', () => {
+    const misplaced: string[] = [];
 
-      if (drip === 'single' || drip === 'soft') {
-        expect(marks.length).toBe(1);
-      } else {
-        // A curtain of runs or a splash needs enough marks to read as one.
-        expect(marks.length).toBeGreaterThanOrEqual(5);
-      }
-    });
-  });
+    doors.forEach((door, index) => {
+      door.graffiti!.lines.forEach((line) => {
+        // Where the letters are, by the same reckoning the door uses: each
+        // character an equal share of the line, spaces skipped.
+        const onALetter = new Set(
+          [...line.text]
+            .map((character, i) =>
+              character === ' '
+                ? null
+                : Math.round(((i + 0.5) / line.text.length) * 100)
+            )
+            .filter((stop): stop is number => stop !== null)
+        );
 
-  it('keeps a splash round apart from the heavy specks that ran', () => {
-    const splashed = doors.filter((door) => door.graffiti!.drip === 'splash');
-    expect(splashed.length).toBeGreaterThan(0);
-
-    splashed.forEach((door) => {
-      const marks = door.graffiti!.marks;
-      // Round specks have no run; the ones drawn as runs are the heavy
-      // ones, and those are the only marks in a splash with a length.
-      marks.forEach((mark) => {
-        if (mark.round) expect(mark.length).toBe(0);
-        else expect(mark.length).toBeGreaterThan(0);
+        line.runs.forEach((run) => {
+          if (!onALetter.has(run.x)) {
+            misplaced.push(
+              `door ${index}: a run at ${run.x}% across "${line.text}" ` +
+                `is not on a letter`
+            );
+          }
+        });
       });
-      expect(marks.some((mark) => mark.round)).toBeTrue();
+    });
+
+    expect(misplaced).toEqual([]);
+  });
+
+  it('runs paint off the top line as well as the bottom one', () => {
+    const fromTheTop = doors.filter(
+      (door) => door.graffiti!.lines.length > 1 && door.graffiti!.lines[0].runs.length
+    );
+
+    expect(fromTheTop.length)
+      .withContext('every run came off the last line')
+      .toBeGreaterThan(0);
+  });
+
+  it('runs paint from an upper line far enough to pass the line below', () => {
+    doors.forEach((door) => {
+      const lines = door.graffiti!.lines;
+
+      lines.forEach((line, index) => {
+        const below = lines.length - 1 - index;
+        line.runs.forEach((run) => {
+          // A run that stopped between the two lines would look like a
+          // smudge rather than paint that ran.
+          expect(run.length).toBeGreaterThanOrEqual(10 + below * 16);
+        });
+      });
     });
   });
 
-  it('never flings paint off the side of the door', () => {
+  it('gives each kind of drip the right number of runs', () => {
     doors.forEach((door) => {
-      door.graffiti!.marks.forEach((mark) => {
-        expect(mark.x).toBeGreaterThanOrEqual(0);
-        expect(mark.x).toBeLessThanOrEqual(100);
+      const { drip, lines } = door.graffiti!;
+      const runs = lines.reduce((total, line) => total + line.runs.length, 0);
+
+      // A drawing has no letters, so nothing can run off it.
+      if (!lines.length) {
+        expect(runs).toBe(0);
+        return;
+      }
+
+      if (drip === 'splash') expect(runs).toBe(0);
+      else if (drip === 'curtain') expect(runs).toBeGreaterThanOrEqual(5);
+      else expect(runs).toBe(1);
+    });
+  });
+
+  it('only splashes the doors that were splashed', () => {
+    doors.forEach((door) => {
+      const { drip, specks } = door.graffiti!;
+      if (drip === 'splash') expect(specks.length).toBeGreaterThanOrEqual(11);
+      else expect(specks).toEqual([]);
+    });
+  });
+
+  it('never flings a speck off the side of the door', () => {
+    doors.forEach((door) => {
+      door.graffiti!.specks.forEach((speck) => {
+        expect(speck.x).toBeGreaterThanOrEqual(0);
+        expect(speck.x).toBeLessThanOrEqual(100);
         // Paint runs off the bottom and is clipped there, which is what it
         // would really do, but it never starts below the door.
-        expect(mark.y).toBeGreaterThanOrEqual(0);
-        expect(mark.y).toBeLessThanOrEqual(100);
+        expect(speck.y).toBeGreaterThanOrEqual(0);
+        expect(speck.y).toBeLessThanOrEqual(100);
       });
     });
   });

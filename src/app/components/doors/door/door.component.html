@@ -135,27 +135,39 @@
           <path class="door__cat-line door__cat-line--fine" d="M101 36 L111 38" />
         </svg>
       } @else {
-        <span class="door__tag-text">{{ tag.text }}</span>
+        <span class="door__tag-text">
+          @for (line of tag.lines; track $index) {
+            <span class="door__tag-line"
+              >{{ line.text
+              }}@for (run of line.runs; track $index) {
+                <!-- Paint that ran off this letter. -->
+                <span
+                  class="door__run"
+                  [style.--run-x]="run.x + '%'"
+                  [style.--run-thickness]="run.thickness + 'px'"
+                  [style.--run-length]="run.length"
+                ></span>
+              }</span
+            >
+          }
+        </span>
       }
 
       </span>
 
       <!--
-        What the paint did after it left the can: one run, a whole curtain
-        of them, or a splash flung at the door. These sit outside the span
-        that turns and shifts the tag, because paint runs straight down
-        whatever angle the lettering was sprayed at -- and because being
-        moved by the tag's offset as well as their own put them above the
-        words instead of below them.
+        A splash was thrown at the door, so unlike a run it belongs to the
+        door rather than to a letter. It sits outside the span that turns
+        and shifts the tag: being moved by the tag's offset on top of its
+        own put the specks above the lettering instead of around it.
       -->
-      @for (mark of tag.marks; track $index) {
+      @for (speck of tag.specks; track $index) {
         <span
-          class="door__drip"
-          [class.door__drip--speck]="mark.round"
-          [style.--mark-x]="mark.x + '%'"
-          [style.--mark-y]="mark.y + '%'"
-          [style.--mark-thickness]="mark.thickness + 'px'"
-          [style.--mark-length]="mark.length + '%'"
+          class="door__speck"
+          [style.--speck-x]="speck.x + '%'"
+          [style.--speck-y]="speck.y + '%'"
+          [style.--speck-size]="speck.size + 'px'"
+          [style.--speck-tail]="speck.tail"
         ></span>
       }
     </span>

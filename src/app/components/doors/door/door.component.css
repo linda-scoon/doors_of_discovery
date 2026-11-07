@@ -687,47 +687,75 @@
 }
 
 /*
- * Paint that ran before it dried.
- *
- * Each mark is placed against the door, not against the lettering, so a
- * run starts under the words and carries on down the timber. How many
- * there are and where they fall is decided per door; this only draws them.
+ * A line of the lettering. Sized to its own words rather than to the box
+ * around them, so a run hung at 40% across sits 40% across those words --
+ * which is the whole point of hanging runs off letters.
  */
-.door__drip {
-  position: absolute;
-  left: var(--mark-x);
-  top: var(--mark-y);
-  width: var(--mark-thickness);
-  height: var(--mark-length);
-  /* Heaviest where it left the letter, thinning as it runs out of paint. */
-  background: linear-gradient(var(--tag-ink), transparent);
-  /*
-   * Rounded at the head, which only shows on the thick ones. A heavy blob
-   * of a splash is drawn as a short run, and with square corners it came
-   * out as a rectangle sitting on the door rather than a drop of paint.
-   */
-  border-radius: calc(var(--mark-thickness) / 2)
-    calc(var(--mark-thickness) / 2) 3px 3px;
-  opacity: 0.8;
+.door__tag-line {
+  display: block;
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+  white-space: nowrap;
 }
 
-/* A speck of a splash: thrown at the door rather than run down it, so it
-   is round and at full strength, never having travelled far enough to
-   thin out. The heavier specks of a splash are drawn as runs instead,
-   because a big enough blob does run. */
-.door__drip--speck {
-  height: var(--mark-thickness);
-  border-radius: 50%;
-  background: var(--tag-ink);
+/*
+ * Paint that ran off a letter, starting at the foot of that letter's line.
+ *
+ * Turned back by however far the tag was turned, because paint falls
+ * straight down whatever angle the lettering was sprayed at. Its length is
+ * in container units, so a run is the same share of every door.
+ */
+.door__run {
+  position: absolute;
+  top: 100%;
+  left: var(--run-x);
+  width: var(--run-thickness);
+  height: calc(var(--run-length) * 1cqw);
+
+  /* Heaviest where it left the letter, thinning as it runs out of paint. */
+  background: linear-gradient(var(--tag-ink), transparent);
+  border-radius: calc(var(--run-thickness) / 2) calc(var(--run-thickness) / 2)
+    3px 3px;
+  opacity: 0.8;
+
+  rotate: calc(-1 * var(--tag-rotate, -8deg));
+  transform-origin: top center;
+}
+
+/*
+ * A speck of a splash: thrown at the door rather than run down it, so it
+ * is round and at full strength, never having travelled far enough to thin
+ * out. The heavy ones ran a little once they landed.
+ */
+.door__speck {
+  position: absolute;
+  left: var(--speck-x);
+  top: var(--speck-y);
+  width: var(--speck-size);
+  height: calc(var(--speck-size) + var(--speck-tail) * 1cqw);
+
+  background: linear-gradient(
+    var(--tag-ink),
+    var(--tag-ink) var(--speck-size),
+    transparent
+  );
+  /* Rounded by half its own width, so a blob with a tail reads as a drop
+     of paint rather than as a rectangle sitting on the door. */
+  border-radius: calc(var(--speck-size) / 2);
   opacity: 0.75;
 }
 
-.door__graffiti--signature .door__drip {
+.door__graffiti--signature .door__run {
   background: linear-gradient(var(--tag-accent), transparent);
 }
 
-.door__graffiti--signature .door__drip--speck {
-  background: var(--tag-accent);
+.door__graffiti--signature .door__speck {
+  background: linear-gradient(
+    var(--tag-accent),
+    var(--tag-accent) var(--speck-size),
+    transparent
+  );
 }
 
 /*

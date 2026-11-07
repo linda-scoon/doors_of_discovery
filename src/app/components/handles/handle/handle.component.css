@@ -73,6 +73,23 @@
   transform: rotate(25deg);
 }
 
+/*
+ * A lever reaches in across the door, away from the edge it is mounted on,
+ * because that is the way your hand comes at it. On a left-hand handle it
+ * therefore points right, and it was pointing left on both -- which read
+ * as a lever hanging off the side of the door into the frame.
+ */
+.handle--left .handle__lever {
+  right: auto;
+  left: 20%;
+  transform-origin: left center;
+}
+
+/* Anticlockwise, so the free end still drops rather than rising. */
+.handle--left .handle__lever--pressed {
+  transform: rotate(-25deg);
+}
+
 .handle__keyhole-top {
   position: absolute;
   top: 55%;
