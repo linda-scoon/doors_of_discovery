@@ -16,6 +16,7 @@ import {
   Wear,
   characterForDoor,
   panelCountForDesign,
+  pickWeighted,
 } from './door-material';
 import { HandleComponent } from '../../handles/handle/handle.component';
 
@@ -174,6 +175,14 @@ export class DoorComponent {
    * monster arrives while it is still moving, so a 1.6s swing left the
    * scare happening behind a door that was still in the way.
    */
+  /**
+   * A fire door's handle is painted orange or red, the colours of a fire
+   * door, so it stands out from the scorching around it.
+   */
+  get fireHandle(): 'orange' | 'red' {
+    return pickWeighted<'orange' | 'red'>([['orange', 1], ['red', 1]], `${this.id}:fire-handle`);
+  }
+
   get isFlung(): boolean {
     return this.surprise === 'monster';
   }

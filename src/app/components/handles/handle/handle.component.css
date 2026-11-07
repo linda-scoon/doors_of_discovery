@@ -51,7 +51,7 @@
 
   border: 1px solid black;
   border-radius: 50%;
-  background-color: var(--door-furniture);
+  background-color: var(--handle-colour, var(--door-furniture));
 }
 
 /* The lever that drops when the door opens. */
@@ -64,7 +64,7 @@
 
   border: 1px solid black;
   border-radius: 20px;
-  background-color: var(--door-furniture);
+  background-color: var(--handle-colour, var(--door-furniture));
 
   transform-origin: right center;
   transition: transform 150ms ease-in;

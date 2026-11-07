@@ -11,6 +11,7 @@
 
 const cities = require('../shared/cities.json');
 const bookSubjects = require('../shared/book-subjects.json');
+const spaceTopics = require('../shared/space-topics.json');
 
 /**
  * Some APIs ask callers to say who they are. Wikimedia refuses requests
@@ -114,6 +115,37 @@ const apis = [
     pathParams: ['subject'],
     pathParamPatterns: { subject: new RegExp(`^(${bookSubjects.map((s) => s.slug).join('|')})$`) },
     queryParams: { offset: { min: 0, max: 200, step: 50 } },
+    cacheSeconds: 86400,
+  },
+  {
+    // Lichess's puzzle of the day: the position, whose move it is, and the
+    // moves that solve it. The same for a whole day, so kept an hour.
+    id: 'chess',
+    url: 'https://lichess.org/api/puzzle/daily',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+    cacheSeconds: 3600,
+  },
+  {
+    // Pictures from NASA's image library on one of a few space topics, a
+    // random page of results at a time; the room picks one.
+    id: 'space',
+    url: 'https://images-api.nasa.gov/search?q=:topic&media_type=image',
+    auth: { style: AuthStyle.NONE },
+    pathParams: ['topic'],
+    pathParamPatterns: {
+      topic: new RegExp(`^(${spaceTopics.map((t) => t.replace(/ /g, '(?: |%20)')).join('|')})$`),
+    },
+    queryParams: { page: { min: 1, max: 5 } },
+    cacheSeconds: 86400,
+  },
+  {
+    // What an English word means, from the Free Dictionary API.
+    id: 'dictionary',
+    url: 'https://api.dictionaryapi.dev/api/v2/entries/en/:word',
+    auth: { style: AuthStyle.NONE },
+    pathParams: ['word'],
+    pathParamPatterns: { word: /^[a-z]{2,24}$/ },
     cacheSeconds: 86400,
   },
   {

@@ -200,6 +200,31 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'common',
   },
 
+  {
+    kind: 'word',
+    name: 'Word Room',
+    load: () => import('./components/rooms/word-room/word-room.component').then((m) => m.WordRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'space',
+    name: 'Space Room',
+    load: () => import('./components/rooms/space-room/space-room.component').then((m) => m.SpaceRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'chapter',
+    name: 'Reading Nook',
+    load: () => import('./components/rooms/chapter-room/chapter-room.component').then((m) => m.ChapterRoomComponent),
+    rarity: 'common',
+  },
+  {
+    kind: 'riddle',
+    name: 'Riddle Room',
+    load: () => import('./components/rooms/riddle-room/riddle-room.component').then((m) => m.RiddleRoomComponent),
+    rarity: 'common',
+  },
+
   // A set that comes round again: 78 cards, fifty stories, fifty-odd cities.
   {
     kind: 'story',
@@ -236,6 +261,62 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'uncommon',
   },
 
+  // Toys and games: the same toy every time, so only now and then.
+  {
+    kind: 'flags',
+    name: 'Flag Room',
+    load: () => import('./components/rooms/flags-room/flags-room.component').then((m) => m.FlagsRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'challenge',
+    name: 'Challenge Room',
+    load: () => import('./components/rooms/challenge-room/challenge-room.component').then((m) => m.ChallengeRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'answerball',
+    name: 'Answer Ball',
+    load: () => import('./components/rooms/answer-ball-room/answer-ball-room.component').then((m) => m.AnswerBallRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'bubblewrap',
+    name: 'Bubble Wrap',
+    load: () => import('./components/rooms/bubble-wrap-room/bubble-wrap-room.component').then((m) => m.BubbleWrapRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'bubbles',
+    name: 'Bubble Room',
+    load: () => import('./components/rooms/bubbles-room/bubbles-room.component').then((m) => m.BubblesRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'xylophone',
+    name: 'Xylophone',
+    load: () => import('./components/rooms/xylophone-room/xylophone-room.component').then((m) => m.XylophoneRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'fortunecookie',
+    name: 'Fortune Cookie',
+    load: () => import('./components/rooms/fortune-cookie-room/fortune-cookie-room.component').then((m) => m.FortuneCookieRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'memory',
+    name: 'Memory Room',
+    load: () => import('./components/rooms/memory-room/memory-room.component').then((m) => m.MemoryRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
+    kind: 'dice',
+    name: 'Dice Room',
+    load: () => import('./components/rooms/dice-room/dice-room.component').then((m) => m.DiceRoomComponent),
+    rarity: 'uncommon',
+  },
+
   // Much the same every time, so only now and then.
   {
     kind: 'iss',
@@ -256,6 +337,24 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     name: 'Games Room',
     load: () =>
       import('./components/rooms/tic-tac-toe-room/tic-tac-toe-room.component').then((m) => m.TicTacToeRoomComponent),
+    rarity: 'rare',
+  },
+  {
+    kind: 'rps',
+    name: 'Rock Paper Scissors',
+    load: () => import('./components/rooms/rps-room/rps-room.component').then((m) => m.RpsRoomComponent),
+    rarity: 'rare',
+  },
+  {
+    kind: 'snowglobe',
+    name: 'Snow Globe',
+    load: () => import('./components/rooms/snow-globe-room/snow-globe-room.component').then((m) => m.SnowGlobeRoomComponent),
+    rarity: 'rare',
+  },
+  {
+    kind: 'chess',
+    name: 'Chess Puzzle',
+    load: () => import('./components/rooms/chess-room/chess-room.component').then((m) => m.ChessRoomComponent),
     rarity: 'rare',
   },
 ];

@@ -1,0 +1,51 @@
+/**
+ * Challenges: small, healthy, kind things to do. Gentle enough for most
+ * bodies, nothing risky, nothing to do with food, money or other people's
+ * business, and every one leaves you a little better off.
+ */
+export const CHALLENGES = {
+  day: [
+    'Drink a full glass of water, then another later.',
+    'Go for a ten-minute walk, and look up at the sky.',
+    'Send a kind message to someone you have not spoken to in a while.',
+    'Eat something green today.',
+    'Write down three good things that happened today.',
+    'Go to bed half an hour earlier tonight.',
+    'Put your phone in another room for an hour.',
+    'Tidy one small space: a drawer, a shelf, a bag.',
+    'Learn one new word and use it in a sentence.',
+    'Tell someone what you appreciate about them.',
+    'Spend ten minutes outside in daylight.',
+    'Read ten pages of a book.',
+    'Do something kind and tell nobody.',
+    'Stretch for five minutes when you get up.',
+    'Listen to a whole album you love, doing nothing else.',
+    'Cook or make something with your hands.',
+    'Say thank you to someone who does not hear it enough.',
+    'Take the stairs every time today.',
+    'Write a note to your future self.',
+    'Call someone instead of texting them.',
+    'Try a food you have never had before.',
+    'Spend fifteen minutes on something you used to love doing.',
+    'Give someone a genuine compliment.',
+    'Plan one thing to look forward to this week.',
+  ],
+  hour: [
+    'Do 10 squats.',
+    'Do 5 push-ups, against a wall if you like.',
+    'Take five slow, deep breaths.',
+    'Stand up and stretch your arms to the ceiling.',
+    'Drink a glass of water.',
+    'Roll your shoulders back ten times.',
+    'Look out of a window at something far away for a minute.',
+    'Walk around for two minutes.',
+    'Smile at the next person you see.',
+    'March on the spot for one minute.',
+    'Unclench your jaw and relax your shoulders.',
+    'Write down one thing you are grateful for.',
+    'Do 10 calf raises.',
+    'Sit up tall for the next ten minutes.',
+    'Hold a plank for 20 seconds, or on your knees.',
+    'Put on a song you love and move to it.',
+  ],
+} as const;

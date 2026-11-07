@@ -205,3 +205,47 @@ test('the owner\'s stories are read from the sitemap and each page\'s tags', asy
   assert.ok(upstreamCalls.every((call) => call.url.startsWith('https://silverfootfalls.com/')));
   assert.ok(!upstreamCalls.some((call) => call.url.includes('/read/')));
 });
+
+test('a chapter comes only from the books on our list, cut into chapters', async () => {
+  const chapter = (n) => `CHAPTER ${n}.\n\nThe ${n} Part\n\n${'Words and more words. '.repeat(100)}\n\n`;
+  upstreamReply = () =>
+    new Response(
+      'Header\r\n*** START OF THE PROJECT GUTENBERG EBOOK X ***\r\nContents\n\nCHAPTER I.\nCHAPTER II.\nCHAPTER III.\n\n' +
+        `A preface. ${'More preface. '.repeat(150)}\n\n` +
+        `${chapter('I')}${chapter('II')}${chapter('III')}*** END OF THE PROJECT GUTENBERG EBOOK X ***\nLicence`,
+      { status: 200 }
+    );
+
+  const response = await get('/api/chapter/11');
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const body = await response.json();
+  assert.equal(body.title, "Alice's Adventures in Wonderland");
+  // The chapter's name joins its number, and the contents page and the
+  // preface after it are never served as a chapter.
+  assert.match(body.heading, /^CHAPTER (I|II|III): The (I|II|III) Part$/);
+  assert.ok(!body.paragraphs.join(' ').includes('preface'));
+  assert.ok(body.paragraphs.length > 0);
+  assert.ok(!body.paragraphs.join(' ').includes('Licence'));
+  assert.match(upstreamCalls[0].url, /^https:\/\/www\.gutenberg\.org\/cache\/epub\/11\/pg11\.txt$/);
+
+  assert.equal((await get('/api/chapter/999999')).status, 400);
+  assert.equal((await get('/api/chapter/..%2F..%2Fetc')).status, 400);
+});
+
+test('space pictures and dictionary words are only looked up on what the rooms ask for', async () => {
+  assert.equal((await get('/api/space/nebula?page=2')).status, 200);
+  assert.match(upstreamCalls[0].url, /images-api\.nasa\.gov\/search\?q=nebula/);
+  assert.equal((await get('/api/space/earth%20from%20space')).status, 200);
+  assert.equal((await get('/api/space/anything')).status, 400);
+  assert.equal((await get('/api/space/nebula?page=9')).status, 400);
+
+  assert.equal((await get('/api/dictionary/serendipity')).status, 200);
+  assert.equal((await get('/api/dictionary/%3Cscript%3E')).status, 400);
+  assert.equal((await get('/api/dictionary/a')).status, 400);
+});
+
+test('the chess puzzle is fetched from Lichess', async () => {
+  assert.equal((await get('/api/chess')).status, 200);
+  assert.match(upstreamCalls[0].url, /^https:\/\/lichess\.org\/api\/puzzle\/daily/);
+});
