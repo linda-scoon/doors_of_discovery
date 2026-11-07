@@ -7,9 +7,9 @@
   position: absolute;
   inset: 0;
   /*
-   * The doorway stacks: room contents at the bottom, then the curtain, then
-   * the door over both. Left to document order the room's contents would
-   * paint over the door, since they come after it in the template.
+   * The doorway stacks: the room's contents at the bottom, the door over
+   * them. Left to document order the contents would paint over the door,
+   * since they come after it in the template.
    */
   z-index: 2;
 
