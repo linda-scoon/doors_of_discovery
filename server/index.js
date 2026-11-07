@@ -13,6 +13,7 @@
  * Run it with `npm run serve:api` locally, or `npm run serve:prod` to serve
  * the production build the way the host does.
  */
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 
@@ -25,6 +26,20 @@ loadEnvFile();
 const app = express();
 const port = process.env.PORT || 3000;
 const browserBuildDir = path.resolve(__dirname, '..', 'dist');
+const indexFile = path.join(browserBuildDir, 'index.html');
+
+/**
+ * Whether `npm run build` has run. The server only serves what the build
+ * produced, so without it /api works and every page is missing -- which is
+ * what a host does if it starts the server but skips the build step.
+ */
+const isBuilt = () => fs.existsSync(indexFile);
+
+const NOT_BUILT =
+  'The doors have not been built yet.\n\n' +
+  'The server is running, but dist/ is missing, so there is nothing to show. ' +
+  'Run `npm run build` before starting the server -- on the host, set the ' +
+  'build script to `build` and redeploy.\n';
 
 // One route per API, built from the config table rather than written by hand,
 // so adding a room is a one-entry change in apis.js.
@@ -46,7 +61,7 @@ app.get('/api/health', (_req, res) => {
     configured[api.id] =
       !api.auth.keyName || Boolean(process.env[api.auth.keyName]);
   }
-  res.json({ ok: true, rooms: configured });
+  res.json({ ok: true, built: isBuilt(), rooms: configured });
 });
 
 app.use(express.static(browserBuildDir));
@@ -55,7 +70,11 @@ app.use(express.static(browserBuildDir));
 // let the client router deal with it. Without this, refreshing on a deep link
 // returns 404.
 app.get(/.*/, (_req, res) => {
-  res.sendFile(path.join(browserBuildDir, 'index.html'));
+  if (!isBuilt()) {
+    res.status(503).type('text/plain').send(NOT_BUILT);
+    return;
+  }
+  res.sendFile(indexFile);
 });
 
 // Only listen when run directly, so tests can import the app without binding
@@ -64,6 +83,10 @@ if (require.main === module) {
   app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
     console.log(`Serving the app from ${browserBuildDir}`);
+
+    if (!isBuilt()) {
+      console.warn(`\n  WARNING: ${indexFile} does not exist. Run \`npm run build\`.\n`);
+    }
 
     const missing = apis
       .filter((api) => api.auth.keyName && !process.env[api.auth.keyName])

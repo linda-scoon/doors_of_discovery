@@ -3,8 +3,8 @@
   inset: 0;
   display: grid;
   place-content: center;
-  /* Doors come small enough now that the note has to wrap; keep it off
-     the frame when it does. */
+  /* On a phone the doorway is narrow enough that the note wraps; keep it
+     off the frame when it does. */
   padding: 0 10%;
   text-align: center;
 }

@@ -1,15 +1,10 @@
-<div class="app-wrapper" [style.--cols]="layout.cols">
+<div class="app-wrapper">
   <!--
-    Shuffled on every visit, and generated as the visitor scrolls. Where each
-    door goes is worked out in src/app/wall.ts, so the wall has no gaps.
+    Shuffled on every visit, and generated as the visitor scrolls. See
+    src/app/wall.ts.
   -->
   @for (door of doors; track door.room.id) {
-    <app-room-slot
-      class="app-room"
-      [style.grid-area]="door.gridArea"
-      [room]="door.room"
-      [ordinal]="door.ordinal"
-    ></app-room-slot>
+    <app-room-slot class="app-room" [room]="door.room" [ordinal]="door.ordinal"></app-room-slot>
   }
 </div>
 

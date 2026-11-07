@@ -10,9 +10,7 @@
   --space-door-gap: 0.75rem;
 
   /* doors */
-  /* A door's height for its width. The wall's cells are this shape, so
-     every door that covers a square block of them is too. */
-  --door-height: 1.9;
+  --door-aspect: 1 / 1.9;
   --door-frame: #1a1208;
   --door-furniture: #b9b6bc;
   --door-furniture-dark: #6e6b72;

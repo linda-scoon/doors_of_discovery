@@ -89,23 +89,29 @@ Hostinger builds from `master` automatically on every push.
 
 | Setting | Value | Why |
 |---|---|---|
-| Build command | `npm run build` | |
-| Output directory | `dist` | the build writes `index.html` here |
-| Application type | **Node.js** | |
+| Framework | **Express** | |
+| Build script | **`build`** | |
+| Output directory | leave blank | Express deploys the whole repository |
 | Entry file | **`server/index.js`** | |
 
-The last two matter. With the application type unset, Hostinger copies `dist`
-into `public_html` and serves it as static files — the doors appear, but
-**`/api/*` does not exist**, so no room can load anything. The server has to
-actually run for the site to work.
+Each one matters:
+
+- With the framework set to **Angular**, Hostinger serves `dist` as static
+  files and never starts the server — the doors appear, but **`/api/*` does
+  not exist**, so no room can load anything.
+- With **Express** but no build script, the server starts but `dist` was
+  never built, so every page is missing. The server says so in place of the
+  page, and `/api/health` reports `"built": false`.
 
 Set `RAPID_API_KEY`, `GIFS_API_KEY` and `TMDB_API_KEY` as environment
 variables in the panel. They are read only by the server process, so they
 never reach the public site.
 
-After a deploy, `https://doors.purplefootsteps.co.uk/api/health` reports which
-rooms came up configured. If it returns the page's HTML instead of JSON, the
-server is not running and the site is being served statically.
+After a deploy, `https://doors.purplefootsteps.co.uk/api/health` reports
+whether the site was built and which rooms came up configured. Open it in a
+private window: a browser that has visited the site before may answer with
+the wall from its offline copy. If it returns the page's HTML instead of
+JSON, the server is not running and the site is being served statically.
 
 ### If it is served statically anyway
 
