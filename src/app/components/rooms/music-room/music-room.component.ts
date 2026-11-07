@@ -1,11 +1,19 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MusicService } from './music.service';
 
 @Component({
-    selector: 'app-music-room',
-    templateUrl: './music-room.component.html',
-    styleUrls: ['./music-room.component.css'],
-    standalone: false
+  selector: 'app-music-room',
+  templateUrl: './music-room.component.html',
+  styleUrls: ['./music-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class MusicRoomComponent implements OnInit {
   // input from app component

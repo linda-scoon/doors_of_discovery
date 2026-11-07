@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { JokesService } from './jokes.service';
 import {
   animate,
@@ -11,20 +11,24 @@ import {
 } from '@angular/animations';
 
 @Component({
-    selector: 'app-jokes-room',
-    templateUrl: './jokes-room.component.html',
-    styleUrls: ['./jokes-room.component.css'],
-    animations: [
-        trigger('fade', [
-            transition(':enter', [
-                group([
-                    query('.setup', [style({ opacity: 0 }), animate(2000)]),
-                    query('.punch-line', stagger(1000, [style({ opacity: 0 }), animate(10000)])),
-                ]),
-            ]),
+  selector: 'app-jokes-room',
+  templateUrl: './jokes-room.component.html',
+  styleUrls: ['./jokes-room.component.css'],
+  animations: [
+    trigger('fade', [
+      transition(':enter', [
+        group([
+          query('.setup', [style({ opacity: 0 }), animate(2000)]),
+          query(
+            '.punch-line',
+            stagger(1000, [style({ opacity: 0 }), animate(10000)]),
+          ),
         ]),
-    ],
-    standalone: false
+      ]),
+    ]),
+  ],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class JokesRoomComponent implements OnInit {
   // input from app component

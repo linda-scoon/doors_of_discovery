@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ImagesService } from './images.service';
 
 @Component({
-    selector: 'app-image-room',
-    templateUrl: './image-room.component.html',
-    styleUrls: ['./image-room.component.css'],
-    standalone: false
+  selector: 'app-image-room',
+  templateUrl: './image-room.component.html',
+  styleUrls: ['./image-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class ImageRoomComponent implements OnInit {
   // input from app component

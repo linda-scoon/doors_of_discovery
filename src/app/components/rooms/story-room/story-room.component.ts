@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
   UntypedFormBuilder,
   FormControl,
@@ -7,10 +7,11 @@ import {
 } from '@angular/forms';
 
 @Component({
-    selector: 'app-story-room',
-    templateUrl: './story-room.component.html',
-    styleUrls: ['./story-room.component.css'],
-    standalone: false
+  selector: 'app-story-room',
+  templateUrl: './story-room.component.html',
+  styleUrls: ['./story-room.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class StoryRoomComponent {
   // input from app component

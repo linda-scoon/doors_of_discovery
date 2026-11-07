@@ -1,10 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
-    selector: 'app-right-handle',
-    templateUrl: './right-handle.component.html',
-    styleUrls: ['./right-handle.component.css'],
-    standalone: false
+  selector: 'app-right-handle',
+  templateUrl: './right-handle.component.html',
+  styleUrls: ['./right-handle.component.css'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class RightHandleComponent implements OnInit {
   @Output() doorOpening = new EventEmitter<void>();
