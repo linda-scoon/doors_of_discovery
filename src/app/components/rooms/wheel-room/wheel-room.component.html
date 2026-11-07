@@ -1,0 +1,27 @@
+<app-room-frame status="ready">
+  <div class="wheel-room__stand">
+    <span class="wheel-room__pointer" aria-hidden="true"></span>
+    <div
+      class="wheel-room__wheel"
+      [style.transform]="'rotate(' + rotation() + 'deg)'"
+      (transitionend)="stopped()"
+      aria-hidden="true"
+    >
+      @for (segment of segments; track $index) {
+        <span class="wheel-room__label" [style.transform]="'rotate(' + segment.angle + 'deg)'">
+          {{ segment.label }}
+        </span>
+      }
+    </div>
+  </div>
+  <p class="room-words" aria-live="polite">
+    @switch (result()) {
+      @case ('WIN') { You won! }
+      @case ('LOSE') { You lost. }
+      @default { {{ spinning() ? 'Round and round…' : 'Spin the wheel.' }} }
+    }
+  </p>
+  <button type="button" class="room-button" [disabled]="spinning()" (click)="spin()">
+    {{ result() ? 'Spin again' : 'Spin' }}
+  </button>
+</app-room-frame>

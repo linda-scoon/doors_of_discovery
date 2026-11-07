@@ -62,8 +62,13 @@ host. A real environment variable always wins.
 | `TMDB_API_KEY` | video room | [TMDB](https://www.themoviedb.org/settings/api) |
 
 Every other room uses a free API that needs no key: jokes (JokeAPI), facts
-(Useless Facts), quotes (ZenQuotes), paintings (Art Institute of Chicago) and
-music (Deezer).
+(Useless Facts), quotes (ZenQuotes), paintings (Art Institute of Chicago),
+music (Deezer), trivia (Open Trivia DB), Wikipedia and its "On this day",
+the space station (wheretheiss.at), weather (Open-Meteo), animals (Dog CEO,
+Cat as a Service, RandomFox, random-d.uk), radio (Radio Browser), recipes
+(TheMealDB) and old films (Internet Archive). The tarot, wheel and noughts
+and crosses rooms call nothing at all. Each room credits its source, and
+whoever made what it shows when the source says.
 
 To see which rooms are configured on a running server:
 

@@ -9,6 +9,14 @@
  * request time, so no key is ever committed or shipped to a browser.
  */
 
+const cities = require('../shared/cities.json');
+
+/**
+ * Some APIs ask callers to say who they are. Wikimedia refuses requests
+ * without a descriptive User-Agent, and Radio Browser asks for one.
+ */
+const IDENTIFY = { 'User-Agent': 'WebOfDoors/1.0 (https://doors.purplefootsteps.co.uk)' };
+
 /** How a given API expects its key to be presented. */
 const AuthStyle = {
   /** RapidAPI wants the key in an X-RapidAPI-Key header. None use it now. */
@@ -29,6 +37,7 @@ const AuthStyle = {
  *   queryParams   numbers the browser may pass through, each with the range
  *                 it must fall in. Anything else in the query is ignored.
  *   pathParams    named :segments of the url, filled from the route.
+ *   headers       sent with every request upstream.
  */
 const apis = [
   {
@@ -87,6 +96,108 @@ const apis = [
       'https://v2.jokeapi.dev/joke/Any?safe-mode' +
       '&blacklistFlags=nsfw,religious,political,racist,sexist,explicit',
     auth: { style: AuthStyle.NONE },
+  },
+
+  {
+    // Fifty quiz questions at a time; the room picks one. Open Trivia DB
+    // allows one request every five seconds, so the list is kept a while.
+    // url3986 encoding, because its default is HTML entities.
+    id: 'trivia',
+    url: 'https://opentdb.com/api.php?amount=50&type=multiple&encode=url3986',
+    auth: { style: AuthStyle.NONE },
+    cacheSeconds: 300,
+  },
+  {
+    // Five random Wikipedia articles, each with its first three sentences and
+    // a picture. Five, so the room can pass over a disambiguation page -- a
+    // list of "Zebari may refer to:" -- and still have a real article.
+    id: 'wikipedia',
+    url:
+      'https://en.wikipedia.org/w/api.php?action=query&format=json' +
+      '&generator=random&grnnamespace=0&grnlimit=5' +
+      '&prop=extracts|pageimages|info|pageprops&ppprop=disambiguation&inprop=url' +
+      '&exintro=1&explaintext=1&exsentences=3&exlimit=5&piprop=thumbnail&pithumbsize=400',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+  },
+  {
+    // What happened on this day in history. The room sends today's date, so
+    // it is the visitor's day, not the server's.
+    id: 'onthisday',
+    url: 'https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/:month/:day',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+    pathParams: ['month', 'day'],
+    cacheSeconds: 86400,
+  },
+  {
+    // Where the International Space Station is right now.
+    id: 'iss',
+    url: 'https://api.wheretheiss.at/v1/satellites/25544',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    // The weather now in every city in shared/cities.json, in one call; the
+    // room picks a city. Weather does not change by the minute.
+    id: 'weather',
+    url:
+      'https://api.open-meteo.com/v1/forecast' +
+      `?latitude=${cities.map((c) => c.latitude).join(',')}` +
+      `&longitude=${cities.map((c) => c.longitude).join(',')}` +
+      '&current=temperature_2m,weather_code,is_day,wind_speed_10m&timezone=auto',
+    auth: { style: AuthStyle.NONE },
+    cacheSeconds: 900,
+  },
+  // Four animals, each from its own free API. The room picks one.
+  {
+    id: 'animals/dog',
+    url: 'https://dog.ceo/api/breeds/image/random',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    id: 'animals/cat',
+    url: 'https://cataas.com/cat?json=true',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    id: 'animals/fox',
+    url: 'https://randomfox.ca/floof/',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    id: 'animals/duck',
+    url: 'https://random-d.uk/api/v2/random',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    // Ten random radio stations that are up and stream over https -- a page
+    // served over https may not play anything else. The room tries them in
+    // turn until one plays.
+    id: 'radio',
+    url:
+      'https://de1.api.radio-browser.info/json/stations/search' +
+      '?limit=10&order=random&hidebroken=true&is_https=true',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+  },
+  {
+    // A random recipe. "1" is TheMealDB's public key for non-commercial use.
+    id: 'recipe',
+    url: 'https://www.themealdb.com/api/json/v1/1/random.php',
+    auth: { style: AuthStyle.NONE },
+  },
+  {
+    // Old films from the Internet Archive's Prelinger collection: adverts,
+    // public information films, home movies. Fifty to a page.
+    id: 'films',
+    url:
+      'https://archive.org/advancedsearch.php' +
+      '?q=collection%3Aprelinger+AND+mediatype%3Amovies' +
+      '&fl[]=identifier&fl[]=title&fl[]=year&rows=50&output=json',
+    auth: { style: AuthStyle.NONE },
+    // About ten thousand films, so two hundred pages of fifty.
+    queryParams: { page: { min: 1, max: 200 } },
+    cacheSeconds: 86400,
   },
 
   // The video room needs two calls: pick a popular movie, then find its

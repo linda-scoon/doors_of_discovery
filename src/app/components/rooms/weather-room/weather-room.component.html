@@ -1,0 +1,13 @@
+<app-room-frame [status]="weather.status()">
+  @if (weather.value(); as w) {
+    <div class="weather-room__window" [class.weather-room__window--night]="!w.isDay">
+      <span class="weather-room__icon" aria-hidden="true">{{ w.icon }}</span>
+      <span class="room-words room-words--big">{{ w.temperature }}°C</span>
+    </div>
+    <p class="room-words">{{ w.city }}</p>
+    <p class="room-words room-words--small">{{ w.condition }}, wind {{ w.wind }} km/h. It is {{ w.time }} there.</p>
+    <p class="room-credit">
+      {{ w.country }} · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+    </p>
+  }
+</app-room-frame>

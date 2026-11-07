@@ -8,6 +8,18 @@ import { MusicRoomComponent } from './components/rooms/music-room/music-room.com
 import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.component';
 import { VideoRoomComponent } from './components/rooms/video-room/video-room.component';
 import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
+import { TriviaRoomComponent } from './components/rooms/trivia-room/trivia-room.component';
+import { WikipediaRoomComponent } from './components/rooms/wikipedia-room/wikipedia-room.component';
+import { OnThisDayRoomComponent } from './components/rooms/on-this-day-room/on-this-day-room.component';
+import { IssRoomComponent } from './components/rooms/iss-room/iss-room.component';
+import { WeatherRoomComponent } from './components/rooms/weather-room/weather-room.component';
+import { AnimalRoomComponent } from './components/rooms/animal-room/animal-room.component';
+import { RadioRoomComponent } from './components/rooms/radio-room/radio-room.component';
+import { RecipeRoomComponent } from './components/rooms/recipe-room/recipe-room.component';
+import { FilmRoomComponent } from './components/rooms/film-room/film-room.component';
+import { TarotRoomComponent } from './components/rooms/tarot-room/tarot-room.component';
+import { WheelRoomComponent } from './components/rooms/wheel-room/wheel-room.component';
+import { TicTacToeRoomComponent } from './components/rooms/tic-tac-toe-room/tic-tac-toe-room.component';
 
 import { HandleSide, OpenStyle } from './components/doors/door/door.component';
 import { DoorMaterial } from './components/doors/door/door-material';
@@ -119,6 +131,30 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'common',
     needsDoorState: true,
   },
+  { kind: 'trivia', name: 'Quiz Room', component: TriviaRoomComponent, rarity: 'common' },
+  { kind: 'wikipedia', name: 'Library', component: WikipediaRoomComponent, rarity: 'common' },
+  { kind: 'onthisday', name: 'History Room', component: OnThisDayRoomComponent, rarity: 'common' },
+  { kind: 'animals', name: 'Pet Room', component: AnimalRoomComponent, rarity: 'common' },
+  {
+    kind: 'radio',
+    name: 'Radio Room',
+    component: RadioRoomComponent,
+    rarity: 'common',
+    needsDoorState: true,
+  },
+  { kind: 'recipe', name: 'Kitchen', component: RecipeRoomComponent, rarity: 'common' },
+
+  // A set that comes round again: 78 cards, fifty-odd cities, and films that
+  // are heavy enough to load that they should not be everywhere.
+  { kind: 'tarot', name: 'Fortune Teller', component: TarotRoomComponent, rarity: 'uncommon' },
+  { kind: 'weather', name: 'Window Room', component: WeatherRoomComponent, rarity: 'uncommon' },
+  { kind: 'films', name: 'Cinema', component: FilmRoomComponent, rarity: 'uncommon' },
+
+  // Much the same every time, so only now and then.
+  { kind: 'iss', name: 'Observatory', component: IssRoomComponent, rarity: 'rare' },
+  { kind: 'wheel', name: 'Wheel Room', component: WheelRoomComponent, rarity: 'rare' },
+  { kind: 'tictactoe', name: 'Games Room', component: TicTacToeRoomComponent, rarity: 'rare' },
+
   // Kept, rarely: an empty room is a pause in the wall, and it is where the
   // next room goes.
   {

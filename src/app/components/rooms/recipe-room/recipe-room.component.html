@@ -1,0 +1,13 @@
+<app-room-frame [status]="meal.status()">
+  @if (meal.value(); as m) {
+    <img class="recipe-room__dish" [src]="m.image" [alt]="m.name" />
+    <p class="room-words">{{ m.name }}</p>
+    @if (m.kind) {
+      <p class="room-words room-words--small">{{ m.kind }}</p>
+    }
+    <p class="room-credit">
+      <a [href]="m.link" target="_blank" rel="noopener">The recipe</a> ·
+      <a href="https://www.themealdb.com/" target="_blank" rel="noopener">TheMealDB</a>
+    </p>
+  }
+</app-room-frame>

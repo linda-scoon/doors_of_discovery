@@ -63,9 +63,11 @@ function buildUpstreamUrl(api, req) {
 }
 
 function buildUpstreamHeaders(api, upstreamUrl) {
-  if (api.auth.style !== AuthStyle.RAPIDAPI_HEADER) return {};
+  const headers = { ...(api.headers || {}) };
+  if (api.auth.style !== AuthStyle.RAPIDAPI_HEADER) return headers;
 
   return {
+    ...headers,
     // RapidAPI routes on the host header, which is always the url's own host.
     'X-RapidAPI-Host': upstreamUrl.hostname,
     'X-RapidAPI-Key': process.env[api.auth.keyName],

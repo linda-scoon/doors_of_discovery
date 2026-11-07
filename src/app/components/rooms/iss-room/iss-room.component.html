@@ -1,0 +1,15 @@
+<app-room-frame [status]="station.status()">
+  @if (station.value(); as s) {
+    <p class="room-credit iss-room__heading">Right now</p>
+    <div class="iss-room__map" role="img" [attr.aria-label]="'The space station is over ' + s.where">
+      <span class="iss-room__station" [style.left.%]="s.x" [style.top.%]="s.y"></span>
+    </div>
+    <p class="room-words room-words--small">
+      The International Space Station is over {{ s.where }}, {{ s.altitude }} km up, doing
+      {{ s.speed }} km/h.
+    </p>
+    <p class="room-credit">
+      <a href="https://wheretheiss.at/" target="_blank" rel="noopener">wheretheiss.at</a>
+    </p>
+  }
+</app-room-frame>

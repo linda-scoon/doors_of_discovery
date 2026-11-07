@@ -21,6 +21,22 @@ describe('GifRoomComponent', () => {
     expect(room.fixture.nativeElement.querySelector('img').src).toContain('cat.gif');
   });
 
+  it('credits whoever made the gif', async () => {
+    const room = await openRoom(GifRoomComponent);
+    room.server.expectOne((req) => req.url === '/api/gifs').flush({
+      data: [
+        {
+          title: 'Cat',
+          username: 'catmaker',
+          user: { display_name: 'Cat Maker' },
+          images: { downsized: { url: 'https://media.giphy.com/cat.gif' } },
+        },
+      ],
+    });
+
+    expect(room.text()).toContain('By Cat Maker');
+  });
+
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(GifRoomComponent);
     failRequest(room.server, /\/api\/gifs/);

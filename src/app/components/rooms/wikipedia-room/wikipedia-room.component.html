@@ -1,0 +1,12 @@
+<app-room-frame [status]="page.status()">
+  @if (page.value(); as p) {
+    @if (p.thumbnail) {
+      <img class="wikipedia-room__picture" [src]="p.thumbnail.source" alt="" />
+    }
+    <p class="room-words wikipedia-room__title">{{ p.title }}</p>
+    <p class="room-words room-words--small">{{ p.extract }}</p>
+    <p class="room-credit">
+      From <a [href]="p.canonicalurl" target="_blank" rel="noopener">Wikipedia</a>, CC BY-SA
+    </p>
+  }
+</app-room-frame>

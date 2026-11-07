@@ -1,0 +1,12 @@
+<app-room-frame [status]="animal.status()">
+  @if (animal.value(); as a) {
+    <img class="animal-room__photo" [src]="a.image" [alt]="a.who" />
+    <p class="room-words">Who lives here? {{ a.who.charAt(0).toUpperCase() + a.who.slice(1) }}.</p>
+    @if (a.detail) {
+      <p class="room-words room-words--small">{{ a.detail }}</p>
+    }
+    <p class="room-credit">
+      <a [href]="a.creditUrl" target="_blank" rel="noopener">{{ a.credit }}</a>
+    </p>
+  }
+</app-room-frame>

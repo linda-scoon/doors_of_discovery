@@ -1,0 +1,15 @@
+:host {
+  display: contents;
+}
+
+.wikipedia-room__picture {
+  display: block;
+  max-width: 100%;
+  max-height: 35cqh;
+  object-fit: contain;
+  border-radius: 1.5cqi;
+}
+
+.wikipedia-room__title {
+  font-family: Georgia, 'Times New Roman', serif;
+}

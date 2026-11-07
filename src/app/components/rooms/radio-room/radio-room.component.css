@@ -1,0 +1,41 @@
+:host {
+  display: contents;
+}
+
+/* An old wireless set, its dial glowing. */
+.radio-room__set {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4cqi;
+  width: 70cqi;
+  aspect-ratio: 5 / 3;
+  border-radius: 6cqi;
+  background:
+    repeating-linear-gradient(to right, rgba(0, 0, 0, 0.25) 0 1px, transparent 1px 3cqi),
+    linear-gradient(#7a4f2c, #4d311b);
+  box-shadow: 0 2cqi 5cqi rgba(0, 0, 0, 0.6);
+}
+
+.radio-room__logo {
+  width: 20cqi;
+  height: 20cqi;
+  object-fit: contain;
+  border-radius: 2cqi;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.radio-room__dial {
+  width: 18cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe7a3, #d99b2b 60%, #6b4513);
+  box-shadow: 0 0 6cqi rgba(255, 200, 90, 0.6);
+  animation: glow 2.4s ease-in-out infinite;
+}
+
+@keyframes glow {
+  50% {
+    box-shadow: 0 0 2cqi rgba(255, 200, 90, 0.3);
+  }
+}

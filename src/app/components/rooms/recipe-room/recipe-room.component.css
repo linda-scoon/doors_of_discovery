@@ -1,0 +1,13 @@
+:host {
+  display: contents;
+}
+
+/* On a plate. */
+.recipe-room__dish {
+  width: 70cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3cqi solid #f4efe6;
+  box-shadow: 0 2cqi 6cqi rgba(0, 0, 0, 0.6);
+}

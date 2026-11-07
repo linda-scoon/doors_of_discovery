@@ -1,0 +1,31 @@
+:host {
+  display: contents;
+}
+
+.trivia-room__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5cqi;
+  width: 100%;
+}
+
+.trivia-room__choice {
+  border-radius: 2cqi;
+}
+
+.trivia-room__choice:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.trivia-room__choice--right:disabled {
+  opacity: 1;
+  border-color: #6fcf7f;
+  background: rgba(111, 207, 127, 0.25);
+}
+
+.trivia-room__choice--wrong:disabled {
+  opacity: 1;
+  border-color: #e0705f;
+  background: rgba(224, 112, 95, 0.25);
+}

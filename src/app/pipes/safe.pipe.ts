@@ -26,6 +26,7 @@ export class SafePipe implements PipeTransform {
     'youtube.com',
     'www.youtube-nocookie.com',
     'player.vimeo.com',
+    'archive.org',
   ];
 
   constructor(private sanitizer: DomSanitizer) {}

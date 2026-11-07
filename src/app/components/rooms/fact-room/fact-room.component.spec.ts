@@ -8,6 +8,16 @@ describe('FactRoomComponent', () => {
     expect(room.text()).toContain('Bananas are berries.');
   });
 
+  it('credits where the fact came from', async () => {
+    const room = await openRoom(FactRoomComponent);
+    room.server
+      .expectOne('/api/facts')
+      .flush({ text: 'Bananas are berries.', source: 'fruit.example', source_url: 'https://fruit.example/' });
+
+    expect(room.text()).toContain('Source: fruit.example');
+    expect(room.text()).toContain('Useless Facts');
+  });
+
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(FactRoomComponent);
     failRequest(room.server, '/api/facts');

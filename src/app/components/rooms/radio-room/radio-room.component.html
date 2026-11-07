@@ -1,0 +1,25 @@
+<app-room-frame [status]="stations.status()">
+  @if (station(); as s) {
+    <div class="radio-room__set" aria-hidden="true">
+      @if (s.favicon) {
+        <img class="radio-room__logo" [src]="s.favicon" alt="" (error)="$any($event.target).hidden = true" />
+      }
+      <span class="radio-room__dial"></span>
+    </div>
+    <p class="room-words">{{ s.name }}</p>
+    <p class="room-credit">
+      Live from {{ s.country || 'somewhere' }}
+      @if (s.homepage) {
+        · <a [href]="s.homepage" target="_blank" rel="noopener">station website</a>
+      }
+      <br />
+      <a href="https://www.radio-browser.info/" target="_blank" rel="noopener">Radio Browser</a>
+    </p>
+    @if (open()) {
+      <!-- Tried with each station in turn; see nextStation(). -->
+      <audio autoplay [src]="s.url_resolved" (error)="nextStation()"></audio>
+    }
+  } @else {
+    <app-bricks [doorway]="true" label="This doorway is bricked up."></app-bricks>
+  }
+</app-room-frame>

@@ -1,0 +1,33 @@
+:host {
+  display: contents;
+}
+
+/* Chalked on the wall. */
+.tic-tac-toe-room__board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5cqi;
+  width: 78cqi;
+  aspect-ratio: 1;
+  background: rgba(242, 236, 228, 0.55);
+}
+
+.tic-tac-toe-room__cell {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: var(--room-dark);
+  color: #f2ece4;
+  font: inherit;
+  font-size: 14cqi;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tic-tac-toe-room__cell:disabled {
+  cursor: default;
+}
+
+.tic-tac-toe-room__cell--house {
+  color: #f6c35b;
+}
