@@ -1,35 +1,32 @@
 /*
- * Sunday morning in the kitchen: golden light through the window, a
- * gingham cloth on the table, and the dish written up by hand.
+ * Sunday morning in the kitchen: golden light through the window, a gingham
+ * cloth on the table, the dish on a plate and its recipe card beside it,
+ * long enough to scroll through.
  */
 :host {
   display: contents;
 }
 
 app-room-frame {
-  position: relative;
+  justify-content: flex-start;
+  gap: 3cqi;
+  padding-bottom: 16cqi;
+  /* The tablecloth is part of the background, so it stays along the bottom
+     of the doorway while the recipe scrolls over it. */
   background:
+    repeating-linear-gradient(90deg, rgba(200, 50, 50, 0.55) 0 3cqi, transparent 3cqi 6cqi)
+      bottom / 100% 12cqi no-repeat,
+    repeating-linear-gradient(0deg, rgba(200, 50, 50, 0.55) 0 3cqi, #fff8ee 3cqi 6cqi)
+      bottom / 100% 12cqi no-repeat,
     radial-gradient(ellipse at 25% 0%, #fffbe9, transparent 60%),
     linear-gradient(to bottom, #ffe9b8, #f9d98f 70%, #f2c46a);
   color: #5a3a1a;
-  padding-bottom: 16cqi;
-}
-
-/* The tablecloth along the bottom. */
-app-room-frame::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  height: 12cqi;
-  background:
-    repeating-linear-gradient(90deg, rgba(200, 50, 50, 0.55) 0 3cqi, transparent 3cqi 6cqi),
-    repeating-linear-gradient(0deg, rgba(200, 50, 50, 0.55) 0 3cqi, #fff8ee 3cqi 6cqi);
-  box-shadow: 0 -0.6cqi 1.5cqi rgba(90, 58, 26, 0.25);
 }
 
 /* On a plate. */
 .recipe-room__dish {
-  width: 68cqi;
+  flex: none;
+  width: 58cqi;
   aspect-ratio: 1;
   border-radius: 50%;
   object-fit: cover;
@@ -37,8 +34,56 @@ app-room-frame::after {
   box-shadow: 0 0 0 0.5cqi #e8dcc7, 0 2cqi 5cqi rgba(90, 58, 26, 0.35);
 }
 
-app-room-frame .room-words:not(.room-words--small) {
+.recipe-room__name {
   font-family: 'Caveat', 'Segoe Print', cursive;
   font-size: clamp(1.1rem, 10cqi, 1.8rem);
   line-height: 1.05;
+}
+
+/* A recipe card: cream, ruled, a red line across the top. */
+.recipe-room__card {
+  width: 100%;
+  padding: 3cqi 4cqi 4cqi;
+  border-top: 1.2cqi solid #c94a3a;
+  border-radius: 1cqi;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 6.4cqi, rgba(90, 58, 26, 0.12) 6.4cqi 6.6cqi),
+    #fffaf0;
+  box-shadow: 0 1cqi 3cqi rgba(90, 58, 26, 0.25);
+  text-align: left;
+  font-size: clamp(0.68rem, 4.6cqi, 0.88rem);
+  line-height: 1.4;
+}
+
+.recipe-room__heading {
+  margin: 1.5cqi 0 1cqi;
+  font-family: 'Caveat', 'Segoe Print', cursive;
+  font-size: clamp(0.95rem, 7.5cqi, 1.35rem);
+  font-weight: 700;
+  color: #c94a3a;
+}
+
+.recipe-room__ingredients {
+  list-style: none;
+}
+
+.recipe-room__ingredients li {
+  padding: 0.3cqi 0;
+}
+
+.recipe-room__measure {
+  font-weight: 700;
+}
+
+.recipe-room__steps {
+  padding-left: 1.3em;
+}
+
+.recipe-room__steps li + li {
+  margin-top: 1.5cqi;
+}
+
+.recipe-room__steps li::marker {
+  font-weight: 700;
+  color: #c94a3a;
 }
