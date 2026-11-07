@@ -233,13 +233,7 @@ test('a chapter comes only from the books on our list, cut into chapters', async
   assert.equal((await get('/api/chapter/..%2F..%2Fetc')).status, 400);
 });
 
-test('space pictures and dictionary words are only looked up on what the rooms ask for', async () => {
-  assert.equal((await get('/api/space/nebula?page=2')).status, 200);
-  assert.match(upstreamCalls[0].url, /images-api\.nasa\.gov\/search\?q=nebula/);
-  assert.equal((await get('/api/space/earth%20from%20space')).status, 200);
-  assert.equal((await get('/api/space/anything')).status, 400);
-  assert.equal((await get('/api/space/nebula?page=9')).status, 400);
-
+test('dictionary words are only looked up on what the room asks for', async () => {
   assert.equal((await get('/api/dictionary/serendipity')).status, 200);
   assert.equal((await get('/api/dictionary/%3Cscript%3E')).status, 400);
   assert.equal((await get('/api/dictionary/a')).status, 400);

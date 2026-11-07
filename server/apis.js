@@ -11,7 +11,6 @@
 
 const cities = require('../shared/cities.json');
 const bookSubjects = require('../shared/book-subjects.json');
-const spaceTopics = require('../shared/space-topics.json');
 
 /**
  * Some APIs ask callers to say who they are. Wikimedia refuses requests
@@ -125,19 +124,6 @@ const apis = [
     auth: { style: AuthStyle.NONE },
     headers: IDENTIFY,
     cacheSeconds: 3600,
-  },
-  {
-    // Pictures from NASA's image library on one of a few space topics, a
-    // random page of results at a time; the room picks one.
-    id: 'space',
-    url: 'https://images-api.nasa.gov/search?q=:topic&media_type=image',
-    auth: { style: AuthStyle.NONE },
-    pathParams: ['topic'],
-    pathParamPatterns: {
-      topic: new RegExp(`^(${spaceTopics.map((t) => t.replace(/ /g, '(?: |%20)')).join('|')})$`),
-    },
-    queryParams: { page: { min: 1, max: 5 } },
-    cacheSeconds: 86400,
   },
   {
     // What an English word means, from the Free Dictionary API.

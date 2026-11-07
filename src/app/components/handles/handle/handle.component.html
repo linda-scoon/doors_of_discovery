@@ -2,6 +2,7 @@
   type="button"
   class="handle"
   [class.handle--left]="side === 'left'"
+  [class.handle--fire]="fire"
   [attr.aria-label]="stuck ? label + ' — the handle will not turn' : 'Open ' + label"
   [attr.aria-expanded]="pressed"
   (click)="onClick($event)"
