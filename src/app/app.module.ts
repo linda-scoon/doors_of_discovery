@@ -1,7 +1,7 @@
 import { SafePipe } from './pipes/safe.pipe';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { WoodenDoorComponent } from './components/doors/wooden-door/wooden-door.component';
 import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
@@ -21,33 +21,26 @@ import { HandleComponent } from './components/handles/handle/handle.component';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    WoodenDoorComponent,
-    MusicRoomComponent,
-    RightHandleComponent,
-    JokesRoomComponent,
-    QoutesRoomComponent,
-    ImageRoomComponent,
-    RoomComponent,
-    GifRoomComponent,
-    VideoRoomComponent,
-    GameRoomComponent,
-    FactRoomComponent,
-    StoryRoomComponent,
-    DoorComponent,
-    HandleComponent,
-    SafePipe,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [
+        AppComponent,
+        WoodenDoorComponent,
+        MusicRoomComponent,
+        RightHandleComponent,
+        JokesRoomComponent,
+        QoutesRoomComponent,
+        ImageRoomComponent,
+        RoomComponent,
+        GifRoomComponent,
+        VideoRoomComponent,
+        GameRoomComponent,
+        FactRoomComponent,
+        StoryRoomComponent,
+        DoorComponent,
+        HandleComponent,
+        SafePipe,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}
