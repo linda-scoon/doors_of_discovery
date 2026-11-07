@@ -76,6 +76,30 @@ export type Surprise =
  */
 export type GraffitiKind = 'words' | 'signature' | 'cat';
 
+/**
+ * What the paint did after it left the can.
+ *
+ * `single` is one run from a letter. `curtain` is a whole row of runs, the
+ * look of a can held still for too long. `splash` is paint flung at the
+ * door rather than sprayed. `soft` is overspray: sprayed from too far back,
+ * so nothing quite has an edge.
+ */
+export type DripStyle = 'single' | 'curtain' | 'splash' | 'soft';
+
+/** One run of paint, or one speck of a splash. */
+export interface PaintMark {
+  /** Across the door, as a percentage of its width. */
+  x: number;
+  /** Down the door, as a percentage of its height. */
+  y: number;
+  /** How thick the run or speck is, in pixels. */
+  thickness: number;
+  /** How far it runs down the door, as a percentage of its height. */
+  length: number;
+  /** A flung speck, drawn as a blob, rather than a run drawn as a line. */
+  round: boolean;
+}
+
 export interface GraffitiTag {
   /** Whether this one is a tag, a signature, or a drawing. */
   kind: GraffitiKind;
@@ -92,6 +116,10 @@ export interface GraffitiTag {
   rotate: number;
   /** How big it is, as a multiplier. */
   scale: number;
+  /** What the paint did on its way down the door. */
+  drip: DripStyle;
+  /** Every run or speck of it, placed against the door. */
+  marks: PaintMark[];
 }
 
 /** Everything about one door. */
@@ -274,6 +302,17 @@ const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
 ];
 
 /**
+ * How the paint ran. Most tags have the one run; the rest are rarer so
+ * that coming across a splash or a curtain of runs still registers.
+ */
+const DRIP_STYLES: ReadonlyArray<[DripStyle, number]> = [
+  ['single', 44],
+  ['curtain', 22],
+  ['splash', 20],
+  ['soft', 14],
+];
+
+/**
  * Which stretches of the door already have something screwed to them.
  *
  * Each entry is [top, bottom] as a percentage of the door's height, and
@@ -359,6 +398,9 @@ function graffitiFor(
   // far apart and uses every hue on the wheel before any repeats.
   const hue = (ordinal * 47) % 360;
 
+  const drip = pickWeighted(DRIP_STYLES, `${id}:dripstyle`);
+  const placement = placeTag(id, furniture);
+
   return {
     kind,
     text: kind === 'signature' ? 'Linda' : 'web of doors',
@@ -371,8 +413,89 @@ function graffitiFor(
     // letter off the side, which looks worse than a tag that fits.
     shiftX: spread('tagx', -6, 6),
     rotate: spread('tagrot', -14, 14),
-    ...placeTag(id, furniture),
+    ...placement,
+    drip,
+    marks: paintMarks(id, drip, placement),
   };
+}
+
+/**
+ * Where the paint ran, and how far.
+ *
+ * Marks are placed against the door rather than against the lettering, so
+ * that a run starts under the words and carries on down the timber. They
+ * are clipped at the foot of the door like everything else, which is what
+ * a run that reached the bottom would do anyway.
+ */
+function paintMarks(
+  id: string,
+  drip: DripStyle,
+  placement: { shiftY: number; scale: number }
+): PaintMark[] {
+  const tagBottom = 50 + placement.shiftY + (TAG_HEIGHT * placement.scale) / 2;
+
+  // Each mark gets its own seeds, so changing how many there are does not
+  // move the ones that were already there.
+  const of = (index: number, part: string) =>
+    hashToFraction(`${id}:mark${index}:${part}`);
+
+  const tagMiddle = 50 + placement.shiftY;
+
+  if (drip === 'splash') {
+    // Paint thrown at the door rather than sprayed on it, so the specks
+    // scatter round the lettering instead of hanging below it. They are
+    // placed by angle and distance rather than in a box, which is what
+    // makes it read as one splash rather than as scattered dirt.
+    const count = 11 + Math.floor(hashToFraction(`${id}:splash`) * 6);
+
+    return Array.from({ length: count }, (_unused, i) => {
+      const angle = of(i, 'angle') * Math.PI * 2;
+      // Not square-rooted on purpose: that would spread them evenly over
+      // the circle, and a splash is thickest where it hit.
+      const distance = of(i, 'dist');
+
+      // Most specks are small and a few are big, rather than all middling.
+      const size = of(i, 'size') ** 2;
+
+      return {
+        x: Math.round(50 + Math.cos(angle) * distance * 34),
+        y: Math.round(tagMiddle + Math.sin(angle) * distance * 15),
+        thickness: Math.round(2 + size * 10),
+        // The heaviest few ran a little before they dried.
+        length: size > 0.55 ? Math.round(3 + of(i, 'tail') * 7) : 0,
+        round: size <= 0.55,
+      };
+    });
+  }
+
+  if (drip === 'curtain') {
+    // The can held still too long: a row of runs, each a different length,
+    // which is what stops it reading as a comb.
+    const count = 5 + Math.floor(hashToFraction(`${id}:curtain`) * 4);
+
+    return Array.from({ length: count }, (_unused, i) => ({
+      // Spread across the lettering rather than placed at random, or they
+      // bunch up and leave half the tag dry.
+      x: Math.round(24 + (i / Math.max(1, count - 1)) * 52 + of(i, 'x') * 5),
+      // Started off whichever letter they came from, so the tops of the
+      // runs are not all on one line.
+      y: Math.round(tagBottom - 5 + of(i, 'y') * 4),
+      thickness: Math.round(2 + of(i, 'thick') * 2),
+      length: Math.round(7 + of(i, 'len') * 26),
+      round: false,
+    }));
+  }
+
+  // One run, from somewhere under the middle of the lettering.
+  return [
+    {
+      x: Math.round(38 + hashToFraction(`${id}:dripx`) * 26),
+      y: Math.round(tagBottom - 4),
+      thickness: 3,
+      length: Math.round(14 + hashToFraction(`${id}:driplen`) * 20),
+      round: false,
+    },
+  ];
 }
 
 /**

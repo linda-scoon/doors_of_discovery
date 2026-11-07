@@ -96,6 +96,7 @@
       class="door__graffiti"
       aria-hidden="true"
       [class.door__graffiti--signature]="tag.kind === 'signature'"
+      [class.door__graffiti--soft]="tag.drip === 'soft'"
       [style.--tag-ink]="'hsl(' + tag.hue + ' 92% 58%)'"
       [style.--tag-accent]="'hsl(' + tag.hueAccent + ' 92% 62%)'"
       [style.--tag-x]="tag.shiftX + '%'"
@@ -135,9 +136,28 @@
         </svg>
       } @else {
         <span class="door__tag-text">{{ tag.text }}</span>
-        <span class="door__drip"></span>
       }
+
       </span>
+
+      <!--
+        What the paint did after it left the can: one run, a whole curtain
+        of them, or a splash flung at the door. These sit outside the span
+        that turns and shifts the tag, because paint runs straight down
+        whatever angle the lettering was sprayed at -- and because being
+        moved by the tag's offset as well as their own put them above the
+        words instead of below them.
+      -->
+      @for (mark of tag.marks; track $index) {
+        <span
+          class="door__drip"
+          [class.door__drip--speck]="mark.round"
+          [style.--mark-x]="mark.x + '%'"
+          [style.--mark-y]="mark.y + '%'"
+          [style.--mark-thickness]="mark.thickness + 'px'"
+          [style.--mark-length]="mark.length + '%'"
+        ></span>
+      }
     </span>
   }
 

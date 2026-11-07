@@ -686,21 +686,57 @@
     0 0 16px color-mix(in srgb, var(--tag-accent) 70%, transparent);
 }
 
-/* Paint ran before it dried. */
+/*
+ * Paint that ran before it dried.
+ *
+ * Each mark is placed against the door, not against the lettering, so a
+ * run starts under the words and carries on down the timber. How many
+ * there are and where they fall is decided per door; this only draws them.
+ */
 .door__drip {
   position: absolute;
-  top: 62%;
-  left: 62%;
-  width: 3px;
-  height: 26%;
-  border-radius: 0 0 3px 3px;
+  left: var(--mark-x);
+  top: var(--mark-y);
+  width: var(--mark-thickness);
+  height: var(--mark-length);
+  /* Heaviest where it left the letter, thinning as it runs out of paint. */
   background: linear-gradient(var(--tag-ink), transparent);
+  /*
+   * Rounded at the head, which only shows on the thick ones. A heavy blob
+   * of a splash is drawn as a short run, and with square corners it came
+   * out as a rectangle sitting on the door rather than a drop of paint.
+   */
+  border-radius: calc(var(--mark-thickness) / 2)
+    calc(var(--mark-thickness) / 2) 3px 3px;
   opacity: 0.8;
 }
 
+/* A speck of a splash: thrown at the door rather than run down it, so it
+   is round and at full strength, never having travelled far enough to
+   thin out. The heavier specks of a splash are drawn as runs instead,
+   because a big enough blob does run. */
+.door__drip--speck {
+  height: var(--mark-thickness);
+  border-radius: 50%;
+  background: var(--tag-ink);
+  opacity: 0.75;
+}
+
 .door__graffiti--signature .door__drip {
-  left: 30%;
   background: linear-gradient(var(--tag-accent), transparent);
+}
+
+.door__graffiti--signature .door__drip--speck {
+  background: var(--tag-accent);
+}
+
+/*
+ * Sprayed from too far back, so the paint arrived half dry and nothing has
+ * a hard edge. Blurred in container units rather than pixels, or the same
+ * blur would wipe a phone-sized tag out while barely softening a wide one.
+ */
+.door__graffiti--soft {
+  filter: blur(0.5cqw);
 }
 
 /* --- the cat ------------------------------------------------------------- */

@@ -93,6 +93,67 @@ describe('graffiti placement', () => {
     expect(places.size).toBeGreaterThan(8);
   });
 
+  it('uses every kind of drip, and uses the plain one most', () => {
+    const counts = new Map<string, number>();
+    doors.forEach((door) =>
+      counts.set(door.graffiti!.drip, (counts.get(door.graffiti!.drip) ?? 0) + 1)
+    );
+
+    ['single', 'curtain', 'splash', 'soft'].forEach((style) =>
+      expect(counts.get(style))
+        .withContext(`no door got the ${style} drip`)
+        .toBeGreaterThan(0)
+    );
+
+    // A splash is only a surprise while most doors are not splashed.
+    const single = counts.get('single')!;
+    ['curtain', 'splash', 'soft'].forEach((style) =>
+      expect(single).toBeGreaterThan(counts.get(style)!)
+    );
+  });
+
+  it('gives each kind of drip the right number of marks', () => {
+    doors.forEach((door) => {
+      const { drip, marks } = door.graffiti!;
+
+      if (drip === 'single' || drip === 'soft') {
+        expect(marks.length).toBe(1);
+      } else {
+        // A curtain of runs or a splash needs enough marks to read as one.
+        expect(marks.length).toBeGreaterThanOrEqual(5);
+      }
+    });
+  });
+
+  it('keeps a splash round apart from the heavy specks that ran', () => {
+    const splashed = doors.filter((door) => door.graffiti!.drip === 'splash');
+    expect(splashed.length).toBeGreaterThan(0);
+
+    splashed.forEach((door) => {
+      const marks = door.graffiti!.marks;
+      // Round specks have no run; the ones drawn as runs are the heavy
+      // ones, and those are the only marks in a splash with a length.
+      marks.forEach((mark) => {
+        if (mark.round) expect(mark.length).toBe(0);
+        else expect(mark.length).toBeGreaterThan(0);
+      });
+      expect(marks.some((mark) => mark.round)).toBeTrue();
+    });
+  });
+
+  it('never flings paint off the side of the door', () => {
+    doors.forEach((door) => {
+      door.graffiti!.marks.forEach((mark) => {
+        expect(mark.x).toBeGreaterThanOrEqual(0);
+        expect(mark.x).toBeLessThanOrEqual(100);
+        // Paint runs off the bottom and is clipped there, which is what it
+        // would really do, but it never starts below the door.
+        expect(mark.y).toBeGreaterThanOrEqual(0);
+        expect(mark.y).toBeLessThanOrEqual(100);
+      });
+    });
+  });
+
   it('gives the same door the same tag every time', () => {
     const once = characterForDoor('door-42', 42).graffiti;
     const again = characterForDoor('door-42', 42).graffiti;
