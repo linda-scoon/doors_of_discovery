@@ -1,5 +1,5 @@
-import { ROOMS } from './rooms';
-import { Deck, shuffle } from './wall';
+import { ROOM_KINDS, RoomKind } from './rooms';
+import { Deck, kindForDoor, shuffle } from './wall';
 
 /** A random number generator that can be replayed, so a failure can be too. */
 function seeded(seed: number): () => number {
@@ -23,34 +23,63 @@ describe('shuffle', () => {
   });
 });
 
+describe('kindForDoor', () => {
+  it('gives a door the same kind of room every time', () => {
+    expect(kindForDoor('door-7', ROOM_KINDS)).toBe(kindForDoor('door-7', ROOM_KINDS));
+  });
+
+  it('makes rare rooms rare and common rooms common', () => {
+    const counts = new Map<string, number>();
+    for (let i = 1; i <= 10_000; i += 1) {
+      const kind = kindForDoor(`door-${i}`, ROOM_KINDS).kind;
+      counts.set(kind, (counts.get(kind) ?? 0) + 1);
+    }
+
+    const rare = ROOM_KINDS.filter((k) => k.rarity === 'rare');
+    const common = ROOM_KINDS.filter((k) => k.rarity === 'common');
+    const fewestCommon = Math.min(...common.map((k) => counts.get(k.kind) ?? 0));
+    const mostRare = Math.max(...rare.map((k) => counts.get(k.kind) ?? 0));
+
+    expect(mostRare * 4).toBeLessThan(fewestCommon);
+  });
+});
+
 describe('Deck', () => {
   it('deals the doors in a different order on different visits', () => {
     const order = (seed: number) =>
-      new Deck(ROOMS, seeded(seed)).take(30).map((door) => door.room.id);
+      new Deck(ROOM_KINDS, seeded(seed)).take(30).map((door) => door.room.id);
 
     expect(order(1)).not.toEqual(order(2));
   });
 
   it('keeps each door the same wherever it is dealt', () => {
-    const ordinals = (seed: number) =>
+    const doors = (seed: number) =>
       new Map(
-        new Deck(ROOMS, seeded(seed)).take(ROOMS.length + 24).map((door) => [door.room.id, door.ordinal])
+        new Deck(ROOM_KINDS, seeded(seed))
+          .take(30)
+          .map((door) => [door.room.id, `${door.kind}#${door.ordinal}`])
       );
 
-    // The first deck is the same doors every visit, so they can be compared
-    // one for one.
-    expect(ordinals(2)).toEqual(ordinals(1));
-  });
-
-  it('shuffles every room in with the first doors, so none is far down', () => {
-    for (let seed = 1; seed <= 25; seed += 1) {
-      const ids = new Deck(ROOMS, seeded(seed)).take(ROOMS.length + 24).map((door) => door.room.id);
-      ROOMS.forEach((room) => expect(ids).toContain(room.id));
-    }
+    const second = doors(2);
+    doors(1).forEach((door, id) => {
+      if (second.has(id)) expect(second.get(id)).toBe(door);
+    });
   });
 
   it('never deals the same door twice', () => {
-    const ids = new Deck(ROOMS, seeded(4)).take(300).map((door) => door.room.id);
+    const ids = new Deck(ROOM_KINDS, seeded(4)).take(300).map((door) => door.room.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('keeps the same kind of room from turning up in a clump', () => {
+    // Enough kinds that it is always possible.
+    const kinds: RoomKind[] = ROOM_KINDS.filter((k) => k.rarity === 'common');
+    const dealt = new Deck(kinds, seeded(9)).take(200).map((door) => door.kind);
+
+    let repeats = 0;
+    for (let i = 1; i < dealt.length; i += 1) {
+      if (dealt[i] === dealt[i - 1]) repeats += 1;
+    }
+    expect(repeats).toBe(0);
   });
 });

@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 
-import { ROOMS } from './rooms';
+import { ROOM_KINDS } from './rooms';
 import { Deck, WallDoor } from './wall';
 
 /** How many doors to add each time the visitor reaches the bottom. */
@@ -28,12 +28,9 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   title: string = 'web_of_doors';
 
   /** Every door, in this visit's order. */
-  private readonly deck = new Deck(ROOMS);
+  private readonly deck = new Deck(ROOM_KINDS);
 
-  /**
-   * The doors on the wall. The rooms with an API behind them are shuffled
-   * in among the first of them, and the wall grows as the visitor scrolls.
-   */
+  /** The doors on the wall. It grows as the visitor scrolls. */
   doors: WallDoor[] = [];
 
   constructor() {
@@ -41,7 +38,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     // lifecycle hook that runs after the view is rendered changes state the
     // template has already been checked against, which Angular rightly
     // complains about.
-    this.addDoors(ROOMS.length + DOORS_PER_PAGE * 2);
+    this.addDoors(DOORS_PER_PAGE * 3);
   }
 
   /** Watched by the observer; reaching it means asking for more doors. */

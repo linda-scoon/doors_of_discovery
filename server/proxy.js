@@ -8,12 +8,15 @@
  */
 const { AuthStyle } = require('./apis');
 
-/**
- * How long an upstream response is reused for. These APIs are rate-limited
- * and several rooms refetch on every page load, so a short cache keeps us
- * well inside the free quotas without making the content feel stale.
+/*
+ * Responses are not reused unless an api asks for it with cacheSeconds.
+ *
+ * Any number of doors open onto the same kind of room now, and each should
+ * find something different: a cached random fact is the same fact behind
+ * every fact door for as long as it is kept. Caching is for the APIs that
+ * return a list for the room to pick from -- the list can be kept, and the
+ * pick still differs -- or that would otherwise run out of quota.
  */
-const CACHE_TTL_MS = 60_000;
 
 /** How long to wait for an upstream before giving up. */
 const UPSTREAM_TIMEOUT_MS = 8_000;
@@ -67,8 +70,12 @@ function createHandler(api) {
       });
     }
 
+    // Nor should the browser keep it, or reopening a door shows what it
+    // showed last time.
+    if (!api.cacheSeconds) res.set('Cache-Control', 'no-store');
+
     const cacheKey = req.originalUrl;
-    const cached = cache.get(cacheKey);
+    const cached = api.cacheSeconds ? cache.get(cacheKey) : undefined;
     if (cached && cached.expiresAt > Date.now()) {
       res.set('X-Cache', 'hit');
       return res.status(cached.status).json(cached.body);
@@ -89,9 +96,9 @@ function createHandler(api) {
 
       const body = await upstream.json();
 
-      if (upstream.ok) {
+      if (upstream.ok && api.cacheSeconds) {
         cache.set(cacheKey, {
-          expiresAt: Date.now() + CACHE_TTL_MS,
+          expiresAt: Date.now() + api.cacheSeconds * 1000,
           status: upstream.status,
           body,
         });
@@ -108,4 +115,4 @@ function createHandler(api) {
   };
 }
 
-module.exports = { createHandler, CACHE_TTL_MS };
+module.exports = { createHandler };

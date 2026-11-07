@@ -1,5 +1,5 @@
-import { RoomDefinition } from './rooms';
-import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
+import { RARITY_WEIGHTS, RoomDefinition, RoomKind } from './rooms';
+import { pickWeighted } from './components/doors/door/door-material';
 
 /** One door on the wall. */
 export interface WallDoor {
@@ -12,13 +12,24 @@ export interface WallDoor {
    * its number, and a 13 would give a door a different face.
    */
   ordinal: number;
+
+  /** Which kind of room it opens onto. */
+  kind: string;
 }
 
-/** How many empty doors are shuffled in with the rooms on the first deck. */
-const FIRST_DECK_EMPTY_DOORS = 24;
-
 /** How many doors are shuffled together each time the deck runs out. */
-const LATER_DECK_SIZE = 36;
+const DECK_SIZE = 36;
+
+/**
+ * How many of the doors just hung a new one should differ from, so the same
+ * kind of room does not turn up in a clump. Kept small: with only a handful
+ * of kinds, a longer memory leaves so few to choose from that the wall falls
+ * into a visible rota -- the jokes room every sixth door.
+ */
+const NO_REPEAT_WITHIN = 2;
+
+/** How far ahead to look for a door that breaks up a clump. */
+const LOOK_AHEAD = 12;
 
 /**
  * Shuffles in place and returns the same array. Fisher-Yates: every order
@@ -33,58 +44,93 @@ export function shuffle<T>(items: T[], random: () => number): T[] {
 }
 
 /**
+ * The kind of room behind a door. Picked by rarity, and the same for a
+ * given door every time, so a door always opens onto the same kind of
+ * room -- though what is in it is fetched fresh each time it is opened.
+ */
+export function kindForDoor(id: string, kinds: readonly RoomKind[]): RoomKind {
+  return pickWeighted(
+    kinds.map((kind): [RoomKind, number] => [kind, RARITY_WEIGHTS[kind.rarity]]),
+    `${id}:room`
+  );
+}
+
+/**
  * Every door there is, in a different order on every visit.
  *
- * A door looks the same each time -- that comes from its id -- but where it
- * hangs does not. The rooms with something behind them are shuffled in with
- * the first doors, so they move about but are never far down. After that the
+ * A door looks the same each time -- that comes from its id -- and opens
+ * onto the same kind of room, but where it hangs does not stay put. The
  * deck is dealt a batch at a time, each shuffled, for as long as anyone
- * keeps scrolling.
+ * keeps scrolling, and kept from putting the same kind of room in a clump.
  */
 export class Deck {
-  private readonly waiting: WallDoor[];
+  private readonly waiting: WallDoor[] = [];
+  private readonly recent: string[] = [];
   private nextDoorNumber = 1;
 
   constructor(
-    private readonly rooms: readonly RoomDefinition[],
+    private readonly kinds: readonly RoomKind[],
     private readonly random: () => number = Math.random
-  ) {
-    const registry = rooms.map((room, index) => ({ room, ordinal: index }));
-
-    this.waiting = shuffle(
-      [...registry, ...this.emptyDoors(FIRST_DECK_EMPTY_DOORS)],
-      random
-    );
-  }
+  ) {}
 
   /** The next doors to hang. */
   take(count: number): WallDoor[] {
-    while (this.waiting.length < count) {
-      this.waiting.push(...shuffle(this.emptyDoors(LATER_DECK_SIZE), this.random));
+    const dealt: WallDoor[] = [];
+    while (dealt.length < count) dealt.push(this.next());
+    return dealt;
+  }
+
+  private next(): WallDoor {
+    while (this.waiting.length < LOOK_AHEAD) {
+      this.waiting.push(...shuffle(this.doors(DECK_SIZE), this.random));
     }
-    return this.waiting.splice(0, count);
+
+    // The first door whose kind of room has not been seen lately -- or, if
+    // every door in sight repeats one, the one whose kind was seen longest
+    // ago, so at least it is not the same as the door just hung.
+    let index = 0;
+    let longestAgo = -1;
+    this.waiting.slice(0, LOOK_AHEAD).forEach((door, i) => {
+      const seen = this.recent.lastIndexOf(door.kind);
+      const ago = seen === -1 ? Infinity : this.recent.length - seen;
+      if (ago > longestAgo) {
+        index = i;
+        longestAgo = ago;
+      }
+    });
+    const [door] = this.waiting.splice(index, 1);
+
+    this.recent.push(door.kind);
+    if (this.recent.length > NO_REPEAT_WITHIN) this.recent.shift();
+
+    return door;
   }
 
   /**
-   * Doors with no API behind them yet, which open onto an empty room. Their
-   * ids are stable, which is what lets each one keep the same colour,
-   * material and face every time the page is loaded.
+   * The next run of doors, numbered in order. Their ids are stable, which is
+   * what lets each one keep the same colour, material, face and room every
+   * time the page is loaded.
    */
-  private emptyDoors(count: number): WallDoor[] {
+  private doors(count: number): WallDoor[] {
     const doors: WallDoor[] = [];
 
     for (let i = 0; i < count; i += 1) {
       const number = this.nextDoorNumber++;
+      const id = `door-${number}`;
+      const kind = kindForDoor(id, this.kinds);
+
       doors.push({
         room: {
-          id: `door-${number}`,
-          name: `Door ${number}`,
-          component: EmptyRoomComponent,
-          isEmpty: true,
+          id,
+          name: kind.name,
+          component: kind.component,
+          isEmpty: kind.isEmpty,
+          needsDoorState: kind.needsDoorState,
         },
-        // Where it would have hung before the wall was shuffled, so every
-        // door kept the number it had then.
-        ordinal: this.rooms.length + number - 1,
+        // Where it would have hung before the wall was shuffled, so a door
+        // keeps its number wherever it ends up.
+        ordinal: number - 1,
+        kind: kind.kind,
       });
     }
     return doors;

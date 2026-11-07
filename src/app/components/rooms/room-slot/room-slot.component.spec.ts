@@ -61,11 +61,46 @@ describe('RoomSlotComponent', () => {
 
   const door = () => fixture.nativeElement.querySelector('.door');
   const handle = () => fixture.nativeElement.querySelector('button.handle');
+  const leave = () =>
+    fixture.nativeElement.querySelector('app-room').dispatchEvent(new MouseEvent('mouseleave'));
 
-  it('renders the room component behind the door', async () => {
+  it('builds the room behind the door only once it is opened', async () => {
     await createWith(plainRoom);
+    // Nothing is fetched for a door nobody opens.
+    expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+
+    handle().click();
+    fixture.detectChanges();
+
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
   });
+
+  it('takes the room down once the door has swung shut', fakeAsync(async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    leave();
+    fixture.detectChanges();
+    // Still there while the door swings closed over it.
+    expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+
+    tick(2000);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+  }));
+
+  it('keeps the room if the door is opened again before it is taken down', fakeAsync(async () => {
+    await createWith(plainRoom);
+    handle().click();
+    leave();
+    tick(500);
+    handle().click();
+    tick(2000);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+  }));
 
   it('renders exactly one door', async () => {
     await createWith(plainRoom);

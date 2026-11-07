@@ -1,21 +1,20 @@
 import { Type } from '@angular/core';
 
 import { FactRoomComponent } from './components/rooms/fact-room/fact-room.component';
-import { GameRoomComponent } from './components/rooms/game-room/game-room.component';
 import { GifRoomComponent } from './components/rooms/gif-room/gif-room.component';
 import { ImageRoomComponent } from './components/rooms/image-room/image-room.component';
 import { JokesRoomComponent } from './components/rooms/jokes-room/jokes-room.component';
 import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
 import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.component';
-import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
 import { VideoRoomComponent } from './components/rooms/video-room/video-room.component';
+import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
 
 import { HandleSide, OpenStyle } from './components/doors/door/door.component';
 import { DoorMaterial } from './components/doors/door/door-material';
 
 /** One door, and what is behind it. */
 export interface RoomDefinition {
-  /** Matches the room's route in server/apis.js, where its API key lives. */
+  /** The door's identity. Everything about how it looks comes from this. */
   id: string;
 
   /** Shown to people, and used to build the door's accessible name. */
@@ -46,7 +45,6 @@ export interface RoomDefinition {
    */
   isEmpty?: boolean;
 
-
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;
 
@@ -63,29 +61,71 @@ export interface RoomDefinition {
 }
 
 /**
- * Every door on the site, in the order they appear.
+ * How often a kind of room turns up.
  *
- * This is the list the home page is built from — add an entry and a door
- * appears, complete with its own open/close behaviour, with no changes to
- * the page itself. Removing an entry removes the door.
- *
- * A new room needs three things: an entry in server/apis.js so the server
- * can reach its API with a key, a component to present the result, and a
- * line here.
+ * By how different it is each time. A room that fetches something new on
+ * every visit -- a fact, a painting, a joke -- can be behind any number of
+ * doors. One that is much the same every time is only worth meeting now and
+ * then, or the wall starts to repeat itself.
  */
-export const ROOMS: RoomDefinition[] = [
-  { id: 'gifs', name: 'Gif Room', component: GifRoomComponent },
-  { id: 'game', name: 'Game Room', component: GameRoomComponent, isEmpty: true },
-  { id: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent },
-  { id: 'images', name: 'Image Room', component: ImageRoomComponent },
-  { id: 'story', name: 'Story Room', component: StoryRoomComponent, openStyle: 'creak' },
-  { id: 'jokes', name: 'Jokes Room', component: JokesRoomComponent },
-  { id: 'videos', name: 'Video Room', component: VideoRoomComponent },
+export type Rarity = 'common' | 'uncommon' | 'rare';
+
+export const RARITY_WEIGHTS: Readonly<Record<Rarity, number>> = {
+  common: 10,
+  uncommon: 4,
+  rare: 1,
+};
+
+/** A kind of room. Any number of doors can open onto the same kind. */
+export interface RoomKind {
+  /** Names the kind. Where it has an API, matches its route in server/apis.js. */
+  kind: string;
+
+  /** Shown to people, and used to build the door's accessible name. */
+  name: string;
+
+  component: Type<unknown>;
+
+  rarity: Rarity;
+
+  /** See RoomDefinition. */
+  isEmpty?: boolean;
+
+  /** See RoomDefinition. */
+  needsDoorState?: boolean;
+}
+
+/**
+ * Every kind of room there is.
+ *
+ * The wall is built from this: each door is given one of these, picked by
+ * rarity and the same for that door on every visit. Add an entry and doors
+ * start opening onto it; remove one and they stop.
+ *
+ * A new room needs a component to present what it shows, a line here, and,
+ * if it calls an API, an entry in server/apis.js.
+ */
+export const ROOM_KINDS: readonly RoomKind[] = [
+  { kind: 'jokes', name: 'Jokes Room', component: JokesRoomComponent, rarity: 'common' },
+  { kind: 'facts', name: 'Fact Room', component: FactRoomComponent, rarity: 'common' },
+  { kind: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent, rarity: 'common' },
+  { kind: 'images', name: 'Image Room', component: ImageRoomComponent, rarity: 'common' },
+  { kind: 'gifs', name: 'Gif Room', component: GifRoomComponent, rarity: 'common' },
+  { kind: 'videos', name: 'Video Room', component: VideoRoomComponent, rarity: 'common' },
   {
-    id: 'music',
+    kind: 'music',
     name: 'Music Room',
     component: MusicRoomComponent,
+    rarity: 'common',
     needsDoorState: true,
   },
-  { id: 'facts', name: 'Fact Room', component: FactRoomComponent },
+  // Kept, rarely: an empty room is a pause in the wall, and it is where the
+  // next room goes.
+  {
+    kind: 'empty',
+    name: 'Empty Room',
+    component: EmptyRoomComponent,
+    rarity: 'rare',
+    isEmpty: true,
+  },
 ];

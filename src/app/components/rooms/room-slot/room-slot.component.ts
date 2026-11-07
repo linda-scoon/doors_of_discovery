@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
@@ -33,6 +34,13 @@ import { DoorSoundService } from '../../../services/door-sound.service';
  */
 const MONSTER_DELAY = 150;
 
+/**
+ * How long after a door is shut its room is taken down. Long enough for the
+ * door to swing closed over it, so the room does not vanish while it can
+ * still be seen through the gap.
+ */
+const CLEAR_ROOM_DELAY = 1800;
+
 @Component({
   selector: 'app-room-slot',
   templateUrl: './room-slot.component.html',
@@ -42,6 +50,7 @@ const MONSTER_DELAY = 150;
 })
 export class RoomSlotComponent implements OnInit, OnDestroy {
   private readonly sound = inject(DoorSoundService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
   /**
    * Everything waiting to happen on this door.
@@ -59,6 +68,14 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
 
   /** Whether the door stands open. */
   open = false;
+
+  /**
+   * Whether the room behind the door has been built. It is built when the
+   * door opens and taken down a little after it shuts.
+   */
+  furnished = false;
+
+  private clearRoomTimer?: ReturnType<typeof setTimeout>;
 
   /** Set while the doorway is alight, for a door that hides fire. */
   burning = false;
@@ -141,6 +158,8 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
 
   openDoor(): void {
     this.open = true;
+    clearTimeout(this.clearRoomTimer);
+    this.furnished = true;
     this.refreshContentInputs();
 
     if (this.character.openStyle === 'creak') {
@@ -157,10 +176,20 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
     this.lunging = false;
     this.answering = false;
     this.refreshContentInputs();
+
+    clearTimeout(this.clearRoomTimer);
+    this.clearRoomTimer = setTimeout(() => {
+      if (this.open) return;
+      this.furnished = false;
+      // Said out loud rather than left for zone.js to notice, so it also
+      // holds wherever change detection is not driven by timers.
+      this.changeDetector.markForCheck();
+    }, CLEAR_ROOM_DELAY);
   }
 
   ngOnDestroy(): void {
     this.cancelPending();
+    clearTimeout(this.clearRoomTimer);
   }
 
   /**

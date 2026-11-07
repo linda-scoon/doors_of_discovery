@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
-import { ROOMS } from './rooms';
+import { ROOM_KINDS } from './rooms';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -27,16 +27,13 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.title).toEqual('web_of_doors');
   });
 
-  it('hangs every room on the first screens', () => {
+  it('fills the wall with doors, each opening onto some kind of room', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const ids = fixture.componentInstance.doors.map((door) => door.room.id);
+    const kinds = ROOM_KINDS.map((kind) => kind.kind);
+    const doors = fixture.componentInstance.doors;
 
-    ROOMS.forEach((room) => expect(ids).toContain(room.id));
-  });
-
-  it('fills the rest of the wall with generated doors', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance.doors.length).toBeGreaterThan(ROOMS.length);
+    expect(doors.length).toBeGreaterThan(20);
+    doors.forEach((door) => expect(kinds).toContain(door.kind));
   });
 
   it('renders one slot per door, each laid out by the grid', () => {
