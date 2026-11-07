@@ -8,14 +8,11 @@ import {
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RoomComponent } from './components/rooms/room/room.component';
-import { GameRoomComponent } from './components/rooms/game-room/game-room.component';
-import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
 import { DoorComponent } from './components/doors/door/door.component';
 import { RoomSlotComponent } from './components/rooms/room-slot/room-slot.component';
 import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
 import { HandleComponent } from './components/handles/handle/handle.component';
 import { AppComponent } from './app.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { BricksComponent } from './components/bricks/bricks.component';
 
@@ -25,8 +22,6 @@ import { BricksComponent } from './components/bricks/bricks.component';
   declarations: [
     AppComponent,
     RoomComponent,
-    GameRoomComponent,
-    StoryRoomComponent,
     DoorComponent,
     RoomSlotComponent,
     EmptyRoomComponent,
@@ -37,7 +32,6 @@ import { BricksComponent } from './components/bricks/bricks.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule,
     BricksComponent,
 
     ServiceWorkerModule.register('ngsw-worker.js', {

@@ -1,165 +1,28 @@
-<ng-container >
-  <div *ngIf="!showStory"class="room-container">
-    <h1>Generate a Random Story</h1>
-    <div class="wrap">
-      <form [formGroup]="storyFillers" class="form">
-        <p id="errorMsg" *ngIf="!storyFillers.valid && storyFillers.touched">
-          All fields are required
-        </p>
-
-        <label>Favourite dessert</label>
-        <input type="text" formControlName="dessert" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('dessert')">
-          Random
-        </button>
-        <br />
-
-        <label>Cutest animal</label>
-        <input type="text" formControlName="animal" id="animal" />
-        <small>(noun)</small>
-        <button
-          class="btnstyle2"
-          id="animalBtn"
-          (click)="getRandom('animal')"
-        >
-          Random
-        </button>
-        <br />
-
-        <label>Silly Word</label>
-        <input type="text" formControlName="sillyword" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('sillyword')">
-          Random
-        </button>
-        <br />
-
-        <label>Favourite season</label>
-        <input type="text" formControlName="season" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('season')">
-          Random
-        </button>
-        <br />
-
-        <label>Number of siblings</label>
-        <input type="number" formControlName="siblings" min="0" />
-        <small>(number)</small>
-        <button class="btnstyle2" (click)="getRandom('siblings')">
-          Random
-        </button>
-        <br />
-
-        <label>Favourite colour</label>
-        <input type="text" formControlName="colour" />
-        <small>(adjective)</small>
-        <button class="btnstyle2" (click)="getRandom('colour')">
-          Random
-        </button>
-        <br />
-
-        <label>Creepiest insects (plural)</label>
-        <input type="text" formControlName="insects" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('insects')">
-          Random
-        </button>
-        <br />
-
-        <label>Prefered Exercise</label>
-        <select id="exercise" formControlName="exercise">
-          <option value="jogging" selected>Jogging</option>
-          <option value="swimming">Swimming</option>
-          <option value="cycling">Cycling</option>
-          <option value="skipping">Skipping</option>
-        </select>
-        <br />
-
-        <label>Last song you listened to</label>
-        <input type="text" formControlName="song" required />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('song')">Random</button>
-        <br />
-
-        <label>Last vehicle you were in</label>
-        <input type="text" formControlName="vehicle" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('vehicle')">
-          Random
-        </button>
-        <br />
-
-        <label>Most dagerous place you know of</label>
-        <input type="text" formControlName="place" />
-        <small>(noun)</small>
-        <button class="btnstyle2" (click)="getRandom('place')">Random</button>
-        <br />
-
-        <label>Customise text Colour</label>
-        <input type="color" formControlName="textColour" class="textColor" />
-        <br />
-
-        <div class="bottomrow">
-          <button class="btnstyle1" id="allRandom" (click)="getRandom('all')">
-            Totally Random
-          </button>
-          <button
-            class="btnstyle3"
-            id="submit"
-            [disabled]="!storyFillers.valid"
-            (click)="generateStory()"
-          >
-            Create Story
-          </button>
-        </div>
-      </form>
+<app-room-frame status="ready">
+  @if (told(); as story) {
+    <p class="room-words story-room__title">{{ story.title }}</p>
+    <p class="room-words room-words--small story-room__text">{{ story.text }}</p>
+    <div class="story-room__actions">
+      <button type="button" class="room-button" (click)="another()">Another story</button>
+      <button type="button" class="room-button story-room__quiet" (click)="someoneElse()">
+        Not {{ name() }}?
+      </button>
     </div>
-  </div>
-
-  <!-- The story -->
-  <div class="story" *ngIf="showStory">
-    <div
-      class="topBar"
-      [style.backgroundImage]="'url(assets/img/' + animalField + '.webp)'"
-    >
-      <h1 id="heading" [style.color]="textColourField">Read Your Story</h1>
-    </div>
-    <div class="page2wrap">
-      <p class="textArea">
-        Once upon a time in the land of
-        <span [style.color]="textColourField">{{ dessertField }}</span> ,
-        there was a young
-        <span [style.color]="textColourField">{{ animalField }}</span> by the
-        name of
-        <span [style.color]="textColourField">{{ sillywordField }}</span> that
-        lived happily with his family. Then one day
-        <span [style.color]="textColourField">{{ seasonField }}</span> fell
-        upon the land, after
-        <span [style.color]="textColourField">{{ years }}</span> years of
-        prosperity, the land was faced with great terrors. For this was the
-        season of the
-        <span [style.color]="textColourField">{{ colourField }}</span>
-        <span [style.color]="textColourField">{{ insectsField }}</span> , that
-        covered the land, bringing famine and disease to all that lived.
-        <span [style.color]="textColourField">{{ sillywordField }}</span> had
-        an idea, he began
-        <span [style.color]="textColourField">{{ exerciseField }}</span> up to
-        the tallest mountain and when he got there he sang
-        <span [style.color]="textColourField">{{ songField }}</span> at the
-        top of his voice. When the
-        <span [style.color]="textColourField">{{ insectsField }}</span> heard
-        the song they disliked it so much so that they got in a
-        <span [style.color]="textColourField">{{ vehicleField }}</span> and
-        ran away to
-        <span [style.color]="textColourField">{{ placeField }}</span> never to
-        return.
-      </p>
-      <div class="bottomrow">
-        <button class="btnstyle3" id="replay" (click)="reShowStory()">
-          Rewrite Story
-        </button>
-      </div>
-    </div>
-  </div>
-</ng-container>
+  } @else {
+    <p class="room-words story-room__title">Once upon a time&hellip;</p>
+    <form class="story-room__ask" (submit)="$event.preventDefault(); begin(nameInput.value)">
+      <label class="room-words room-words--small" for="story-hero">Who is the hero of this story?</label>
+      <input
+        #nameInput
+        id="story-hero"
+        class="story-room__name"
+        type="text"
+        autocomplete="given-name"
+        placeholder="Your name"
+        [maxLength]="longestName"
+        [value]="name()"
+      />
+      <button type="submit" class="room-button">Tell me a story</button>
+    </form>
+  }
+</app-room-frame>

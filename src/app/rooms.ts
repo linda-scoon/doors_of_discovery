@@ -18,6 +18,7 @@ import { RadioRoomComponent } from './components/rooms/radio-room/radio-room.com
 import { RecipeRoomComponent } from './components/rooms/recipe-room/recipe-room.component';
 import { FilmRoomComponent } from './components/rooms/film-room/film-room.component';
 import { TarotRoomComponent } from './components/rooms/tarot-room/tarot-room.component';
+import { StoryRoomComponent } from './components/rooms/story-room/story-room.component';
 import { WheelRoomComponent } from './components/rooms/wheel-room/wheel-room.component';
 import { TicTacToeRoomComponent } from './components/rooms/tic-tac-toe-room/tic-tac-toe-room.component';
 
@@ -144,8 +145,10 @@ export const ROOM_KINDS: readonly RoomKind[] = [
   },
   { kind: 'recipe', name: 'Kitchen', component: RecipeRoomComponent, rarity: 'common' },
 
-  // A set that comes round again: 78 cards, fifty-odd cities, and films that
-  // are heavy enough to load that they should not be everywhere.
+  // A set that comes round again: 78 cards, fifty stories, fifty-odd cities,
+  // and films that are heavy enough to load that they should not be
+  // everywhere.
+  { kind: 'story', name: 'Story Room', component: StoryRoomComponent, rarity: 'uncommon' },
   { kind: 'tarot', name: 'Fortune Teller', component: TarotRoomComponent, rarity: 'uncommon' },
   { kind: 'weather', name: 'Window Room', component: WeatherRoomComponent, rarity: 'uncommon' },
   { kind: 'films', name: 'Cinema', component: FilmRoomComponent, rarity: 'uncommon' },
