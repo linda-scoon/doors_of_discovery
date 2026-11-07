@@ -9,6 +9,7 @@ export class JokesService {
   constructor(private http: HttpClient) {}
 
   loadData(): Observable<any> {
-    return this.http.get<any>('https://v2.jokeapi.dev/joke/Any?safe-mode');
+    // The key for this API lives on the server; see server/apis.js.
+    return this.http.get<any>('/api/jokes');
   }
 }

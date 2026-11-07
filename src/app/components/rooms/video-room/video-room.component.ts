@@ -9,29 +9,52 @@ import { VideosService } from './videos.service';
   standalone: false,
 })
 export class VideoRoomComponent implements OnInit {
-  // input from app component
   openedDoor: boolean = false;
   videoURL: string = '';
   videoTitle: string = '';
 
   constructor(private videoStream: VideosService) {}
+
   ngOnInit(): void {
-    let movieId: string = '';
+    this.showTrailerForARandomPopularMovie();
+  }
 
-    this.videoStream.getPopularMovies().subscribe((data) => {
-      // generating a random number out of all the items in the array of popular films
-      let movieIdx = Math.round(Math.random() * (data.items.length - 1));
+  /**
+   * Picks one of the current popular movies at random and shows its trailer,
+   * so the room has something different behind the door each visit.
+   */
+  private showTrailerForARandomPopularMovie(): void {
+    this.videoStream.getPopularMovies().subscribe((popular) => {
+      const movies = popular.results ?? [];
+      if (movies.length === 0) return;
 
-      // retriving random movie id from list
-      movieId = data.items[movieIdx].id;
+      const movie = movies[Math.floor(Math.random() * movies.length)];
 
-      // retrieving trailer of random movie id
-      this.videoStream.getTrailer(movieId).subscribe((data) => {
-        this.videoURL = data.linkEmbed + '?autoplay=true&width=480';
-        this.videoTitle = data.fullTitle;
+      this.videoStream.getTrailers(movie.id).subscribe((videos) => {
+        const trailerKey = this.findYouTubeTrailerKey(videos.results ?? []);
+        if (!trailerKey) return;
+
+        this.videoTitle = movie.title;
+        // SafePipe only trusts hosts it recognises, and youtube.com is one of
+        // them, so this URL is what makes the iframe render.
+        this.videoURL = `https://www.youtube.com/embed/${trailerKey}`;
       });
     });
   }
+
+  /**
+   * TMDB returns clips, featurettes and teasers alongside trailers, and not
+   * all of them are on YouTube. Prefer a real trailer, but fall back to any
+   * YouTube video rather than showing the room empty.
+   */
+  private findYouTubeTrailerKey(
+    videos: { key: string; site: string; type: string }[]
+  ): string | undefined {
+    const onYouTube = videos.filter((video) => video.site === 'YouTube');
+    const trailer = onYouTube.find((video) => video.type === 'Trailer');
+    return (trailer ?? onYouTube[0])?.key;
+  }
+
   enterRoom(): void {
     this.openedDoor = true;
   }
