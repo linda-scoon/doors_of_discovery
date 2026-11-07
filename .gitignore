@@ -41,7 +41,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Local API keys and the environment files generated from them
+# API keys, read by the server at runtime. Never commit this.
 .env
-/src/environments/environment.ts
-/src/environments/environment.prod.ts
