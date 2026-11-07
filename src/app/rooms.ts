@@ -224,6 +224,12 @@ export const ROOM_KINDS: readonly RoomKind[] = [
   },
 
   {
+    kind: 'pip',
+    name: 'Playroom',
+    load: () => import('./components/rooms/pet-room/pet-room.component').then((m) => m.PetRoomComponent),
+    rarity: 'uncommon',
+  },
+  {
     kind: 'moon',
     name: 'Moon Room',
     load: () => import('./components/rooms/moon-room/moon-room.component').then((m) => m.MoonRoomComponent),

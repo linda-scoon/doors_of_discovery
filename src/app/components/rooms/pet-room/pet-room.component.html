@@ -1,0 +1,111 @@
+<app-room-frame status="ready">
+  <p class="pet-room__says" aria-live="polite">{{ says() }}</p>
+
+  <div class="pet-room__scene">
+    <!-- Pip. Stroke, poke, or bring it something to eat. -->
+    <svg
+      #pet
+      class="pip"
+      [class]="'pip pip--' + mood()"
+      viewBox="0 0 200 190"
+      role="img"
+      aria-label="Pip, a small round fluffy creature. Stroke it, poke it, or drag food to it."
+      (pointerdown)="onPetDown($event)"
+      (pointermove)="onPetMove($event)"
+      (pointerup)="onPetUp()"
+      (pointercancel)="onPetUp()"
+    >
+      <ellipse class="pip__shadow" cx="100" cy="178" rx="62" ry="9" />
+      <path class="pip__tail" d="M160 140 C 196 136, 198 96, 176 86 C 168 82, 162 92, 172 96 C 184 102, 180 126, 156 128 Z" />
+      <g class="pip__body">
+        <path class="pip__ear" d="M48 74 L 40 18 Q 44 12, 52 18 L 86 52 Z" />
+        <path class="pip__ear" d="M152 74 L 160 18 Q 156 12, 148 18 L 114 52 Z" />
+        <path class="pip__ear-inner" d="M54 62 L 48 28 L 76 52 Z" />
+        <path class="pip__ear-inner" d="M146 62 L 152 28 L 124 52 Z" />
+        <ellipse class="pip__fur" cx="100" cy="112" rx="72" ry="64" />
+        <ellipse class="pip__belly" cx="100" cy="136" rx="44" ry="34" />
+        <ellipse class="pip__foot" cx="70" cy="172" rx="16" ry="9" />
+        <ellipse class="pip__foot" cx="130" cy="172" rx="16" ry="9" />
+
+        <g class="pip__face">
+          <!-- Eyes: open, shut happy, or wide with surprise. -->
+          @switch (mood()) {
+            @case ('purring') {
+              <path class="pip__eye-shut" d="M62 96 Q 72 86, 82 96" />
+              <path class="pip__eye-shut" d="M118 96 Q 128 86, 138 96" />
+            }
+            @case ('happy') {
+              <path class="pip__eye-shut" d="M62 96 Q 72 86, 82 96" />
+              <path class="pip__eye-shut" d="M118 96 Q 128 86, 138 96" />
+            }
+            @case ('grumpy') {
+              <path class="pip__brow" d="M60 82 L 84 90" />
+              <path class="pip__brow" d="M140 82 L 116 90" />
+              <ellipse class="pip__eye" cx="72" cy="98" rx="7" ry="6" />
+              <ellipse class="pip__eye" cx="128" cy="98" rx="7" ry="6" />
+            }
+            @case ('surprised') {
+              <circle class="pip__eye" cx="72" cy="96" r="12" />
+              <circle class="pip__eye" cx="128" cy="96" r="12" />
+              <circle class="pip__glint" cx="76" cy="91" r="4" />
+              <circle class="pip__glint" cx="132" cy="91" r="4" />
+            }
+            @default {
+              <g class="pip__eyes-open">
+                <ellipse class="pip__eye" cx="72" cy="96" rx="10" ry="12" />
+                <ellipse class="pip__eye" cx="128" cy="96" rx="10" ry="12" />
+                <circle class="pip__glint" cx="76" cy="91" r="3.5" />
+                <circle class="pip__glint" cx="132" cy="91" r="3.5" />
+              </g>
+            }
+          }
+          <ellipse class="pip__cheek" cx="54" cy="116" rx="11" ry="7" />
+          <ellipse class="pip__cheek" cx="146" cy="116" rx="11" ry="7" />
+          <path class="pip__nose" d="M95 108 L 105 108 L 100 114 Z" />
+          <!-- Mouth: a little w, open to eat or to squeak, turned down to sulk. -->
+          @switch (mood()) {
+            @case ('eating') {
+              <ellipse class="pip__mouth-open pip__mouth-chew" cx="100" cy="124" rx="9" ry="7" />
+            }
+            @case ('surprised') {
+              <ellipse class="pip__mouth-open" cx="100" cy="125" rx="5" ry="6" />
+            }
+            @case ('grumpy') {
+              <path class="pip__mouth" d="M88 128 Q 100 118, 112 128" />
+            }
+            @default {
+              <path class="pip__mouth" d="M88 118 Q 94 126, 100 118 Q 106 126, 112 118" />
+            }
+          }
+        </g>
+      </g>
+    </svg>
+
+    @for (heart of hearts(); track heart.id) {
+      <span class="pet-room__heart" [style.left.%]="heart.x" aria-hidden="true">♥</span>
+    }
+
+    <!-- Snacks on the rug. Drag one to Pip. -->
+    @for (food of foods(); track food.id) {
+      @if (!food.eaten) {
+        <span
+          class="pet-room__food"
+          [class.pet-room__food--dragging]="food.dragging"
+          [style.left.%]="food.home"
+          [style.transform]="'translate(calc(-50% + ' + food.dx + 'px), ' + food.dy + 'px)'"
+          role="button"
+          [attr.aria-label]="'Give Pip ' + food.name"
+          tabindex="0"
+          (keydown.enter)="feed(food)"
+          (keydown.space)="$event.preventDefault(); feed(food)"
+          (pointerdown)="onFoodDown($event, food)"
+          (pointermove)="onFoodMove($event, food)"
+          (pointerup)="onFoodUp($event, food)"
+          (pointercancel)="onFoodUp($event, food)"
+        >{{ food.emoji }}</span>
+      }
+    }
+  </div>
+
+  <p class="room-credit">Stroke Pip · poke Pip · drag a snack to Pip</p>
+</app-room-frame>
