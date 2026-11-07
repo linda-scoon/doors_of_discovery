@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { PlanetsRoomComponent } from './planets-room.component';
-import { PLANETS } from './planets';
+import { BODIES } from './planets';
 
 describe('PlanetsRoomComponent', () => {
   afterEach(() => vi.restoreAllMocks());
@@ -22,6 +22,7 @@ describe('PlanetsRoomComponent', () => {
 
     for (let i = 0; i < 20; i += 1) room.go(1);
     expect(room.planet().name).toBe('Pluto');
+    // Pluto is the end of the planets; the moons are a different part of the sky.
   });
 
   it('shows NASA photographs from Wikimedia Commons, and a plain globe if one will not load', () => {
@@ -37,9 +38,22 @@ describe('PlanetsRoomComponent', () => {
     expect(fixture.nativeElement.querySelector('.planet__stand-in')).not.toBeNull();
   });
 
-  it('knows every planet, in order', () => {
-    expect(PLANETS.map((p) => p.name)).toEqual([
+  it('knows every planet, in order, and keeps to one part of the sky', () => {
+    expect(BODIES.filter((b) => b.group === 'The Sun and planets').map((b) => b.name)).toEqual([
       'The Sun', 'Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto',
     ]);
+
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
+    const room = TestBed.createComponent(PlanetsRoomComponent).componentInstance;
+    const group = room.planet().group;
+    for (let i = 0; i < 60; i += 1) {
+      room.go(-1);
+      expect(room.planet().group).toBe(group);
+    }
+  });
+
+  it('credits every photograph, each its own', () => {
+    expect(BODIES.every((b) => b.credit && b.file && b.fact && b.facts.length)).toBe(true);
+    expect(new Set(BODIES.map((b) => b.file)).size).toBe(BODIES.length);
   });
 });

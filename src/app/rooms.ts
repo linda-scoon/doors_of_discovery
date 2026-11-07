@@ -207,6 +207,12 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'common',
   },
   {
+    kind: 'planets',
+    name: 'Planetarium',
+    load: () => import('./components/rooms/planets-room/planets-room.component').then((m) => m.PlanetsRoomComponent),
+    rarity: 'common',
+  },
+  {
     kind: 'chapter',
     name: 'Reading Nook',
     load: () => import('./components/rooms/chapter-room/chapter-room.component').then((m) => m.ChapterRoomComponent),
@@ -246,12 +252,6 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     kind: 'pip',
     name: 'Playroom',
     load: () => import('./components/rooms/pet-room/pet-room.component').then((m) => m.PetRoomComponent),
-    rarity: 'uncommon',
-  },
-  {
-    kind: 'planets',
-    name: 'Planetarium',
-    load: () => import('./components/rooms/planets-room/planets-room.component').then((m) => m.PlanetsRoomComponent),
     rarity: 'uncommon',
   },
   {
