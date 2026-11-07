@@ -1,3 +1,14 @@
-<div class="main-handle">
-  <ng-content></ng-content>
-</div>
+<button
+  type="button"
+  class="handle"
+  [class.handle--left]="side === 'left'"
+  [attr.aria-label]="'Open ' + label"
+  [attr.aria-expanded]="pressed"
+  (click)="onClick()"
+>
+  <span class="handle__knob">
+    <span class="handle__lever" [class.handle__lever--pressed]="pressed"></span>
+  </span>
+  <span class="handle__keyhole-top"></span>
+  <span class="handle__keyhole-bottom"></span>
+</button>

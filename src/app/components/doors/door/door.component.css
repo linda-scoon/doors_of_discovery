@@ -1,3 +1,80 @@
-.door{
+/*
+ * The door covers its room completely and swings aside when opened. The room
+ * component is position: relative, which is what these offsets resolve
+ * against.
+ */
+.door {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  border-left: 1px solid rgb(0, 0, 0);
+  border-right: 3px ridge rgb(0, 0, 0);
+  border-top: 4px double black;
+  border-bottom: 4px double black;
+
+  transition: transform 2s;
+  /* Hinged on the left, so it swings away from a right-hand handle. */
+  transform-origin: left;
+}
+
+/* A left-hand handle means the hinge is on the right instead. */
+.door--hinge-right {
+  transform-origin: right;
+}
+
+/*
+ * perspective() is what makes this read as a door swinging into the room
+ * rather than a flat horizontal squash.
+ */
+.door--open {
+  transform: perspective(1400px) rotateY(150deg);
+}
+
+.door--hinge-right.door--open {
+  transform: perspective(1400px) rotateY(-150deg);
+}
+
+/* The two rows of inset panels that make it look like a panelled door. */
+.door__panels {
+  display: flex;
+  justify-content: space-around;
+  width: 70%;
+}
+
+.door__panels--top {
+  height: 40%;
+}
+
+.door__panels--bottom {
+  height: 60%;
+}
+
+.door__panel {
+  border: 9px ridge;
+  margin: auto;
+  width: 40%;
+}
+
+.door__panels--top .door__panel {
+  height: 70%;
+}
+
+.door__panels--bottom .door__panel {
+  height: 90%;
+}
+
+/* A two-second swing is a long time to wait if motion makes you unwell. */
+@media (prefers-reduced-motion: reduce) {
+  .door {
+    transition-duration: 0.01ms;
+  }
 }
