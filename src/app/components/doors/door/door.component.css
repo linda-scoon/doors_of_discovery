@@ -658,7 +658,8 @@
   position: relative;
   max-width: 82%;
 
-  font-family: 'Permanent Marker', 'Comic Sans MS', cursive;
+  /* Whichever hand this door was tagged in. */
+  font-family: var(--tag-font, 'Permanent Marker'), 'Comic Sans MS', cursive;
   /*
    * Sized against the door, not the viewport, so a tag covers the same
    * share of every door. The old `clamp(13px, 17cqw, 30px)` only hit its
@@ -678,7 +679,7 @@
 
 /* The signature is a different hand entirely -- a flourish, not a tag. */
 .door__graffiti--signature .door__tag-text {
-  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-family: var(--tag-font, 'Dancing Script'), 'Segoe Script', cursive;
   font-size: max(18px, 24cqw);
   font-weight: 700;
   color: var(--tag-accent);

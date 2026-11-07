@@ -69,8 +69,14 @@
   transition: transform 150ms ease-in;
 }
 
+/*
+ * Pressed, the free end of the lever drops -- that is what using a handle
+ * looks like. The lever reaches left from its mounting, so the end that
+ * moves is the left one, and about an origin on the right it is an
+ * anticlockwise turn that takes it down. Clockwise lifted it instead.
+ */
 .handle__lever--pressed {
-  transform: rotate(25deg);
+  transform: rotate(-25deg);
 }
 
 /*
@@ -85,9 +91,9 @@
   transform-origin: left center;
 }
 
-/* Anticlockwise, so the free end still drops rather than rising. */
+/* Mirrored, so clockwise is what drops this one. */
 .handle--left .handle__lever--pressed {
-  transform: rotate(-25deg);
+  transform: rotate(25deg);
 }
 
 .handle__keyhole-top {

@@ -1,4 +1,4 @@
-import { characterForDoor } from './door-material';
+import { characterForDoor, isPlainDesign } from './door-material';
 
 /**
  * Where each piece of furniture sits down the door, as percentages of its
@@ -40,6 +40,49 @@ function taggedDoors(count: number) {
   ).filter((door) => door.graffiti !== null);
 }
 
+describe('door numbers', () => {
+  const all = Array.from({ length: 600 }, (_unused, i) =>
+    characterForDoor(`door-${i}`, i)
+  );
+
+  it('only numbers doors with nothing on the face', () => {
+    const wrong = all
+      .filter((door) => door.number !== null && !isPlainDesign(door.design))
+      .map((door) => `${door.design} door carries number ${door.number}`);
+
+    expect(wrong).toEqual([]);
+  });
+
+  it('still numbers enough doors to be worth having', () => {
+    const numbered = all.filter((door) => door.number !== null);
+    expect(numbered.length).toBeGreaterThan(all.length * 0.08);
+  });
+
+  it('always shows a 13, and puts it on a door that can show one', () => {
+    const unlucky = all.filter((door) => door.number === 13);
+
+    expect(unlucky.length).toBeGreaterThan(0);
+    unlucky.forEach((door) => expect(isPlainDesign(door.design)).toBeTrue());
+  });
+
+  it('gives every material a plain face to put a number on', () => {
+    const plainPerMaterial = new Map<string, number>();
+    all.forEach((door) => {
+      if (!isPlainDesign(door.design)) return;
+      plainPerMaterial.set(
+        door.material,
+        (plainPerMaterial.get(door.material) ?? 0) + 1
+      );
+    });
+
+    ['wood', 'metal', 'glass', 'stone'].forEach((material) =>
+      expect(plainPerMaterial.get(material))
+        .withContext(`no plain ${material} door in 600`)
+        .toBeGreaterThan(0)
+    );
+  });
+});
+
 describe('graffiti placement', () => {
   const doors = taggedDoors(600);
 
@@ -75,17 +118,18 @@ describe('graffiti placement', () => {
   });
 
   it('shrinks a tag rather than running it onto a crowded door', () => {
-    // A door carrying everything has no gap a full-size tag fits in.
+    // Knocker, letterbox and kick plate between them leave no stretch of
+    // door as tall as a full-size tag: the handle takes 41-65%, so the
+    // longest clear run on such a door is the 18% above the knocker.
     const crowded = doors.filter(
-      (door) =>
-        door.hasKnocker &&
-        door.hasLetterbox &&
-        door.hasKickPlate &&
-        door.number !== null
+      (door) => door.hasKnocker && door.hasLetterbox && door.hasKickPlate
     );
 
     expect(crowded.length).toBeGreaterThan(0);
-    crowded.forEach((door) => expect(door.graffiti!.scale).toBeLessThan(0.78));
+    crowded.forEach((door) => {
+      const { top, bottom } = tagExtent(door.graffiti!);
+      expect(bottom - top).toBeLessThanOrEqual(18);
+    });
   });
 
   it('does not drop every tag in the same place', () => {
@@ -203,6 +247,22 @@ describe('graffiti placement', () => {
         expect(speck.y).toBeGreaterThanOrEqual(0);
         expect(speck.y).toBeLessThanOrEqual(100);
       });
+    });
+  });
+
+  it('writes tags in more than one hand', () => {
+    const hands = new Set(doors.map((door) => door.graffiti!.font));
+    expect(hands.size).toBeGreaterThan(4);
+  });
+
+  it('writes a signature in a script and a tag in a marker', () => {
+    const scripts = ["'Dancing Script'", "'Caveat'", "'Nanum Pen Script'",
+      "'Reenie Beanie'", "'Just Another Hand'"];
+
+    doors.forEach((door) => {
+      const { kind, font } = door.graffiti!;
+      if (kind === 'signature') expect(scripts).toContain(font);
+      else expect(scripts).not.toContain(font);
     });
   });
 

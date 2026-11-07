@@ -125,6 +125,8 @@ export interface GraffitiTag {
   kind: GraffitiKind;
   /** The lines sprayed, for a tag. Empty for a drawing. */
   lines: TagLine[];
+  /** The hand it was written in. */
+  font: string;
   /** The paint colour, and the darker outline sprayed behind it. */
   hue: number;
   /** A second colour, for the drip and the highlight. */
@@ -279,6 +281,19 @@ export function designForDoor(id: string, material: DoorMaterial): DoorDesign {
 }
 
 /**
+ * The faces with nothing on them: no panels, no studs, no window, no arch.
+ *
+ * Only these carry a number. A plate screwed across a panel edge or over an
+ * arch reads as a mistake rather than as an address, and every material has
+ * one of these so any door can be given a number if it has to be.
+ */
+const PLAIN_DESIGNS: readonly DoorDesign[] = ['slab', 'planked', 'frosted'];
+
+export function isPlainDesign(design: DoorDesign): boolean {
+  return PLAIN_DESIGNS.includes(design);
+}
+
+/**
  * The colour of a door. This is why adding an API does not mean choosing a
  * hex code: a new room gets a colour that suits its material, and keeps it.
  */
@@ -315,6 +330,33 @@ function openStyleForDoor(id: string, surprise: Surprise): OpenStyle {
  * Real graffiti is lettering, so these are words in a marker hand rather
  * than abstract loops, which looked like a decal.
  */
+/**
+ * The hands a tag can be written in.
+ *
+ * Marker and spray faces for a tag, scripts for a signature. All are
+ * Google Fonts under the Open Font Licence or Apache 2.0; whichever is
+ * picked has to be listed in index.html or the door falls back to
+ * whatever cursive face the browser has.
+ */
+const TAG_FONTS: readonly string[] = [
+  "'Permanent Marker'",
+  "'Rubik Spray Paint'",
+  "'Lacquer'",
+  "'Sedgwick Ave Display'",
+  "'Rock Salt'",
+  "'Rubik Marker Hatch'",
+  "'Rubik Wet Paint'",
+  "'Caveat Brush'",
+];
+
+const SIGNATURE_FONTS: readonly string[] = [
+  "'Dancing Script'",
+  "'Caveat'",
+  "'Nanum Pen Script'",
+  "'Reenie Beanie'",
+  "'Just Another Hand'",
+];
+
 /** What each kind of tag says, a line at a time. */
 const WORDS: Record<'words' | 'signature', string[]> = {
   words: ['web of', 'doors'],
@@ -432,6 +474,12 @@ function graffitiFor(
     // Split into lines here rather than left to wrap, because a run has
     // to know which line it came off.
     lines: taggedLines(id, drip, kind === 'cat' ? [] : WORDS[kind]),
+    // A signature is somebody's name, so it gets a script; a tag gets a
+    // marker or a spray can.
+    font: pick(
+      kind === 'signature' ? SIGNATURE_FONTS : TAG_FONTS,
+      `${id}:tagfont`
+    ),
     hue,
     // Offset round the wheel, so a tag looks like one person's two cans
     // rather than two unrelated colours.
@@ -638,13 +686,22 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
   const positionalNumber = numberForDoor(ordinal);
   const isUnlucky = positionalNumber === UNLUCKY_NUMBER;
 
-  // A 13 always shows its number. Left to chance it would be hidden more
-  // often than not, and a superstition nobody can see is not worth having.
-  const number = isUnlucky
-    ? UNLUCKY_NUMBER
-    : chance(`${id}:plate`, 0.45)
-      ? positionalNumber
-      : null;
+  // A 13 always shows its number -- a superstition nobody can see is not
+  // worth having -- and only a plain door carries a number at all, so a 13
+  // is given a plain face to show it on.
+  const design = isUnlucky
+    ? pick(DESIGNS_BY_MATERIAL[material].filter(isPlainDesign), `${id}:face`)
+    : designForDoor(id, material);
+
+  // A number goes on a flat door and nowhere else. Likelier than it was,
+  // because far fewer doors are now eligible for one.
+  const number = !isPlainDesign(design)
+    ? null
+    : isUnlucky
+      ? UNLUCKY_NUMBER
+      : chance(`${id}:plate`, 0.7)
+        ? positionalNumber
+        : null;
 
   const surprise = isUnlucky
     ? pickWeighted(UNLUCKY_SURPRISES, `${id}:unlucky`)
@@ -664,7 +721,7 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
 
   return {
     material,
-    design: designForDoor(id, material),
+    design,
     colour: colourForDoor(id, material),
     handleSide: chance(`${id}:side`, 0.3) ? 'left' : 'right',
     openStyle: openStyleForDoor(id, surprise),
