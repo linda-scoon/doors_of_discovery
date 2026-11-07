@@ -39,6 +39,7 @@ const AuthStyle = {
  *   queryParams   numbers the browser may pass through, each with the range
  *                 it must fall in. Anything else in the query is ignored.
  *   pathParams    named :segments of the url, filled from the route.
+ *   pathParamPatterns  what each of those must look like, if not anything.
  *   headers       sent with every request upstream.
  */
 const apis = [
@@ -120,16 +121,22 @@ const apis = [
     cacheSeconds: 300,
   },
   {
-    // Five random Wikipedia articles, each with its first three sentences and
-    // a picture. Five, so the room can pass over a disambiguation page -- a
-    // list of "Zebari may refer to:" -- and still have a real article.
+    // Wikipedia's featured articles -- its best-written pages, a few
+    // thousand of them -- rather than any random page, which is mostly
+    // stubs about villages and companies. There is no "random member of a
+    // category", so the room sends two random letters and gets the five
+    // featured articles that sort from there.
     id: 'wikipedia',
     url:
       'https://en.wikipedia.org/w/api.php?action=query&format=json' +
-      '&generator=random&grnnamespace=0&grnlimit=5' +
+      '&generator=categorymembers&gcmtitle=Category:Featured_articles' +
+      '&gcmnamespace=0&gcmlimit=5&gcmstartsortkeyprefix=:prefix' +
       '&prop=extracts|pageimages|info|pageprops&ppprop=disambiguation&inprop=url' +
       '&exintro=1&explaintext=1&exsentences=3&exlimit=5&piprop=thumbnail&pithumbsize=400',
     auth: { style: AuthStyle.NONE },
+    pathParams: ['prefix'],
+    pathParamPatterns: { prefix: /^[A-Z]{2}$/ },
+    cacheSeconds: 86400,
     headers: IDENTIFY,
   },
   {

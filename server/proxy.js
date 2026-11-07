@@ -37,6 +37,10 @@ function buildUpstreamUrl(api, req) {
     if (value === undefined) {
       throw new Error(`Missing route parameter "${name}"`);
     }
+    const pattern = api.pathParamPatterns?.[name];
+    if (pattern && !pattern.test(value)) {
+      throw new Error(`"${name}" is not in the expected form`);
+    }
     url = url.replace(`:${name}`, encodeURIComponent(value));
   }
 

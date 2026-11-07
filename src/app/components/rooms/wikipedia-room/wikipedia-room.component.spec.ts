@@ -4,7 +4,7 @@ import { failRequest, openRoom } from '../room-frame/room-testing';
 describe('WikipediaRoomComponent', () => {
   it('shows the article and links back to it, as its licence asks', async () => {
     const room = await openRoom(WikipediaRoomComponent);
-    room.server.expectOne('/api/wikipedia').flush({
+    room.server.expectOne((req) => /^\/api\/wikipedia\/[A-Y][A-Z]$/.test(req.url)).flush({
       query: {
         pages: {
           '1': {
@@ -24,7 +24,7 @@ describe('WikipediaRoomComponent', () => {
 
   it('passes over disambiguation pages and stubs', async () => {
     const room = await openRoom(WikipediaRoomComponent);
-    room.server.expectOne('/api/wikipedia').flush({
+    room.server.expectOne((req) => /^\/api\/wikipedia\/[A-Y][A-Z]$/.test(req.url)).flush({
       query: {
         pages: {
           '1': {
@@ -49,7 +49,7 @@ describe('WikipediaRoomComponent', () => {
 
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(WikipediaRoomComponent);
-    failRequest(room.server, '/api/wikipedia');
+    failRequest(room.server, /\/api\/wikipedia\//);
     expect(room.bricked()).toBeTrue();
   });
 });

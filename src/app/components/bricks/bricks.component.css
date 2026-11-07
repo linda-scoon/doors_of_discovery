@@ -50,6 +50,9 @@
 :host(.bricks--doorway) {
   position: absolute;
   inset: 0;
+  /* Darkness behind the bricks, so the ragged edges show the doorway's
+     void rather than whatever colour the room was painted. */
+  background: #0d0a07;
 }
 
 :host(.bricks--doorway) .bricks__course {

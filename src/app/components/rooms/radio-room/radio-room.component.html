@@ -1,10 +1,21 @@
 <app-room-frame [status]="stations.status()">
   @if (station(); as s) {
-    <div class="radio-room__set" aria-hidden="true">
-      @if (s.favicon) {
-        <img class="radio-room__logo" [src]="s.favicon" alt="" (error)="$any($event.target).hidden = true" />
-      }
-      <span class="radio-room__dial"></span>
+    <div class="boombox" aria-hidden="true">
+      <span class="boombox__handle"></span>
+      <div class="boombox__body">
+        <span class="boombox__speaker"></span>
+        <div class="boombox__middle">
+          <span class="boombox__display">
+            <span class="boombox__live">● LIVE</span>
+            @if (s.favicon) {
+              <img class="boombox__logo" [src]="s.favicon" alt="" (error)="$any($event.target).hidden = true" />
+            }
+          </span>
+          <span class="boombox__tape"><span></span><span></span></span>
+          <span class="boombox__buttons"><span></span><span></span><span></span><span></span></span>
+        </div>
+        <span class="boombox__speaker"></span>
+      </div>
     </div>
     <p class="room-words">{{ s.name }}</p>
     <p class="room-credit">

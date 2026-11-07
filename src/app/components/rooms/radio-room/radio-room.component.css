@@ -10,40 +10,143 @@ app-room-frame {
   color: #24352f;
 }
 
-/* An old wireless set, its dial glowing. */
-.radio-room__set {
+/*
+ * A boombox on the sideboard: chrome handle, two speakers that thump in
+ * time, a glowing display that says it is live, and a cassette turning.
+ */
+.boombox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 92cqi;
+}
+
+.boombox__handle {
+  width: 56cqi;
+  height: 7cqi;
+  border: 1.6cqi solid #9aa3ab;
+  border-bottom: 0;
+  border-radius: 4cqi 4cqi 0 0;
+}
+
+.boombox__body {
+  display: flex;
+  align-items: center;
+  gap: 2cqi;
+  width: 100%;
+  padding: 3cqi;
+  border-radius: 4cqi;
+  background: linear-gradient(to bottom, #3d434a, #1f2328 60%, #15181b);
+  box-shadow:
+    inset 0 0.6cqi 0 rgba(255, 255, 255, 0.15),
+    0 2cqi 5cqi rgba(36, 53, 47, 0.45);
+}
+
+/* Each speaker: a chrome rim, a mesh, and a cone that pulses. */
+.boombox__speaker {
+  flex: none;
+  width: 27cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #555c63 0 14%, #2a2e33 15% 18%, transparent 19%),
+    repeating-radial-gradient(circle, #1a1d20 0 0.6cqi, #30353a 0.6cqi 1.2cqi);
+  box-shadow: 0 0 0 1.2cqi #aab2ba, inset 0 0 2cqi rgba(0, 0, 0, 0.8);
+  animation: thump 0.5s ease-in-out infinite alternate;
+}
+
+.boombox__speaker:last-child {
+  animation-delay: 0.25s;
+}
+
+@keyframes thump {
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.boombox__middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8cqi;
+  min-width: 0;
+}
+
+.boombox__display {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4cqi;
-  width: 70cqi;
-  aspect-ratio: 5 / 3;
-  border-radius: 6cqi;
-  background:
-    repeating-linear-gradient(to right, rgba(0, 0, 0, 0.25) 0 1px, transparent 1px 3cqi),
-    linear-gradient(#7a4f2c, #4d311b);
-  box-shadow: 0 2cqi 5cqi rgba(0, 0, 0, 0.6);
+  gap: 1.5cqi;
+  width: 100%;
+  height: 7cqi;
+  border-radius: 1cqi;
+  background: #13261d;
+  box-shadow: inset 0 0 1.5cqi rgba(0, 0, 0, 0.8);
 }
 
-.radio-room__logo {
-  width: 20cqi;
-  height: 20cqi;
+.boombox__live {
+  font-size: clamp(0.45rem, 3.2cqi, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6dff9c;
+  text-shadow: 0 0 1cqi #6dff9c;
+  animation: blink 1.6s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.boombox__logo {
+  width: 5cqi;
+  height: 5cqi;
   object-fit: contain;
-  border-radius: 2cqi;
-  background: rgba(255, 255, 255, 0.85);
+  border-radius: 0.8cqi;
+  background: #fff;
 }
 
-.radio-room__dial {
-  width: 18cqi;
+/* The cassette, its two reels turning. */
+.boombox__tape {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 9cqi;
+  border-radius: 1.2cqi;
+  background: linear-gradient(#e9e4d8, #cfc8b8);
+  box-shadow: inset 0 0 0 0.8cqi #2a2e33;
+}
+
+.boombox__tape span {
+  width: 5cqi;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, #ffe7a3, #d99b2b 60%, #6b4513);
-  box-shadow: 0 0 6cqi rgba(255, 200, 90, 0.6);
-  animation: glow 2.4s ease-in-out infinite;
+  background: repeating-conic-gradient(#2a2e33 0 30deg, #8a8478 30deg 60deg);
+  animation: reel 2s linear infinite;
 }
 
-@keyframes glow {
-  50% {
-    box-shadow: 0 0 2cqi rgba(255, 200, 90, 0.3);
+@keyframes reel {
+  to {
+    transform: rotate(1turn);
   }
+}
+
+.boombox__buttons {
+  display: flex;
+  gap: 1cqi;
+}
+
+.boombox__buttons span {
+  width: 4cqi;
+  height: 2.5cqi;
+  border-radius: 0.5cqi;
+  background: linear-gradient(#c9cfd4, #858c93);
+}
+
+.boombox__buttons span:first-child {
+  background: linear-gradient(#ff7a7a, #c22d2d);
 }

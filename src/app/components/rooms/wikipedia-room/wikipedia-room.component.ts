@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 
 import { RoomFrameComponent } from '../room-frame/room-frame.component';
-import { roomLoad } from '../room-frame/room-load';
+import { roomLoad, shuffled } from '../room-frame/room-load';
 
 /** The parts of a page from Wikipedia's random-page query that the room uses. */
 interface WikiPage {
@@ -22,9 +22,8 @@ interface WikiPage {
 const ENOUGH_TO_READ = 60;
 
 /**
- * A random Wikipedia article: its title, a picture if it has one, and the
- * first few sentences. Of the five the server fetches, the first that is a
- * real article with something to read. Wikipedia's text is CC BY-SA, which asks for credit
+ * One of Wikipedia's featured articles -- its best-written pages -- with its
+ * title, a picture if it has one, and the first few sentences. Wikipedia's text is CC BY-SA, which asks for credit
  * and a link to the article.
  */
 @Component({
@@ -38,9 +37,9 @@ export class WikipediaRoomComponent {
   private readonly http = inject(HttpClient);
 
   readonly page = roomLoad(() =>
-    this.http.get<{ query: { pages: Record<string, WikiPage> } }>('/api/wikipedia').pipe(
+    this.http.get<{ query: { pages: Record<string, WikiPage> } }>(`/api/wikipedia/${randomPrefix()}`).pipe(
       map((response) => {
-        const page = Object.values(response?.query?.pages ?? {}).find(
+        const page = shuffled(Object.values(response?.query?.pages ?? {})).find(
           (p) =>
             p.title &&
             p.pageprops?.disambiguation === undefined &&
@@ -51,4 +50,13 @@ export class WikipediaRoomComponent {
       })
     )
   );
+}
+
+/**
+ * Where to start in the alphabetical list of featured articles: two capital
+ * letters, the first stopping short of Z so there are always five to come.
+ */
+function randomPrefix(): string {
+  const letter = (count: number) => String.fromCharCode(65 + Math.floor(Math.random() * count));
+  return letter(25) + letter(26);
 }
