@@ -1,0 +1,16 @@
+# Only used when the site is served as static files by Apache or LiteSpeed.
+# When the Express server is running it handles this itself and this file is
+# ignored.
+#
+# Angular routes exist only in the browser, so a request for /some/route has
+# no matching file on disk. Without this, refreshing on any route but / gives
+# a 404. Send anything that is not a real file or directory to index.html and
+# let the client router work it out.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

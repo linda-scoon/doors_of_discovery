@@ -83,11 +83,35 @@ It reports a true/false per room and never prints a key.
 
 ## Deployment
 
-Hostinger builds from `master` automatically and runs `npm start`.
+Hostinger builds from `master` automatically on every push.
+
+### Settings it needs
+
+| Setting | Value | Why |
+|---|---|---|
+| Build command | `npm run build` | |
+| Output directory | `dist` | the build writes `index.html` here |
+| Application type | **Node.js** | |
+| Entry file | **`server/index.js`** | |
+
+The last two matter. With the application type unset, Hostinger copies `dist`
+into `public_html` and serves it as static files — the doors appear, but
+**`/api/*` does not exist**, so no room can load anything. The server has to
+actually run for the site to work.
 
 Set `RAPID_API_KEY`, `GIFS_API_KEY` and `TMDB_API_KEY` as environment
-variables in the Hostinger panel. They are only ever read by the server
-process, so they stay off the public site.
+variables in the panel. They are read only by the server process, so they
+never reach the public site.
+
+After a deploy, `https://doors.purplefootsteps.co.uk/api/health` reports which
+rooms came up configured. If it returns the page's HTML instead of JSON, the
+server is not running and the site is being served statically.
+
+### If it is served statically anyway
+
+The build also emits an `.htaccess` that sends unknown paths to `index.html`,
+so client-side routes survive a refresh. The site will load, but every room
+will fail to fetch, because there is no `/api` without the server.
 
 ## Project layout
 

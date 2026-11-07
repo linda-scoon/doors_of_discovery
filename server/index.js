@@ -24,7 +24,7 @@ loadEnvFile();
 
 const app = express();
 const port = process.env.PORT || 3000;
-const browserBuildDir = path.resolve(__dirname, '..', 'dist', 'web_of_doors');
+const browserBuildDir = path.resolve(__dirname, '..', 'dist');
 
 // One route per API, built from the config table rather than written by hand,
 // so adding a room is a one-entry change in apis.js.
