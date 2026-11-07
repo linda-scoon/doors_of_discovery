@@ -55,12 +55,25 @@ export class RoomSlotComponent implements OnInit {
     // room asking for a creaky door would have opened silently.
     const derived = characterForDoor(this.room.id, this.ordinal);
 
+    let openStyle = this.room.openStyle ?? derived.openStyle;
+
+    // A door onto an empty room is never stuck. Refusing to open, and then
+    // having nothing behind it, is two disappointments rather than one.
+    if (this.room.isEmpty && openStyle === 'stuck') {
+      openStyle = 'swing';
+    }
+
     this.character = {
       ...derived,
       material: this.room.material ?? derived.material,
       colour: this.room.colour ?? derived.colour,
-      openStyle: this.room.openStyle ?? derived.openStyle,
+      openStyle,
       handleSide: this.room.handleSide ?? derived.handleSide,
+      // The knocking surprise is what made it stuck, so it goes with it.
+      surprise:
+        openStyle === 'swing' && derived.surprise === 'knocks-back'
+          ? 'none'
+          : derived.surprise,
     };
     this.refreshContentInputs();
   }

@@ -29,6 +29,12 @@
     </span>
   }
 
+  <!--
+    The door is given the resolved character, not the registry's raw
+    overrides. Passing room.openStyle straight through let the door be stuck
+    while this component believed it was not, so a door onto an empty room
+    stayed locked despite being unlocked here.
+  -->
   <app-door
     [id]="room.id"
     [ordinal]="ordinal"
@@ -36,10 +42,10 @@
     (opened)="openDoor()"
     (tapped)="onTap($event)"
     (refused)="onRefused($event)"
-    [colour]="room.colour"
-    [material]="room.material"
-    [openStyle]="room.openStyle"
-    [handleSide]="room.handleSide"
+    [colour]="character.colour"
+    [material]="character.material"
+    [openStyle]="character.openStyle"
+    [handleSide]="character.handleSide"
     [label]="doorLabel"
   ></app-door>
 
@@ -47,7 +53,11 @@
     The room's own contents step aside while something is happening in the
     doorway, so a jump scare is not captioned "nothing in here yet".
   -->
-  <span class="room-content" [class.room-content--upstaged]="burning || lunging">
+  <span
+    class="room-content"
+    [class.room-content--hidden]="!open"
+    [class.room-content--upstaged]="burning || lunging"
+  >
     <ng-container
       *ngComponentOutlet="room.component; inputs: contentInputs"
     ></ng-container>

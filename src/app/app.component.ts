@@ -80,6 +80,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         id: `door-${number}`,
         name: `Door ${number}`,
         component: EmptyRoomComponent,
+        isEmpty: true,
       });
     }
     this.rooms = [...this.rooms, ...newDoors];

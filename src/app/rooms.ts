@@ -37,6 +37,15 @@ export interface RoomDefinition {
   /** How the door behaves when opened. Some doors are stuck and never do. */
   openStyle?: OpenStyle;
 
+  /**
+   * There is nothing behind this door yet.
+   *
+   * Such a door is never stuck. A door that will not open onto a room with
+   * nothing in it is two disappointments rather than one, and the stuck
+   * ones are only worth meeting when there is something to find.
+   */
+  isEmpty?: boolean;
+
 
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;
@@ -66,7 +75,7 @@ export interface RoomDefinition {
  */
 export const ROOMS: RoomDefinition[] = [
   { id: 'gifs', name: 'Gif Room', component: GifRoomComponent },
-  { id: 'game', name: 'Game Room', component: GameRoomComponent, openStyle: 'stuck' },
+  { id: 'game', name: 'Game Room', component: GameRoomComponent, isEmpty: true },
   { id: 'quotes', name: 'Quotes Room', component: QoutesRoomComponent },
   { id: 'images', name: 'Image Room', component: ImageRoomComponent },
   { id: 'story', name: 'Story Room', component: StoryRoomComponent, openStyle: 'creak' },

@@ -158,6 +158,38 @@ describe('RoomSlotComponent', () => {
     expect(fixture.componentInstance.open).toBeTrue();
   }));
 
+  it('hides the room until the door is open', async () => {
+    await createWith(plainRoom);
+    const content = fixture.nativeElement.querySelector('.room-content');
+
+    // Being behind the door is not enough: glass doors are translucent, so
+    // the room could be read through one before it was opened.
+    expect(content.classList).toContain('room-content--hidden');
+
+    handle().click();
+    fixture.detectChanges();
+
+    expect(content.classList).not.toContain('room-content--hidden');
+  });
+
+  it('never leaves a door onto an empty room stuck', async () => {
+    await createWith({ ...plainRoom, openStyle: 'stuck', isEmpty: true });
+
+    handle().click();
+    fixture.detectChanges();
+
+    expect(door().classList).toContain('door--open');
+  });
+
+  it('still allows a stuck door onto a room with something in it', async () => {
+    await createWith({ ...plainRoom, openStyle: 'stuck' });
+
+    handle().click();
+    fixture.detectChanges();
+
+    expect(door().classList).not.toContain('door--open');
+  });
+
   it('opens to a tap when that is the kind of door it is', async () => {
     await createWith(plainRoom);
     fixture.componentInstance.character.surprise = 'opens-on-tap';

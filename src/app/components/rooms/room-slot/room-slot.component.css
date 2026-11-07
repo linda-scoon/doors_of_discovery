@@ -1,3 +1,20 @@
+/*
+ * The room's contents are not shown until the door is open.
+ *
+ * Being behind the door is not enough: glass and frosted doors are
+ * translucent on purpose, so whatever was in the room could be read through
+ * them — including "nothing in here yet", which gives away the surprise and
+ * looks like a bug. The contents fade in as the door clears.
+ */
+.room-content--hidden {
+  opacity: 0;
+}
+
+.room-content {
+  transition: opacity 400ms ease-in 500ms;
+}
+
+/* Stepping aside for a jump scare should be immediate, not a slow fade. */
 .room-content--upstaged {
   opacity: 0;
   transition: opacity 180ms ease-out;
