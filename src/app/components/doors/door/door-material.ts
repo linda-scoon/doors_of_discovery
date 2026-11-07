@@ -285,6 +285,21 @@ function numberForDoor(ordinal: number): number | null {
 }
 
 /**
+ * The number nobody wants. In the West 13 is the unlucky one — the floor
+ * hotels skip, the guest you do not seat. A door numbered 13 always has
+ * something unpleasant behind it, and always shows its number, so the
+ * superstition is earned rather than coincidental.
+ */
+const UNLUCKY_NUMBER = 13;
+
+/** What waits behind a 13. None of these options is nothing. */
+const UNLUCKY_SURPRISES: ReadonlyArray<[Surprise, number]> = [
+  ['monster', 38],
+  ['fire', 34],
+  ['knocks-back', 28],
+];
+
+/**
  * Everything about one door, in one go.
  *
  * `ordinal` is the door's place along the wall, used only for its number.
@@ -293,7 +308,21 @@ function numberForDoor(ordinal: number): number | null {
  */
 export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
   const material = materialForDoor(id);
-  const surprise = pickWeighted(SURPRISE_WEIGHTS, `${id}:surprise`);
+
+  const positionalNumber = numberForDoor(ordinal);
+  const isUnlucky = positionalNumber === UNLUCKY_NUMBER;
+
+  // A 13 always shows its number. Left to chance it would be hidden more
+  // often than not, and a superstition nobody can see is not worth having.
+  const number = isUnlucky
+    ? UNLUCKY_NUMBER
+    : chance(`${id}:plate`, 0.45)
+      ? positionalNumber
+      : null;
+
+  const surprise = isUnlucky
+    ? pickWeighted(UNLUCKY_SURPRISES, `${id}:unlucky`)
+    : pickWeighted(SURPRISE_WEIGHTS, `${id}:surprise`);
 
   return {
     material,
@@ -309,7 +338,7 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     hasPeephole: chance(`${id}:peephole`, 0.3),
     hasGraffiti: chance(`${id}:graffiti`, 0.12),
     graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id) : null,
-    number: chance(`${id}:plate`, 0.45) ? numberForDoor(ordinal) : null,
+    number,
     surprise,
   };
 }
