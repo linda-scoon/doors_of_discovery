@@ -37,7 +37,8 @@ const AuthStyle = {
  *                 that returns one random item, or every door of that kind
  *                 shows the same one; see proxy.js.
  *   queryParams   numbers the browser may pass through, each with the range
- *                 it must fall in. Anything else in the query is ignored.
+ *                 it must fall in and optionally a step. Anything else in
+ *                 the query is ignored.
  *   pathParams    named :segments of the url, filled from the route.
  *   pathParamPatterns  what each of those must look like, if not anything.
  *   headers       sent with every request upstream.
@@ -90,7 +91,7 @@ const apis = [
       keyName: 'GIFS_API_KEY',
       paramName: 'api_key',
     },
-    queryParams: { offset: { min: 0, max: 450 } },
+    queryParams: { offset: { min: 0, max: 450, step: 50 } },
     cacheSeconds: 3600,
   },
   {
@@ -147,6 +148,7 @@ const apis = [
     auth: { style: AuthStyle.NONE },
     headers: IDENTIFY,
     pathParams: ['month', 'day'],
+    pathParamPatterns: { month: /^(0[1-9]|1[0-2])$/, day: /^(0[1-9]|[12]\d|3[01])$/ },
     cacheSeconds: 86400,
   },
   {
@@ -230,6 +232,9 @@ const apis = [
     // parameters. Only these names are accepted, so a request cannot reach a
     // part of the upstream API we did not intend.
     pathParams: ['movieId'],
+    // A number and nothing else: a ".." here would walk up TMDB's paths and
+    // reach other endpoints with our key on the request.
+    pathParamPatterns: { movieId: /^\d{1,10}$/ },
     // Cached per film, and a film's trailers do not change.
     cacheSeconds: 86400,
   },

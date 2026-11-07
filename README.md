@@ -88,6 +88,7 @@ It reports a true/false per room and never prints a key.
 | `npm run serve:api` | The API server on its own, on :3000 |
 | `npm run build` | Production build into `dist/web_of_doors/` |
 | `npm test` | Unit tests (Karma + Jasmine) |
+| `npm run test:server` | Server tests: security, caching, misuse |
 | `npm run watch` | Development build, rebuilding on change |
 
 ## Deployment
@@ -149,6 +150,42 @@ src/app/
   pipes/
     safe.pipe.ts  validates embed URLs before they reach an iframe
 ```
+
+## Security and caching
+
+The server is meant to be safe to leave on the public internet, behind a
+CDN or not. `npm run test:server` checks all of this against a fake
+upstream, so nothing leaves the machine.
+
+- **Keys** stay on the server and never appear in a response, an error or a
+  log. An upstream's error is never passed on.
+- **What the browser may send** is narrow: path values must match a pattern
+  (a TMDB film id is digits, never `..`), query values are whole numbers in
+  a range, and anything else is ignored. Junk in the address cannot get round
+  the cache, so it cannot be used to spend an API's allowance.
+- **One visitor** may make 240 `/api` requests a minute (`API_RATE_LIMIT`).
+  Opening a door is one or two.
+- **The cache** holds at most a thousand answers, so it cannot grow until the
+  server runs out of memory.
+- **Headers**: a Content Security Policy on the page (scripts, styles, fonts
+  and data only from here; pictures and sound from any https host; frames
+  only from YouTube), no framing by other sites, `nosniff`, a strict
+  referrer policy, and HSTS over https.
+
+What a CDN may keep:
+
+| What | For how long |
+|---|---|
+| Fingerprinted scripts and styles | a year (the name changes when they do) |
+| The page, the service worker, the manifest | checked every time, so a deploy shows at once |
+| Icons, lettering, sounds | a week |
+| Paintings fetched through `/api/images` | for good (an id is always the same picture) |
+| `/api` lists (trivia, quotes, pages of gifs and photos…) | as long as the server keeps them, `s-maxage` |
+| `/api` random answers, and every error | never (`no-store`) |
+
+A missing file is a 404, never the page, so a CDN can never store the page
+under a script's name. If visitors behind the host's proxy all seem to share
+one address, set `TRUST_PROXY` to suit the host.
 
 ## Before you commit
 

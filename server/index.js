@@ -10,6 +10,10 @@
  *   2. Serves the built Angular app, with a fallback to index.html so the
  *      client-side routes survive a refresh.
  *
+ * It also keeps itself safe to leave on the public internet -- security
+ * headers, a per-visitor limit on /api; see security.js -- and tells a CDN
+ * exactly what it may cache.
+ *
  * Run it with `npm run serve:api` locally, or `npm run serve:prod` to serve
  * the production build the way the host does.
  */
@@ -21,6 +25,12 @@ const { loadEnvFile } = require('./load-env');
 const { apis } = require('./apis');
 const { createHandler } = require('./proxy');
 const { imageSources, createImageHandler } = require('./images');
+const {
+  contentSecurityPolicy,
+  inlineScriptHashes,
+  rateLimit,
+  securityHeaders,
+} = require('./security');
 
 loadEnvFile();
 
@@ -28,6 +38,24 @@ const app = express();
 const port = process.env.PORT || 3000;
 const browserBuildDir = path.resolve(__dirname, '..', 'dist');
 const indexFile = path.join(browserBuildDir, 'index.html');
+
+// Nobody needs to be told what the server runs on.
+app.disable('x-powered-by');
+
+/*
+ * Requests arrive through the host's proxy, and through a CDN when that is
+ * on. Trusting only proxies on private and local addresses means a
+ * visitor's address is the one the last public hop reported, which they
+ * cannot forge by sending their own X-Forwarded-For. With a CDN, that is the
+ * CDN node's address. TRUST_PROXY overrides it if the host needs otherwise.
+ */
+app.set('trust proxy', process.env.TRUST_PROXY || 'loopback, linklocal, uniquelocal');
+
+app.use(securityHeaders);
+
+/** Requests per minute one visitor may make to /api. */
+const API_LIMIT = Number(process.env.API_RATE_LIMIT) || 240;
+app.use('/api', rateLimit({ limit: API_LIMIT }));
 
 /**
  * Whether `npm run build` has run. The server only serves what the build
@@ -62,6 +90,7 @@ for (const source of imageSources) {
  * without reading logs. Names variables, never values.
  */
 app.get('/api/health', (_req, res) => {
+  res.set('Cache-Control', 'no-store');
   const configured = {};
   for (const api of apis) {
     configured[api.id] =
@@ -70,16 +99,77 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, built: isBuilt(), rooms: configured });
 });
 
-app.use(express.static(browserBuildDir));
+// An /api address that is not a room is a mistake, not a page.
+app.use('/api', (_req, res) => {
+  res.set('Cache-Control', 'no-store');
+  res.status(404).json({ error: 'There is no such room.' });
+});
 
-// Anything not matched above is an Angular route, so hand back the app and
-// let the client router deal with it. Without this, refreshing on a deep link
-// returns 404.
-app.get(/.*/, (_req, res) => {
-  if (!isBuilt()) {
-    res.status(503).type('text/plain').send(NOT_BUILT);
-    return;
+/*
+ * How long browsers and a CDN may keep each kind of file.
+ *
+ *   - The scripts and styles have a fingerprint in their names, which
+ *     changes whenever they do, so they can be kept for a year.
+ *   - The page itself, and the service worker's files, must be checked
+ *     every time, or a deploy would not reach anyone until the cache
+ *     expired.
+ *   - Everything else -- icons, lettering, sounds -- for a week.
+ */
+const FINGERPRINTED = /\.[0-9a-f]{16,}\.(js|css)$/;
+const ALWAYS_CHECK = new Set([
+  'index.html',
+  'ngsw.json',
+  'ngsw-worker.js',
+  'safety-worker.js',
+  'worker-basic.min.js',
+  'manifest.webmanifest',
+]);
+
+app.use(
+  express.static(browserBuildDir, {
+    index: false,
+    setHeaders(res, filePath) {
+      const name = path.basename(filePath);
+      if (FINGERPRINTED.test(name)) {
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      } else if (ALWAYS_CHECK.has(name)) {
+        res.set('Cache-Control', 'no-cache');
+      } else {
+        res.set('Cache-Control', 'public, max-age=604800');
+      }
+    },
+  })
+);
+
+/*
+ * The page, with its Content Security Policy. Worked out once from the
+ * built page, and again if the page changes, since it allows the page's own
+ * inline script by its fingerprint.
+ */
+let policy = { mtime: 0, header: '' };
+function pagePolicy() {
+  const mtime = fs.statSync(indexFile).mtimeMs;
+  if (mtime !== policy.mtime) {
+    policy = { mtime, header: contentSecurityPolicy(inlineScriptHashes(indexFile)) };
   }
+  return policy.header;
+}
+
+// Anything else without a file extension is an Angular route, so hand back
+// the app and let the client router deal with it. A missing file -- an old
+// script after a deploy, say -- is a 404, not the page: a CDN that stored
+// the page under a script's name would break the site until it expired.
+app.get(/.*/, (req, res) => {
+  if (path.extname(req.path)) {
+    res.set('Cache-Control', 'no-store');
+    return res.status(404).type('text/plain').send('Not found.\n');
+  }
+  if (!isBuilt()) {
+    res.set('Cache-Control', 'no-store');
+    return res.status(503).type('text/plain').send(NOT_BUILT);
+  }
+  res.set('Cache-Control', 'no-cache');
+  res.set('Content-Security-Policy', pagePolicy());
   res.sendFile(indexFile);
 });
 
