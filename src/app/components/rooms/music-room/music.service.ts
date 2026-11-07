@@ -14,7 +14,7 @@ export class MusicService {
       method: 'GET',
       headers: {
         'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com',
-        'X-RapidAPI-Key': environment.factsApiKey,
+        'X-RapidAPI-Key': environment.rapidApiKey,
       },
     };
 

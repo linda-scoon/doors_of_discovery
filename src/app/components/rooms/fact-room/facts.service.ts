@@ -14,7 +14,7 @@ export class FactsService {
       method: 'GET',
       headers: {
         'X-RapidAPI-Host': 'random-facts2.p.rapidapi.com',
-        'X-RapidAPI-Key': environment.factsApiKey,
+        'X-RapidAPI-Key': environment.rapidApiKey,
       },
     };
     return this.http.get<any>(

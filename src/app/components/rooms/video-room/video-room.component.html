@@ -6,15 +6,22 @@
   ></app-wooden-door>
   <div class="room-container">
     <h2>{{ videoTitle }}</h2>
-    <iframe
-      [src]="videoURL | safe"
-      width="480"
-      height="270"
-      allowfullscreen="true"
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      frameborder="no"
-      scrolling="no"
-    ></iframe>
+    <!--
+      The safe pipe returns null for a URL it will not vouch for, including the
+      empty string we start with. Rendering the iframe only once we have a
+      trusted URL avoids binding null to src.
+    -->
+    @if (videoURL | safe; as trustedVideoURL) {
+      <iframe
+        [src]="trustedVideoURL"
+        width="480"
+        height="270"
+        allowfullscreen="true"
+        mozallowfullscreen="true"
+        webkitallowfullscreen="true"
+        frameborder="no"
+        scrolling="no"
+      ></iframe>
+    }
   </div>
 </app-room>
