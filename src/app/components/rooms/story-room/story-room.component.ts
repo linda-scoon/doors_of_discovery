@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  FormBuilder,
+  UntypedFormBuilder,
   FormControl,
-  FormGroup,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 
@@ -15,7 +15,7 @@ export class StoryRoomComponent {
   // input from app component
   openedDoor: boolean = false;
 
-  storyFillers: FormGroup;
+  storyFillers: UntypedFormGroup;
   showStory: boolean = false;
   textColourField: string = '';
   dessertField: string = '';
@@ -30,7 +30,7 @@ export class StoryRoomComponent {
   colourField: string = '';
   years: string = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: UntypedFormBuilder) {
     this.storyFillers = fb.group({
       textColour: ['#008B8B', Validators.required],
       dessert: ['', Validators.required],
