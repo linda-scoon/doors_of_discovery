@@ -1,4 +1,4 @@
-import { characterForDoor, isPlainDesign } from './door-material';
+import { DOOR_SPANS, characterForDoor, isPlainDesign, sizeForDoor } from './door-material';
 
 /**
  * Where each piece of furniture sits down the door, as percentages of its
@@ -270,5 +270,25 @@ describe('graffiti placement', () => {
     const once = characterForDoor('door-42', 42).graffiti;
     const again = characterForDoor('door-42', 42).graffiti;
     expect(again).toEqual(once);
+  });
+});
+
+describe('sizeForDoor', () => {
+  it('gives a door the same size every time', () => {
+    expect(sizeForDoor('door-7', false)).toBe(sizeForDoor('door-7', false));
+  });
+
+  it('never makes a door with something behind it smaller than usual', () => {
+    for (let i = 0; i < 500; i += 1) {
+      expect(['standard', 'big', 'huge']).toContain(sizeForDoor(`room-${i}`, true));
+    }
+  });
+
+  it('deals plenty of narrow doors, so the gaps beside wide ones get filled', () => {
+    let narrow = 0;
+    for (let i = 0; i < 1000; i += 1) {
+      if (DOOR_SPANS[sizeForDoor(`door-${i}`, false)].cols === 1) narrow += 1;
+    }
+    expect(narrow).toBeGreaterThan(200);
   });
 });

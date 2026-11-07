@@ -11,7 +11,7 @@ import { StoryRoomComponent } from './components/rooms/story-room/story-room.com
 import { VideoRoomComponent } from './components/rooms/video-room/video-room.component';
 
 import { HandleSide, OpenStyle } from './components/doors/door/door.component';
-import { DoorMaterial } from './components/doors/door/door-material';
+import { DoorMaterial, DoorSize } from './components/doors/door/door-material';
 
 /** One door, and what is behind it. */
 export interface RoomDefinition {
@@ -46,6 +46,11 @@ export interface RoomDefinition {
    */
   isEmpty?: boolean;
 
+  /**
+   * How much of the wall the door takes up. Derived from the id when left
+   * out; a room with something in it is never smaller than usual.
+   */
+  size?: DoorSize;
 
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;

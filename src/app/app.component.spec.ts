@@ -27,37 +27,36 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.title).toEqual('web_of_doors');
   });
 
-  it('puts the rooms that have an API behind them first', () => {
+  it('hangs every room on the first screens', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const leading = fixture.componentInstance.rooms
-      .slice(0, ROOMS.length)
-      .map((room) => room.id);
+    const ids = fixture.componentInstance.doors.map((door) => door.room.id);
 
-    expect(leading).toEqual(ROOMS.map((room) => room.id));
+    ROOMS.forEach((room) => expect(ids).toContain(room.id));
   });
 
   it('fills the rest of the wall with generated doors', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance.rooms.length).toBeGreaterThan(ROOMS.length);
+    expect(fixture.componentInstance.doors.length).toBeGreaterThan(ROOMS.length);
   });
 
-  it('renders one slot per door, each laid out by the grid', () => {
+  it('renders one slot per door, each placed on the grid', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    const slots = compiled.querySelectorAll('.app-wrapper .app-room');
+    const slots = compiled.querySelectorAll<HTMLElement>('.app-wrapper .app-room');
 
-    // Every slot carries .app-room, which is what the grid lays out. A door
-    // added without it would not be positioned.
-    expect(slots.length).toBe(fixture.componentInstance.rooms.length);
+    expect(slots.length).toBe(fixture.componentInstance.doors.length);
+    // Every slot is told which cells it covers. A door without that would
+    // fall back to auto-placement and could land in somebody else's gap.
+    slots.forEach((slot) => expect(slot.style.gridArea).not.toBe(''));
   });
 
   it('gives every door a distinct id, so none share an appearance by accident', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 
-    const ids = fixture.componentInstance.rooms.map((room) => room.id);
+    const ids = fixture.componentInstance.doors.map((door) => door.room.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });

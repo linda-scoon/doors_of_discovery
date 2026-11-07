@@ -2,12 +2,17 @@
  * A room is the space behind a door. It is the positioning context the door
  * is absolutely placed against, which is why it must stay relative.
  *
- * Its height comes from its width via the aspect ratio, so doors stay
- * door-shaped at every screen size instead of needing a fixed min-height.
+ * It fills whatever block of the wall its door was given. The wall decides
+ * the shape -- see app.component.css -- so the room does not set one.
  */
+:host {
+  display: block;
+  height: 100%;
+}
+
 .room {
   position: relative;
-  aspect-ratio: var(--door-aspect);
+  height: 100%;
   overflow: hidden;
 
   display: flex;

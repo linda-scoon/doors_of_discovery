@@ -1,38 +1,41 @@
 /*
  * The wall of doors.
  *
- * Two per row on a phone, more as the screen allows. The doors keep their
- * shape and the columns share whatever width there is, so a door on a wide
- * screen is larger rather than stretched.
+ * A grid of small door-shaped cells, each door covering a block of them --
+ * a standard door is two cells by two, a cupboard one by one, a grand door
+ * four by four. Which cells each door covers is worked out in wall.ts and
+ * set on the door; the grid only has to be the right shape. How many cells
+ * across, --cols, is set from there too, by screen width.
  */
+
+/* The container the cell size is measured against. */
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
 .app-wrapper {
+  --cols: 4;
+
+  /* The width of one cell: what is left of the row once the page's own
+     margin and the gaps between cells are taken out. */
+  --cell: calc(
+    (100cqw - 2 * var(--space-page) - (var(--cols) - 1) * var(--space-door-gap)) /
+      var(--cols)
+  );
+
   display: grid;
   /*
      minmax(0, 1fr) rather than 1fr: a plain 1fr track refuses to shrink
      below its content's minimum size, so one room with a wide fixed element
      stretches its column and distorts the whole wall.
   */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  /* Rows are as tall as a door is for the width of one cell, so every
+     square block of cells is door-shaped. */
+  grid-auto-rows: calc(var(--cell) * var(--door-height));
   gap: var(--space-door-gap);
   padding: var(--space-page);
-}
-
-@media (min-width: 40rem) {
-  .app-wrapper {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 60rem) {
-  .app-wrapper {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 85rem) {
-  .app-wrapper {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
 }
 
 /*
