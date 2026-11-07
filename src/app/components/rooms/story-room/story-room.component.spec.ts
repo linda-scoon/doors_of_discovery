@@ -59,10 +59,12 @@ describe('StoryRoomComponent', () => {
 
   it('shows a name as words, never as markup, whatever is typed', () => {
     const { fixture, room, text } = open();
-    room.begin('<img src=x onerror="alert(1)">Ada');
+    // Short enough to survive the 24-character limit whole.
+    const attack = '<img src=x onerror=a()>';
+    room.begin(attack);
 
     // The name is written in as text, so it reads as typed and runs nothing.
-    expect(text()).toContain('<img src=x onerror="alert(1)">Ada');
+    expect(text()).toContain(attack);
     expect(fixture.nativeElement.querySelector('img')).toBeNull();
   });
 });
