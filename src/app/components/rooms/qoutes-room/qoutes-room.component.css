@@ -1,22 +1,27 @@
-.room-container {
+:host {
+  display: contents;
+}
+
+/* Calm and elegant: a sheet of cream paper and a serif hand. */
+app-room-frame {
+  background:
+    radial-gradient(ellipse at 50% 40%, #fffdf7, #f3ecdc 80%);
+  color: #3a3530;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.qoutes-room__quote {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.author::before {
-  content: "\007E";
-}
-
-.author {
-  font-weight: bolder;
+  gap: 4cqi;
   font-style: italic;
 }
 
-@media only screen and (min-width: 900px) {
-  .room-container {
-    max-width: 50vw;
-  }
+.qoutes-room__author {
+  font-style: normal;
+  opacity: 0.8;
+}
+
+.qoutes-room__author::before {
+  content: '— ';
 }

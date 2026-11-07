@@ -1,0 +1,17 @@
+:host {
+  display: contents;
+}
+
+/* Outdoors: blue sky above, green grass below. */
+app-room-frame {
+  background: linear-gradient(to bottom, #bfe9ff, #eaf8ff 45%, #d8f2c9 70%, #a9dd8f);
+  color: #23421d;
+}
+
+.animal-room__photo {
+  display: block;
+  max-width: 100%;
+  max-height: 60cqh;
+  object-fit: contain;
+  border-radius: 2cqi;
+}

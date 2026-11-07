@@ -1,0 +1,97 @@
+/*
+ * A page from a shop-bought encyclopedia, or a book of records: yellowed
+ * paper darkening towards the spine, a running head with the volume, a
+ * picture plate with its caption, a bold heading over a double rule, a red
+ * drop capital, and the page number at the foot.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  justify-content: flex-start;
+  gap: 3cqi;
+  padding: 6cqi 7cqi 6cqi 9cqi;
+  background:
+    linear-gradient(to right, rgba(90, 60, 20, 0.28), transparent 7cqi),
+    radial-gradient(ellipse at 60% 40%, transparent 55%, rgba(140, 100, 40, 0.22)),
+    #f5ecd4;
+  color: #2a2118;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.wikipedia-room__running-head {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 1cqi;
+  border-bottom: 1px solid #a88d62;
+  font-size: clamp(0.5rem, 3.3cqi, 0.65rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #7a5c3a;
+}
+
+/* The picture plate, tipped in on a whiter mount. */
+.wikipedia-room__plate {
+  width: 100%;
+  margin: 0;
+  padding: 1.5cqi 1.5cqi 1cqi;
+  border: 1px solid #cbbd9c;
+  background: #fffdf6;
+  box-shadow: 0 1cqi 2.5cqi rgba(90, 60, 20, 0.25);
+}
+
+.wikipedia-room__plate img {
+  display: block;
+  width: 100%;
+  max-height: 46cqh;
+  object-fit: cover;
+}
+
+.wikipedia-room__plate figcaption {
+  margin-top: 1cqi;
+  font-size: clamp(0.55rem, 3.6cqi, 0.72rem);
+  font-style: italic;
+  text-align: center;
+  color: #6b5536;
+}
+
+.wikipedia-room__title {
+  width: 100%;
+  padding-bottom: 1.2cqi;
+  border-bottom: 0.9cqi double #2a2118;
+  font-size: clamp(1rem, 8.5cqi, 1.55rem);
+  font-variant: small-caps;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.wikipedia-room__entry {
+  width: 100%;
+  font-size: clamp(0.72rem, 5cqi, 0.95rem);
+  line-height: 1.4;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.wikipedia-room__entry::first-letter {
+  float: left;
+  padding: 0.05em 0.08em 0 0;
+  font-size: 3.1em;
+  font-weight: 700;
+  line-height: 0.8;
+  color: #8b1a1a;
+}
+
+.wikipedia-room__folio {
+  font-size: clamp(0.55rem, 3.4cqi, 0.7rem);
+  letter-spacing: 0.2em;
+  color: #7a5c3a;
+}
+
+app-room-frame .room-credit a {
+  color: #8b1a1a;
+}

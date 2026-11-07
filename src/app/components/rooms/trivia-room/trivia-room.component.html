@@ -1,0 +1,29 @@
+<app-room-frame [status]="question.status()">
+  @if (question.value(); as q) {
+    <p class="room-words room-words--small trivia-room__question">{{ q.question }}</p>
+    <div class="trivia-room__choices">
+      @for (choice of q.choices; track choice; let i = $index) {
+        <button
+          type="button"
+          class="trivia-room__choice"
+          [class.trivia-room__choice--picked]="chosen() === choice"
+          [class.trivia-room__choice--right]="chosen() && choice === q.answer"
+          [class.trivia-room__choice--wrong]="chosen() === choice && choice !== q.answer"
+          [disabled]="!!chosen()"
+          (click)="choose(choice)"
+        >
+          <span class="trivia-room__letter">{{ 'ABCD'[i] }}:</span> {{ choice }}
+        </button>
+      }
+    </div>
+    @if (chosen(); as c) {
+      <p class="room-words room-words--small trivia-room__verdict" aria-live="polite">
+        {{ c === q.answer ? 'Correct!' : 'Oh no — it was ' + q.answer + '.' }}
+      </p>
+    }
+    <p class="room-credit">
+      {{ q.category }} ·
+      <a href="https://opentdb.com/" target="_blank" rel="noopener">Open Trivia DB</a>
+    </p>
+  }
+</app-room-frame>

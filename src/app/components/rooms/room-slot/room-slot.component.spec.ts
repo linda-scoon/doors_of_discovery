@@ -61,11 +61,48 @@ describe('RoomSlotComponent', () => {
 
   const door = () => fixture.nativeElement.querySelector('.door');
   const handle = () => fixture.nativeElement.querySelector('button.handle');
+  const leave = (pointerType = 'mouse') =>
+    fixture.nativeElement
+      .querySelector('app-room')
+      .dispatchEvent(new PointerEvent('pointerleave', { pointerType }));
 
-  it('renders the room component behind the door', async () => {
+  it('builds the room behind the door only once it is opened', async () => {
     await createWith(plainRoom);
+    // Nothing is fetched for a door nobody opens.
+    expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+
+    handle().click();
+    fixture.detectChanges();
+
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
   });
+
+  it('takes the room down once the door has swung shut', fakeAsync(async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    leave();
+    fixture.detectChanges();
+    // Still there while the door swings closed over it.
+    expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+
+    tick(2000);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+  }));
+
+  it('keeps the room if the door is opened again before it is taken down', fakeAsync(async () => {
+    await createWith(plainRoom);
+    handle().click();
+    leave();
+    tick(500);
+    handle().click();
+    tick(2000);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+  }));
 
   it('renders exactly one door', async () => {
     await createWith(plainRoom);
@@ -96,17 +133,43 @@ describe('RoomSlotComponent', () => {
     expect(sound.played).toContain('tap');
   });
 
-  it('shuts again when the pointer leaves', async () => {
+  it('shuts again when the mouse leaves', async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    leave();
+    fixture.detectChanges();
+
+    expect(door().classList).not.toContain('door--open');
+  });
+
+  it('stays open when a finger lifts off it, and shuts on a tap elsewhere', async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    // A touch pointer always "leaves" as it lifts.
+    leave('touch');
+    fixture.detectChanges();
+    expect(door().classList).toContain('door--open');
+
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true }));
+    fixture.detectChanges();
+    expect(door().classList).not.toContain('door--open');
+  });
+
+  it('is not shut by a tap inside its own room', async () => {
     await createWith(plainRoom);
     handle().click();
     fixture.detectChanges();
 
     fixture.nativeElement
-      .querySelector('app-room')
-      .dispatchEvent(new MouseEvent('mouseleave'));
+      .querySelector('.content')
+      .dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true }));
     fixture.detectChanges();
 
-    expect(door().classList).not.toContain('door--open');
+    expect(door().classList).toContain('door--open');
   });
 
   it('withholds the door state from rooms that did not ask for it', async () => {

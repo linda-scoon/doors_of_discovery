@@ -1,0 +1,14 @@
+@switch (status()) {
+  @case ('loading') {
+    <p class="room-frame__waiting" aria-label="Someone is coming">
+      <span></span><span></span><span></span>
+    </p>
+  }
+  @case ('failed') {
+    <!-- Bricked up. Opening the door again tries again. -->
+    <app-bricks [doorway]="true" label="This doorway is bricked up."></app-bricks>
+  }
+  @default {
+    <ng-content></ng-content>
+  }
+}

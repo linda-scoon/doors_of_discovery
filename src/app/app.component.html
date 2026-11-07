@@ -1,10 +1,14 @@
 <div class="app-wrapper">
   <!--
-    The rooms with an API behind them come first; everything after is
-    generated as the visitor scrolls. See src/app/rooms.ts.
+    Shuffled on every visit, and generated as the visitor scrolls. See
+    src/app/wall.ts.
   -->
-  @for (room of rooms; track room.id; let i = $index) {
-    <app-room-slot class="app-room" [room]="room" [ordinal]="i"></app-room-slot>
+  @for (cell of doors; track cell.id) {
+    @if (cell.bricks) {
+      <app-bricks class="app-room app-bricks"></app-bricks>
+    } @else {
+      <app-room-slot class="app-room" [room]="cell.room" [ordinal]="cell.ordinal"></app-room-slot>
+    }
   }
 </div>
 

@@ -1,4 +1,21 @@
-.room-container {
-  width: fit-content;
-  padding: 5px;
+:host {
+  display: contents;
+}
+
+/* A theatre: dark, with red curtains drawn back at each side. */
+app-room-frame {
+  background:
+    linear-gradient(to right, #7a0f16, #4a070c 5%, transparent 13%, transparent 87%, #4a070c 95%, #7a0f16),
+    radial-gradient(ellipse at 50% 20%, #1c1c1c, #050505 70%);
+  color: #ece6dc;
+}
+
+/* A screen as wide as the doorway, in the shape of a film. */
+.video-room__player {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 1.5cqi;
+  background: #000;
 }

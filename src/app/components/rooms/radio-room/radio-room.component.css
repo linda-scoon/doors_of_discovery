@@ -1,0 +1,152 @@
+:host {
+  display: contents;
+}
+
+/* A 1950s front room: mint striped wallpaper. */
+app-room-frame {
+  background:
+    repeating-linear-gradient(to right, rgba(255, 255, 255, 0.35) 0 4cqi, transparent 4cqi 8cqi),
+    #bfe6d6;
+  color: #24352f;
+}
+
+/*
+ * A boombox on the sideboard: chrome handle, two speakers that thump in
+ * time, a glowing display that says it is live, and a cassette turning.
+ */
+.boombox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 92cqi;
+}
+
+.boombox__handle {
+  width: 56cqi;
+  height: 7cqi;
+  border: 1.6cqi solid #9aa3ab;
+  border-bottom: 0;
+  border-radius: 4cqi 4cqi 0 0;
+}
+
+.boombox__body {
+  display: flex;
+  align-items: center;
+  gap: 2cqi;
+  width: 100%;
+  padding: 3cqi;
+  border-radius: 4cqi;
+  background: linear-gradient(to bottom, #3d434a, #1f2328 60%, #15181b);
+  box-shadow:
+    inset 0 0.6cqi 0 rgba(255, 255, 255, 0.15),
+    0 2cqi 5cqi rgba(36, 53, 47, 0.45);
+}
+
+/* Each speaker: a chrome rim, a mesh, and a cone that pulses. */
+.boombox__speaker {
+  flex: none;
+  width: 27cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #555c63 0 14%, #2a2e33 15% 18%, transparent 19%),
+    repeating-radial-gradient(circle, #1a1d20 0 0.6cqi, #30353a 0.6cqi 1.2cqi);
+  box-shadow: 0 0 0 1.2cqi #aab2ba, inset 0 0 2cqi rgba(0, 0, 0, 0.8);
+  animation: thump 0.5s ease-in-out infinite alternate;
+}
+
+.boombox__speaker:last-child {
+  animation-delay: 0.25s;
+}
+
+@keyframes thump {
+  to {
+    transform: scale(1.05);
+  }
+}
+
+.boombox__middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8cqi;
+  min-width: 0;
+}
+
+.boombox__display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5cqi;
+  width: 100%;
+  height: 7cqi;
+  border-radius: 1cqi;
+  background: #13261d;
+  box-shadow: inset 0 0 1.5cqi rgba(0, 0, 0, 0.8);
+}
+
+.boombox__live {
+  font-size: clamp(0.45rem, 3.2cqi, 0.65rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6dff9c;
+  text-shadow: 0 0 1cqi #6dff9c;
+  animation: blink 1.6s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.boombox__logo {
+  width: 5cqi;
+  height: 5cqi;
+  object-fit: contain;
+  border-radius: 0.8cqi;
+  background: #fff;
+}
+
+/* The cassette, its two reels turning. */
+.boombox__tape {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 9cqi;
+  border-radius: 1.2cqi;
+  background: linear-gradient(#e9e4d8, #cfc8b8);
+  box-shadow: inset 0 0 0 0.8cqi #2a2e33;
+}
+
+.boombox__tape span {
+  width: 5cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: repeating-conic-gradient(#2a2e33 0 30deg, #8a8478 30deg 60deg);
+  animation: reel 2s linear infinite;
+}
+
+@keyframes reel {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.boombox__buttons {
+  display: flex;
+  gap: 1cqi;
+}
+
+.boombox__buttons span {
+  width: 4cqi;
+  height: 2.5cqi;
+  border-radius: 0.5cqi;
+  background: linear-gradient(#c9cfd4, #858c93);
+}
+
+.boombox__buttons span:first-child {
+  background: linear-gradient(#ff7a7a, #c22d2d);
+}

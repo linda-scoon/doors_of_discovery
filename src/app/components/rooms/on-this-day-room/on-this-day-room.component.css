@@ -1,0 +1,26 @@
+:host {
+  display: contents;
+}
+
+/* Yesterday's newspaper, yellowed. */
+app-room-frame {
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(120, 85, 30, 0.25)),
+    #f1e6cc;
+  color: #2e2618;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.on-this-day-room__heading {
+  width: 100%;
+  padding: 1cqi 0;
+  border-top: 0.6cqi double #2e2618;
+  border-bottom: 0.6cqi double #2e2618;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.on-this-day-room__heading {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}

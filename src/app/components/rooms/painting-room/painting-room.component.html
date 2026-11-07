@@ -1,0 +1,13 @@
+<app-room-frame [status]="painting.status()">
+  @if (painting.value(); as p) {
+    <img class="painting-room__canvas" [src]="p.image" [alt]="p.title + ', by ' + p.artist" />
+    <div class="painting-room__label">
+      <p class="room-words room-words--small painting-room__title">{{ p.title }}</p>
+      <p class="room-credit">
+        {{ p.artist }}{{ p.date ? ', ' + p.date : '' }}
+        <br />
+        <a [href]="p.link" target="_blank" rel="noopener">Art Institute of Chicago</a>
+      </p>
+    </div>
+  }
+</app-room-frame>

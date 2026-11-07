@@ -1,0 +1,99 @@
+/*
+ * A television quiz show: a dark studio under a spotlight, the question and
+ * answers in angled panels, the letter in gold. A pick turns orange while it
+ * sinks in, then the right answer turns green.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  background:
+    repeating-conic-gradient(from 0deg at 50% 0%, rgba(120, 140, 255, 0.07) 0 6deg, transparent 6deg 14deg),
+    radial-gradient(ellipse at 50% 0%, #2a2fa0, #0b0c4a 55%, #030318);
+  color: #ffffff;
+  gap: 3.5cqi;
+}
+
+/* The angled panel shared by the question and the answers. */
+.trivia-room__question,
+.trivia-room__choice {
+  width: 100%;
+  clip-path: polygon(0 50%, 5% 0, 95% 0, 100% 50%, 95% 100%, 5% 100%);
+  border: 0.6cqi solid transparent;
+  background:
+    linear-gradient(to bottom, #1d2d8f, #050a40) padding-box,
+    linear-gradient(to bottom, #e3e8ff, #7d87c9) border-box;
+}
+
+.trivia-room__question {
+  padding: 3.5cqi 7cqi;
+}
+
+.trivia-room__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqi;
+  width: 100%;
+}
+
+.trivia-room__choice {
+  padding: 1.8cqi 7cqi;
+  color: #ffffff;
+  font: inherit;
+  font-size: clamp(0.68rem, 4.8cqi, 0.88rem);
+  text-align: left;
+  cursor: pointer;
+}
+
+.trivia-room__choice:hover:enabled {
+  background:
+    linear-gradient(to bottom, #2c40c0, #0a1260) padding-box,
+    linear-gradient(to bottom, #ffffff, #9aa4e8) border-box;
+}
+
+.trivia-room__letter {
+  color: #f6b40e;
+  font-weight: 700;
+}
+
+.trivia-room__choice:disabled {
+  cursor: default;
+}
+
+/* Final answer: the pick goes orange at once; a beat later the right
+   answer goes green, whichever was picked. */
+.trivia-room__choice--picked {
+  background:
+    linear-gradient(to bottom, #ffb53a, #e07b00) padding-box,
+    linear-gradient(to bottom, #ffffff, #ffcf7a) border-box;
+  color: #000;
+}
+
+.trivia-room__choice--right {
+  animation: correct 0s linear 1.2s forwards;
+}
+
+.trivia-room__choice--picked .trivia-room__letter {
+  color: #000;
+}
+
+@keyframes correct {
+  to {
+    background:
+      linear-gradient(to bottom, #5fe36b, #1e9e2c) padding-box,
+      linear-gradient(to bottom, #ffffff, #b6ffbe) border-box;
+    color: #000;
+  }
+}
+
+.trivia-room__verdict {
+  color: #f6b40e;
+  animation: appear 0.3s ease 1.2s both;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}

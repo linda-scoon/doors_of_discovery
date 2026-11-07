@@ -15,6 +15,9 @@
   justify-content: center;
   align-items: center;
 
+  /* What is inside sizes itself against the doorway, with cq units. */
+  container-type: size;
+
   /* What you see once the door is out of the way. */
   background: radial-gradient(
     ellipse at 50% 40%,

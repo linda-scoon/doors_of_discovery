@@ -1,40 +1,32 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-
 import { VideoRoomComponent } from './video-room.component';
-import { SafePipe } from '../../../pipes/safe.pipe';
+import { failRequest, openRoom } from '../room-frame/room-testing';
 
 describe('VideoRoomComponent', () => {
-  let component: VideoRoomComponent;
-  let fixture: ComponentFixture<VideoRoomComponent>;
+  it('shows the trailer of a popular film', async () => {
+    const room = await openRoom(VideoRoomComponent);
+    room.server.expectOne('/api/videos/popular').flush({ results: [{ id: 7, title: 'A Film' }] });
+    room.server.expectOne('/api/videos/trailer/7').flush({
+      results: [
+        { key: 'clip', site: 'YouTube', type: 'Clip' },
+        { key: 'trail', site: 'YouTube', type: 'Trailer' },
+      ],
+    });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      // SafePipe is used by this component's template, so it has to be
-      // declared here even though it lives elsewhere.
-      declarations: [VideoRoomComponent, SafePipe],
-      // VideosService calls the network; the testing backend keeps the real
-      // request from being made.
-      providers: [provideHttpClient(), provideHttpClientTesting()],
-
-      schemas: [NO_ERRORS_SCHEMA],
-    }).compileComponents();
+    expect(room.text()).toContain('A Film');
+    expect(room.fixture.nativeElement.querySelector('iframe').src).toContain('/embed/trail');
   });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(VideoRoomComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  it('is bricked up when the film has nothing on YouTube', async () => {
+    const room = await openRoom(VideoRoomComponent);
+    room.server.expectOne('/api/videos/popular').flush({ results: [{ id: 7, title: 'A Film' }] });
+    room.server.expectOne('/api/videos/trailer/7').flush({ results: [{ key: 'x', site: 'Vimeo', type: 'Trailer' }] });
+
+    expect(room.bricked()).toBeTrue();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('does not render the iframe until a trusted video URL arrives', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('iframe')).toBeNull();
+  it('is bricked up when the fetch fails', async () => {
+    const room = await openRoom(VideoRoomComponent);
+    failRequest(room.server, '/api/videos/popular');
+    expect(room.bricked()).toBeTrue();
   });
 });

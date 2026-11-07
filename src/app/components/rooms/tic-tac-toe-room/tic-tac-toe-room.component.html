@@ -1,0 +1,30 @@
+<app-room-frame status="ready">
+  <p class="room-words" aria-live="polite">
+    @if (winner() === 'X') {
+      You win!
+    } @else if (winner() === 'O') {
+      I win.
+    } @else if (full()) {
+      A draw.
+    } @else {
+      {{ thinking() ? 'Hmm…' : 'Your move.' }}
+    }
+  </p>
+  <div class="tic-tac-toe-room__board" role="grid" aria-label="Noughts and crosses">
+    @for (cell of board(); track $index) {
+      <button
+        type="button"
+        class="tic-tac-toe-room__cell"
+        [class.tic-tac-toe-room__cell--house]="cell === 'O'"
+        [disabled]="!!cell || over() || thinking()"
+        [attr.aria-label]="cell ? cell : 'Empty square ' + ($index + 1)"
+        (click)="play($index)"
+      >
+        {{ cell }}
+      </button>
+    }
+  </div>
+  @if (over()) {
+    <button type="button" class="room-button" (click)="again()">Play again</button>
+  }
+</app-room-frame>

@@ -1,0 +1,20 @@
+<app-room-frame [status]="page.status()">
+  @if (page.value(); as p) {
+    <p class="wikipedia-room__running-head" aria-hidden="true">
+      <span>The Wonder Book</span>
+      <span>Vol. {{ p.volume }}</span>
+    </p>
+    @if (p.thumbnail && !pictureMissing()) {
+      <figure class="wikipedia-room__plate">
+        <img [src]="p.thumbnail.source" alt="" (error)="pictureMissing.set(true)" />
+        <figcaption>{{ p.title }}</figcaption>
+      </figure>
+    }
+    <h3 class="wikipedia-room__title">{{ p.title }}</h3>
+    <p class="wikipedia-room__entry">{{ p.extract }}</p>
+    <p class="wikipedia-room__folio" aria-hidden="true">— {{ p.folio }} —</p>
+    <p class="room-credit">
+      A featured article from <a [href]="p.canonicalurl" target="_blank" rel="noopener">Wikipedia</a>, CC BY-SA
+    </p>
+  }
+</app-room-frame>

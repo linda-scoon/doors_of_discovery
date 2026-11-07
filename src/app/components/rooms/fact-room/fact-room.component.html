@@ -1,3 +1,18 @@
-<div class="room-container">
-  <p class="fact">{{ randomFact.Fact }}</p>
-</div>
+<app-room-frame [status]="fact.status()">
+  @if (fact.value(); as f) {
+    <p class="fact-room__heading room-credit">Did you know?</p>
+    <p class="room-words">{{ f.text }}</p>
+    <p class="room-credit">
+      @if (f.source) {
+        Source:
+        @if (f.sourceUrl) {
+          <a [href]="f.sourceUrl" target="_blank" rel="noopener">{{ f.source }}</a>
+        } @else {
+          {{ f.source }}
+        }
+        ·
+      }
+      <a href="https://uselessfacts.jsph.pl/" target="_blank" rel="noopener">Useless Facts</a>
+    </p>
+  }
+</app-room-frame>

@@ -3,7 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
-import { ROOMS } from './rooms';
+import { ROOM_KINDS } from './rooms';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -27,18 +27,13 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.title).toEqual('web_of_doors');
   });
 
-  it('puts the rooms that have an API behind them first', () => {
+  it('fills the wall with doors, each opening onto some kind of room', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const leading = fixture.componentInstance.rooms
-      .slice(0, ROOMS.length)
-      .map((room) => room.id);
+    const kinds = ROOM_KINDS.map((kind) => kind.kind);
+    const doors = fixture.componentInstance.doors;
 
-    expect(leading).toEqual(ROOMS.map((room) => room.id));
-  });
-
-  it('fills the rest of the wall with generated doors', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance.rooms.length).toBeGreaterThan(ROOMS.length);
+    expect(doors.length).toBeGreaterThan(20);
+    doors.forEach((door) => expect([...kinds, 'bricks']).toContain(door.kind));
   });
 
   it('renders one slot per door, each laid out by the grid', () => {
@@ -50,14 +45,14 @@ describe('AppComponent', () => {
 
     // Every slot carries .app-room, which is what the grid lays out. A door
     // added without it would not be positioned.
-    expect(slots.length).toBe(fixture.componentInstance.rooms.length);
+    expect(slots.length).toBe(fixture.componentInstance.doors.length);
   });
 
   it('gives every door a distinct id, so none share an appearance by accident', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 
-    const ids = fixture.componentInstance.rooms.map((room) => room.id);
+    const ids = fixture.componentInstance.doors.map((door) => door.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });

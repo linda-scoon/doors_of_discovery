@@ -58,9 +58,18 @@ host. A real environment variable always wins.
 
 | Key | Used by | Where to get it |
 |---|---|---|
-| `RAPID_API_KEY` | fact, image, music, quotes rooms | [RapidAPI](https://rapidapi.com/developer/apps) |
 | `GIFS_API_KEY` | gif room | [Giphy](https://developers.giphy.com/dashboard/) |
 | `TMDB_API_KEY` | video room | [TMDB](https://www.themoviedb.org/settings/api) |
+| `PEXELS_API_KEY` | photo room | [Pexels](https://www.pexels.com/api/) |
+
+Every other room uses a free API that needs no key: jokes (JokeAPI), facts
+(Useless Facts), quotes (ZenQuotes), paintings (Art Institute of Chicago),
+music (Deezer), trivia (Open Trivia DB), Wikipedia and its "On this day",
+the space station (wheretheiss.at), weather (Open-Meteo), animals (Dog CEO,
+Cat as a Service, RandomFox, random-d.uk), radio (Radio Browser), recipes
+(TheMealDB) and old films (Internet Archive). The tarot, wheel and noughts
+and crosses rooms call nothing at all. Each room credits its source, and
+whoever made what it shows when the source says.
 
 To see which rooms are configured on a running server:
 
@@ -87,25 +96,35 @@ Hostinger builds from `master` automatically on every push.
 
 ### Settings it needs
 
-| Setting | Value | Why |
-|---|---|---|
-| Build command | `npm run build` | |
-| Output directory | `dist` | the build writes `index.html` here |
-| Application type | **Node.js** | |
-| Entry file | **`server/index.js`** | |
+| Setting | Value |
+|---|---|
+| Framework preset | **Express** |
+| Entry file | **`server/index.js`** |
+| Package manager | npm |
 
-The last two matter. With the application type unset, Hostinger copies `dist`
-into `public_html` and serves it as static files — the doors appear, but
-**`/api/*` does not exist**, so no room can load anything. The server has to
-actually run for the site to work.
+There is no build setting for Express: Hostinger installs dependencies and
+starts the entry file. The build runs anyway, from `postinstall` (see
+`scripts/build-on-install.js`), so installing is what produces `dist/`.
+Set `SKIP_BUILD=1` to install without building.
 
-Set `RAPID_API_KEY`, `GIFS_API_KEY` and `TMDB_API_KEY` as environment
+Each one matters:
+
+- With the framework set to **Angular**, Hostinger serves `dist` as static
+  files and never starts the server — the doors appear, but **`/api/*` does
+  not exist**, so no room can load anything.
+- If `dist` is missing, the server still starts but has no page to serve.
+  It says so in place of the page, and `/api/health` reports
+  `"built": false`.
+
+Set `GIFS_API_KEY`, `TMDB_API_KEY` and `PEXELS_API_KEY` as environment
 variables in the panel. They are read only by the server process, so they
 never reach the public site.
 
-After a deploy, `https://doors.purplefootsteps.co.uk/api/health` reports which
-rooms came up configured. If it returns the page's HTML instead of JSON, the
-server is not running and the site is being served statically.
+After a deploy, `https://doors.purplefootsteps.co.uk/api/health` reports
+whether the site was built and which rooms came up configured. Open it in a
+private window: a browser that has visited the site before may answer with
+the wall from its offline copy. If it returns the page's HTML instead of
+JSON, the server is not running and the site is being served statically.
 
 ### If it is served statically anyway
 

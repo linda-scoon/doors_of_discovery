@@ -190,7 +190,7 @@ function pick<T>(items: readonly T[], seed: string): T {
 }
 
 /** Picks from a list where some entries should come up more often. */
-function pickWeighted<T>(entries: ReadonlyArray<[T, number]>, seed: string): T {
+export function pickWeighted<T>(entries: ReadonlyArray<[T, number]>, seed: string): T {
   const total = entries.reduce((sum, [, weight]) => sum + weight, 0);
   let position = hashToFraction(seed) * total;
 
@@ -257,11 +257,16 @@ const OPEN_STYLE_WEIGHTS: ReadonlyArray<[OpenStyle, number]> = [
   ['stuck', 1],
 ];
 
+/*
+ * Fire and the monster are the same every time, so they are the rarest:
+ * about one door in a hundred each. At one in seventeen and one in twenty
+ * they came round often enough to stop being a shock.
+ */
 const SURPRISE_WEIGHTS: ReadonlyArray<[Surprise, number]> = [
-  ['none', 72],
+  ['none', 81],
   ['crack', 8],
-  ['fire', 6],
-  ['monster', 5],
+  ['fire', 1],
+  ['monster', 1],
   ['knocks-back', 4],
   ['answers', 3],
   ['opens-on-tap', 2],

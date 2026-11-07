@@ -1,0 +1,41 @@
+/*
+ * Fills the doorway. "safe center" keeps a room that is taller than the
+ * doorway scrollable from its top, where plain centring would cut it off.
+ */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  gap: 5cqi;
+  width: 100%;
+  /* The doorway's own dark, until a room dresses it otherwise. */
+  color: #f2ece4;
+  height: 100%;
+  padding: 10cqi 8cqi;
+  overflow-y: auto;
+  text-align: center;
+  scrollbar-width: thin;
+}
+
+/* Footsteps rather than a spinner: three dots, one after another. */
+.room-frame__waiting {
+  display: flex;
+  gap: 3cqi;
+}
+
+.room-frame__waiting span {
+  width: 2.5cqi;
+  height: 2.5cqi;
+  border-radius: 50%;
+  background: currentColor;
+  animation: footstep 1.2s ease-in-out infinite;
+}
+
+.room-frame__waiting span:nth-child(2) { animation-delay: 0.2s; }
+.room-frame__waiting span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes footstep {
+  0%, 100% { opacity: 0.15; }
+  40% { opacity: 1; }
+}

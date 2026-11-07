@@ -1,0 +1,21 @@
+:host {
+  display: contents;
+}
+
+/* Pop colours, for whatever is moving. */
+app-room-frame {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.6) 0 1.5cqi, transparent 2cqi),
+    radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.6) 0 1cqi, transparent 1.5cqi),
+    radial-gradient(circle at 30% 85%, rgba(255, 255, 255, 0.6) 0 1.2cqi, transparent 1.7cqi),
+    linear-gradient(135deg, #ff9ad5, #c9a7ff 50%, #8fe3ff);
+  color: #2a1640;
+}
+
+.gif-room__gif {
+  display: block;
+  max-width: 100%;
+  max-height: 70cqh;
+  object-fit: contain;
+  border-radius: 2cqi;
+}

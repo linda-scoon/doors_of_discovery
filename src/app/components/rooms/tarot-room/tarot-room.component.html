@@ -1,0 +1,12 @@
+<app-room-frame status="ready">
+  <div class="tarot-room__card">
+    <div class="tarot-room__back" aria-hidden="true"></div>
+    <img class="tarot-room__face" [src]="image" [alt]="card.name" />
+  </div>
+  <p class="room-words">{{ card.name }}</p>
+  <p class="room-words room-words--small tarot-room__meaning">{{ card.meaning }}</p>
+  <p class="room-credit">
+    Pamela Colman Smith, 1909 ·
+    <a [href]="source" target="_blank" rel="noopener">Wikimedia Commons</a>
+  </p>
+</app-room-frame>

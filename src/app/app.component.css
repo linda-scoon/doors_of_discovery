@@ -35,6 +35,11 @@
   }
 }
 
+/* A stretch of bare wall takes the place of a door, and its shape. */
+.app-bricks {
+  aspect-ratio: var(--door-aspect);
+}
+
 /*
  * The sentinel the infinite scroll watches. It has height so that it can be
  * observed at all, and sits below the wall rather than inside the grid.

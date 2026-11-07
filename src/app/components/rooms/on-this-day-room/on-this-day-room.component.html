@@ -1,0 +1,14 @@
+<app-room-frame [status]="event.status()">
+  @if (event.value(); as e) {
+    <p class="room-credit on-this-day-room__heading">On this day, {{ date }}</p>
+    <p class="room-words room-words--big">{{ e.year }}</p>
+    <p class="room-words room-words--small">{{ e.text }}</p>
+    <p class="room-credit">
+      @if (e.link) {
+        <a [href]="e.link" target="_blank" rel="noopener">Wikipedia</a>, CC BY-SA
+      } @else {
+        Wikipedia, CC BY-SA
+      }
+    </p>
+  }
+</app-room-frame>

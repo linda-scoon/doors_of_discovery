@@ -1,20 +1,15 @@
-<div class="room-container">
-  <h2>{{ videoTitle }}</h2>
-  <!--
-    The safe pipe returns null for a URL it will not vouch for, including the
-    empty string we start with. Rendering the iframe only once we have a
-    trusted URL avoids binding null to src.
-  -->
-  @if (videoURL | safe; as trustedVideoURL) {
-    <iframe
-      [src]="trustedVideoURL"
-      width="480"
-      height="270"
-      allowfullscreen="true"
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      frameborder="no"
-      scrolling="no"
-    ></iframe>
+<app-room-frame [status]="trailer.status()">
+  @if (trailer.value(); as t) {
+    <p class="room-words room-words--small">{{ t.title }}</p>
+    @if (t.url | safe; as trusted) {
+      <iframe
+        class="video-room__player"
+        [src]="trusted"
+        [title]="'Trailer for ' + t.title"
+        allow="encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+      ></iframe>
+    }
+    <p class="room-credit">Films from TMDB</p>
   }
-</div>
+</app-room-frame>

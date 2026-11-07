@@ -1,0 +1,59 @@
+/*
+ * Whimsical: a pastel sky, a hand-drawn grid, coral crosses and teal
+ * noughts in a felt-tip hand.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  background:
+    radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.9) 0 4cqi, transparent 4.5cqi),
+    radial-gradient(circle at 22% 10%, rgba(255, 255, 255, 0.9) 0 5cqi, transparent 5.5cqi),
+    radial-gradient(circle at 85% 88%, rgba(255, 255, 255, 0.8) 0 6cqi, transparent 6.5cqi),
+    linear-gradient(160deg, #ffd6ec, #e3d9ff 50%, #ccf3ff);
+  color: #5b3a8c;
+  font-family: 'Caveat Brush', 'Comic Sans MS', cursive;
+}
+
+app-room-frame .room-words {
+  font-size: clamp(1rem, 9cqi, 1.6rem);
+}
+
+/* The grid is the gaps between the squares, in a wobbly purple. */
+.tic-tac-toe-room__board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2cqi;
+  width: 78cqi;
+  aspect-ratio: 1;
+  padding: 1cqi;
+  border-radius: 5cqi;
+  background: #b388eb;
+  transform: rotate(-2deg);
+}
+
+.tic-tac-toe-room__cell {
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 3cqi;
+  background: #fffaf3;
+  color: #ff6b6b;
+  font: inherit;
+  font-size: 15cqi;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.tic-tac-toe-room__cell:hover:enabled {
+  background: #fff1dd;
+}
+
+.tic-tac-toe-room__cell:disabled {
+  cursor: default;
+}
+
+.tic-tac-toe-room__cell--house {
+  color: #13a89e;
+}

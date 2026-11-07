@@ -1,25 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { JokesRoomComponent } from './jokes-room.component';
+import { failRequest, openRoom } from '../room-frame/room-testing';
 
 describe('JokesRoomComponent', () => {
-  let component: JokesRoomComponent;
-  let fixture: ComponentFixture<JokesRoomComponent>;
+  it('shows a setup and its punchline', async () => {
+    const room = await openRoom(JokesRoomComponent);
+    room.server
+      .expectOne('/api/jokes')
+      .flush({ type: 'twopart', setup: 'Why the long face?', delivery: 'I am a horse.' });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ JokesRoomComponent ]
-    })
-    .compileComponents();
+    expect(room.text()).toContain('Why the long face?');
+    expect(room.text()).toContain('I am a horse.');
   });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(JokesRoomComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  it('shows a one-liner, which used to come out blank', async () => {
+    const room = await openRoom(JokesRoomComponent);
+    room.server.expectOne('/api/jokes').flush({ type: 'single', joke: 'I used to be indecisive.' });
+
+    expect(room.text()).toContain('I used to be indecisive.');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('is bricked up when the fetch fails', async () => {
+    const room = await openRoom(JokesRoomComponent);
+    failRequest(room.server, '/api/jokes');
+    expect(room.bricked()).toBeTrue();
   });
 });

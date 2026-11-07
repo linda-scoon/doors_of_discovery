@@ -1,4 +1,4 @@
-<app-room (mouseleave)="closeDoor()">
+<app-room (pointerleave)="onPointerLeave($event)">
   <!-- The doorway's own theatrics, behind the door so they are revealed. -->
   @if (burning) {
     <span class="doorway-fire" aria-hidden="true">
@@ -42,13 +42,20 @@
     The room's own contents step aside while something is happening in the
     doorway, so a jump scare is not captioned "nothing in here yet".
   -->
+  <!--
+    The room itself is only built once the door opens, and taken down again
+    once it has swung shut. So nothing is fetched for the doors nobody
+    opens, and opening the same door again finds something new.
+  -->
   <span
     class="room-content"
     [class.room-content--hidden]="!open"
     [class.room-content--upstaged]="upstaged"
   >
-    <ng-container
-      *ngComponentOutlet="room.component; inputs: contentInputs"
-    ></ng-container>
+    @if (furnished) {
+      <ng-container
+        *ngComponentOutlet="room.component; inputs: contentInputs"
+      ></ng-container>
+    }
   </span>
 </app-room>

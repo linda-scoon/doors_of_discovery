@@ -11,6 +11,10 @@
 }
 
 .room-content {
+  /* The whole doorway, for the room to lay itself out in. */
+  position: absolute;
+  inset: 0;
+  display: flex;
   transition: opacity 400ms ease-in 500ms;
 }
 

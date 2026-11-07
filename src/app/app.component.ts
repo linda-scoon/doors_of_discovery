@@ -9,8 +9,8 @@ import {
   inject,
 } from '@angular/core';
 
-import { ROOMS, RoomDefinition } from './rooms';
-import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
+import { ROOM_KINDS } from './rooms';
+import { Deck, WallCell } from './wall';
 
 /** How many doors to add each time the visitor reaches the bottom. */
 const DOORS_PER_PAGE = 12;
@@ -27,25 +27,24 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   title: string = 'web_of_doors';
 
-  /**
-   * The doors on the wall. Begins with the rooms that have an API behind
-   * them, and grows as the visitor scrolls.
-   */
-  rooms: RoomDefinition[] = [...ROOMS];
+  /** Every door, in this visit's order. */
+  private readonly deck = new Deck(ROOM_KINDS);
+
+  /** The wall, door by door. It grows as the visitor scrolls. */
+  doors: WallCell[] = [];
 
   constructor() {
     // Filled here rather than in ngAfterViewInit. Adding doors from a
     // lifecycle hook that runs after the view is rendered changes state the
     // template has already been checked against, which Angular rightly
     // complains about.
-    this.addDoors(DOORS_PER_PAGE * 2);
+    this.addDoors(DOORS_PER_PAGE * 3);
   }
 
   /** Watched by the observer; reaching it means asking for more doors. */
   @ViewChild('endOfWall') endOfWall?: ElementRef<HTMLElement>;
 
   private observer?: IntersectionObserver;
-  private nextDoorNumber = 1;
 
   ngAfterViewInit(): void {
     if (!this.endOfWall || typeof IntersectionObserver === 'undefined') return;
@@ -66,23 +65,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.observer?.disconnect();
   }
 
-  /**
-   * Doors beyond the registry have no API behind them yet, so they open onto
-   * an empty room. Their ids are stable, which is what lets each one keep
-   * the same colour, material and face every time the page is loaded.
-   */
   private addDoors(count: number): void {
-    const newDoors: RoomDefinition[] = [];
-
-    for (let i = 0; i < count; i += 1) {
-      const number = this.nextDoorNumber++;
-      newDoors.push({
-        id: `door-${number}`,
-        name: `Door ${number}`,
-        component: EmptyRoomComponent,
-        isEmpty: true,
-      });
-    }
-    this.rooms = [...this.rooms, ...newDoors];
+    this.doors = [...this.doors, ...this.deck.take(count)];
   }
 }
