@@ -11,6 +11,14 @@
  * multiplies the total, and they are cheap because they are all just hashes.
  */
 
+/*
+ * Nothing on a door is a letter, numeral or symbol, and nothing should be.
+ * Marks acquire meanings their author never intended — a diagonal brace
+ * reads as a Z, and two-digit house numbers include several that are known
+ * extremist codes. With doors generated endlessly and nobody reviewing each
+ * one, the only safe rule is that doors carry hardware, not characters.
+ */
+
 export type DoorMaterial = 'wood' | 'glass' | 'stone' | 'metal';
 
 /** The face of the door — its joinery, glazing, or lack of either. */
@@ -19,7 +27,6 @@ export type DoorDesign =
   | 'six-panel'
   | 'two-panel'
   | 'planked'
-  | 'z-brace'
   | 'glazed-top'
   | 'porthole'
   | 'studded'
@@ -28,6 +35,7 @@ export type DoorDesign =
   | 'leaded'
   | 'frosted'
   | 'carved'
+  | 'ledged'
   | 'slab';
 
 /** How a door behaves when someone tries to open it. */
@@ -58,8 +66,8 @@ export interface DoorCharacter {
   wear: Wear;
   hasKnocker: boolean;
   hasLetterbox: boolean;
-  /** The number on the door, or null when it has no number plate. */
-  number: number | null;
+  hasKickPlate: boolean;
+  hasPeephole: boolean;
   surprise: Surprise;
 }
 
@@ -117,7 +125,7 @@ const MATERIAL_WEIGHTS: ReadonlyArray<[DoorMaterial, number]> = [
  * which is why they repeated after three or four doors; they have four now.
  */
 const DESIGNS_BY_MATERIAL: Record<DoorMaterial, readonly DoorDesign[]> = {
-  wood: ['four-panel', 'six-panel', 'two-panel', 'planked', 'z-brace', 'glazed-top'],
+  wood: ['four-panel', 'six-panel', 'two-panel', 'planked', 'glazed-top', 'ledged'],
   metal: ['studded', 'slab', 'porthole', 'two-panel'],
   glass: ['panes', 'glazed-top', 'leaded', 'frosted'],
   stone: ['arched', 'slab', 'carved', 'two-panel'],
@@ -219,9 +227,8 @@ export function characterForDoor(id: string): DoorCharacter {
     wear: pick(WEARS, `${id}:wear`),
     hasKnocker: chance(`${id}:knocker`, 0.35),
     hasLetterbox: chance(`${id}:letterbox`, 0.4),
-    number: chance(`${id}:plate`, 0.45)
-      ? 1 + Math.floor(hashToFraction(`${id}:number`) * 99)
-      : null,
+    hasKickPlate: chance(`${id}:kickplate`, 0.33),
+    hasPeephole: chance(`${id}:peephole`, 0.3),
     surprise,
   };
 }

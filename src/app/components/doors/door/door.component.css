@@ -265,9 +265,9 @@
   );
 }
 
-/* --- z-brace: planks with a diagonal, like a cottage door ---------------- */
+/* --- ledged: planks held by horizontal rails, like a cottage door -------- */
 
-.door--z-brace {
+.door--ledged {
   background-image: repeating-linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.22) 0 2px,
@@ -289,24 +289,14 @@
   top: 14%;
 }
 
+.door__rail--middle {
+  top: 46%;
+}
+
 .door__rail--bottom {
   bottom: 14%;
 }
 
-.door__brace {
-  position: absolute;
-  top: 14%;
-  left: 6%;
-  width: 88%;
-  height: 72%;
-  background: linear-gradient(
-    to bottom right,
-    transparent calc(50% - 7%),
-    color-mix(in srgb, var(--door-colour) 72%, black) calc(50% - 7%),
-    color-mix(in srgb, var(--door-colour) 72%, black) calc(50% + 7%),
-    transparent calc(50% + 7%)
-  );
-}
 
 /* --- studded: riveted metal ---------------------------------------------- */
 
@@ -422,17 +412,31 @@
   );
 }
 
-.door__number {
+.door__kick-plate {
   position: absolute;
-  top: 12%;
+  inset: auto 8% 5%;
+  height: 12%;
+
+  border: 2px solid var(--door-furniture-dark);
+  background: linear-gradient(
+    180deg,
+    var(--door-furniture),
+    var(--door-furniture-dark)
+  );
+  opacity: 0.85;
+}
+
+.door__peephole {
+  position: absolute;
+  top: 17%;
   left: 50%;
   translate: -50% 0;
+  width: 7%;
+  aspect-ratio: 1;
 
-  font-size: clamp(9px, 7cqw, 15px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--door-furniture);
-  text-shadow: 0 1px 0 var(--door-furniture-dark);
+  border: 2px solid var(--door-furniture-dark);
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #d8d4cc, #2b2a28 70%);
 }
 
 /* ============================================================== wear */

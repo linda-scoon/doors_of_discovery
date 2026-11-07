@@ -120,8 +120,12 @@ export class DoorComponent {
     return this.character.hasLetterbox;
   }
 
-  get doorNumber(): number | null {
-    return this.character.number;
+  get hasKickPlate(): boolean {
+    return this.character.hasKickPlate;
+  }
+
+  get hasPeephole(): boolean {
+    return this.character.hasPeephole;
   }
 
   get surprise(): Surprise {
