@@ -44,8 +44,6 @@ function daySeed(date: Date): number {
 
 export interface Reading {
   message: string;
-  /** Out of five, never below two: luck here is only ever fair to good. */
-  stars: number;
   number: number;
   colour: string;
 }
@@ -54,7 +52,6 @@ export function readingFor(moon: Moon, date: Date): Reading {
   const seed = daySeed(date);
   return {
     message: `${BY_PHASE[moon.phase]} ${BY_SIGN[moon.sign]}`,
-    stars: 2 + (seed % 4),
     number: 1 + (Math.floor(seed / 4) % 99),
     colour: COLOURS[Math.floor(seed / 400) % COLOURS.length],
   };

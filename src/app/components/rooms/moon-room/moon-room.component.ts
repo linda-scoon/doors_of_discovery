@@ -9,8 +9,9 @@ const R = 50;
 
 /**
  * What the moon is doing tonight -- its phase and the sign it is passing
- * through -- drawn as it actually looks, with a reading of the day's luck.
- * Worked out from the date, so it needs nothing from anywhere.
+ * through -- drawn as it actually looks, with a reading for the day. Worked
+ * out from the date, so it needs nothing from anywhere; the room itself
+ * keeps to the moon's own language, with no numbers or ratings.
  */
 @Component({
   selector: 'app-moon-room',
@@ -25,6 +26,4 @@ export class MoonRoomComponent {
   readonly reading = readingFor(this.moon, this.today);
   readonly r = R;
   readonly lit = litPath(this.moon, R);
-  readonly percent = Math.round(this.moon.illumination * 100);
-  readonly stars = [1, 2, 3, 4, 5];
 }

@@ -32,9 +32,9 @@ describe('the day\'s luck', () => {
     const a = readingFor(moonOn(morning), morning);
     const b = readingFor(moonOn(evening), evening);
 
-    expect(a.stars).toBe(b.stars);
+    expect(a.message).toBe(b.message);
     expect(a.number).toBe(b.number);
-    expect(a.stars).toBeGreaterThanOrEqual(2);
+    expect(a.colour).toBe(b.colour);
   });
 });
 
@@ -47,5 +47,7 @@ describe('MoonRoomComponent', () => {
     expect(fixture.nativeElement.querySelector('path').getAttribute('d')).toContain('A ');
     expect(text).toContain(fixture.componentInstance.moon.phase);
     expect(text).toContain('Lucky number');
+    expect(text).not.toContain('%');
+    expect(text).not.toContain('★');
   });
 });

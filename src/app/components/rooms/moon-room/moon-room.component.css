@@ -58,17 +58,6 @@ app-room-frame {
   background: rgba(10, 12, 40, 0.55);
 }
 
-.moon-room__stars {
-  font-size: clamp(0.9rem, 7cqi, 1.3rem);
-  letter-spacing: 0.15em;
-  color: rgba(233, 236, 255, 0.25);
-}
-
-.moon-room__star--on {
-  color: #ffd56b;
-  text-shadow: 0 0 2cqi rgba(255, 213, 107, 0.6);
-}
-
 .moon-room__lucky {
   opacity: 0.75;
 }
