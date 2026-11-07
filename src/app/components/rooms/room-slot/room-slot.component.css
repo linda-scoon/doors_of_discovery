@@ -141,10 +141,10 @@
 
 /* ---------------------------------------------------------- curtains */
 /*
- * A curtain hanging in the doorway, behind the door. Two halves, each with
- * its own drift, so they do not move as one sheet. Pleats are a repeating
- * gradient; the sway is a slow skew from the rail, which is where a hanging
- * fabric actually pivots.
+ * Some doorways are curtained. There are two kinds, and they do opposite
+ * jobs: netting hangs closed across the opening and veils whatever is in
+ * the room, while heavy curtains are drawn back to the sides and frame it.
+ * Both hang behind the door, so they are revealed as the door swings aside.
  */
 
 .doorway-curtain {
@@ -154,17 +154,20 @@
   pointer-events: none;
   /* Over the room's contents, under the door. */
   z-index: 1;
+}
 
-  /*
-   * The curtain is barely there. What hides the room is not the fabric's
-   * opacity but the blur behind it: you can see that something is in there,
-   * and roughly where, but not what it is.
-   */
-  /*
-   * Light in the doorway, as if the room beyond has a window. Painted on
-   * the container, so it sits behind the fabric. Without it the rooms are
-   * nearly black and white netting at low opacity just reads as grey.
-   */
+/* ------------------------------------------------------ netting */
+
+/*
+ * Netting is drawn across the whole doorway. What hides the room is not the
+ * fabric's opacity but the blur behind it: you can see that something is in
+ * there, and roughly where, but not what it is.
+ *
+ * The wash and the glow are painted on the container, behind the fabric.
+ * Without them the rooms are nearly black, and white netting at this
+ * opacity over black just reads as grey.
+ */
+.doorway-curtain--net {
   background-color: rgba(255, 253, 248, 0.3);
   background-image: radial-gradient(
     ellipse 75% 60% at 50% 40%,
@@ -173,15 +176,13 @@
     transparent 78%
   );
 
-  /* What hides the room is the blur, not the fabric's opacity: you can see
-     that something is in there, and roughly where, but not what. */
   backdrop-filter: blur(7px) brightness(1.6) saturate(0.75);
   -webkit-backdrop-filter: blur(7px) brightness(1.6) saturate(0.75);
 }
 
 /*
  * One strip per fold. Each runs the same animation a beat later than the
- * one before, so a ripple travels across the curtain rather than the whole
+ * one before, so a ripple travels across the netting rather than the whole
  * sheet swinging like a board.
  */
 .doorway-curtain__strip {
@@ -217,9 +218,155 @@
   }
 }
 
+/* ------------------------------------------------- drawn curtains */
+
+/*
+ * Heavy curtains, pulled back to either side. These are not there to hide
+ * the room — the middle is left clear — so they get no blur and no wash.
+ * They are the one part of the doorway that takes a colour.
+ */
+.doorway-curtain--drawn {
+  justify-content: space-between;
+}
+
+/* The rail they hang from, so they are not two shapes floating at the top. */
+.doorway-curtain--drawn::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.22),
+    rgba(0, 0, 0, 0.55)
+  );
+  background-color: var(--curtain-colour);
+}
+
+.doorway-curtain__half {
+  width: 32%;
+  height: 100%;
+  /* The containing block for the tie-back below. */
+  position: relative;
+
+  background-color: var(--curtain-colour);
+  /*
+   * Two layers: light falling from the rail down into the hem, and the
+   * pleats. The pleats are drawn as light and shade rather than in a second
+   * colour, so one hue covers every curtain in the wall.
+   */
+  background-image: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.04) 45%,
+      rgba(0, 0, 0, 0.3) 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.34) 0,
+      rgba(0, 0, 0, 0) 24%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(0, 0, 0, 0) 74%,
+      rgba(0, 0, 0, 0.34) 100%
+    );
+  background-size:
+    100% 100%,
+    27% 100%;
+
+  /* A dark seam where the fabric turns away from the doorway. */
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.45);
+}
+
+/*
+ * Each half is pinched partway down, where the tie-back gathers it. That
+ * narrow waist with fabric bunched above and below is what reads as a
+ * curtain held open, rather than a straight panel standing at the side.
+ */
+.doorway-curtain__half--left {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 42%,
+    64% 57%,
+    100% 72%,
+    100% 100%,
+    0 100%
+  );
+  transform-origin: top left;
+  animation: curtain-hang-left 5.2s ease-in-out infinite alternate;
+}
+
+.doorway-curtain__half--right {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 72%,
+    36% 57%,
+    0 42%
+  );
+  transform-origin: top right;
+  /* A different clock from the left, or the pair moves as one piece. */
+  animation: curtain-hang-right 6.1s ease-in-out infinite alternate;
+}
+
+/*
+ * The tie-back itself, lying across the waist. It stops short of the inner
+ * edge: run all the way across and it stops reading as a band around the
+ * fabric and starts reading as a pole laid over the doorway.
+ */
+.doorway-curtain__half::after {
+  content: '';
+  position: absolute;
+  top: 52%;
+  height: 3%;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.26),
+    rgba(0, 0, 0, 0.62)
+  );
+  background-color: var(--curtain-colour);
+}
+
+.doorway-curtain__half--left::after {
+  left: 34%;
+  right: 6%;
+}
+
+.doorway-curtain__half--right::after {
+  left: 6%;
+  right: 34%;
+}
+
+/*
+ * Hung fabric pivots at the rail, so the sway is a skew from the top edge
+ * rather than a sideways slide. The widening is slight: a heavy curtain
+ * barely breathes compared with netting.
+ */
+@keyframes curtain-hang-left {
+  from {
+    transform: skewX(-1.1deg) scaleX(1);
+  }
+  to {
+    transform: skewX(1.5deg) scaleX(1.05);
+  }
+}
+
+@keyframes curtain-hang-right {
+  from {
+    transform: skewX(1.1deg) scaleX(1);
+  }
+  to {
+    transform: skewX(-1.5deg) scaleX(1.05);
+  }
+}
+
 /* A curtain that thrashes is worse than one that does not move at all. */
 @media (prefers-reduced-motion: reduce) {
-  .doorway-curtain__strip {
+  .doorway-curtain__strip,
+  .doorway-curtain__half {
     animation: none;
   }
 }

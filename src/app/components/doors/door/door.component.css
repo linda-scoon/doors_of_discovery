@@ -387,6 +387,7 @@
 
 .door__knocker {
   position: absolute;
+  z-index: 2;
   top: 26%;
   left: 50%;
   translate: -50% 0;
@@ -406,6 +407,7 @@
 
 .door__letterbox {
   position: absolute;
+  z-index: 2;
   top: 56%;
   left: 50%;
   translate: -50% 0;
@@ -422,6 +424,7 @@
 
 .door__kick-plate {
   position: absolute;
+  z-index: 2;
   inset: auto 8% 5%;
   height: 12%;
 
@@ -434,6 +437,7 @@
 
 .door__peephole {
   position: absolute;
+  z-index: 2;
   top: 17%;
   left: 50%;
   translate: -50% 0;
@@ -539,6 +543,8 @@
   inset: 0;
   pointer-events: none;
   background-repeat: no-repeat;
+  /* Damage to the surface, so it sits with the paint, under the furniture. */
+  z-index: 1;
 }
 
 [data-cracks='1'] .door__cracks {
@@ -590,6 +596,7 @@
 
 .door__number {
   position: absolute;
+  z-index: 2;
   top: 11%;
   left: 50%;
   translate: -50% 0;
@@ -609,13 +616,21 @@
  * running off one letter.
  */
 
+/*
+ * Paint goes on the door, not on its ironmongery. Somebody with a spray can
+ * covers the timber; they do not paint over the handle, the letterbox or
+ * the kick plate, and a tag that did would look like a mistake.
+ *
+ * The doorway stacks: the face of the door, then paint and damage over it,
+ * then the furniture screwed on top of everything.
+ */
 .door__graffiti {
   position: absolute;
   inset: 0;
   display: grid;
   place-content: center;
   pointer-events: none;
-  z-index: 3;
+  z-index: 1;
 
   /* Every tag is turned, shifted and sized differently, or the same mark
      appears on every tagged door and reads as a stamp. */

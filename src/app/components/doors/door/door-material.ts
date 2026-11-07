@@ -52,6 +52,15 @@ export type Finish = 'brass' | 'chrome' | 'iron' | 'nickel';
 export type Wear = 'clean' | 'scuffed' | 'peeling';
 
 /**
+ * How a curtained doorway is dressed.
+ *
+ * `net` hangs white and closed across the opening: you can tell something
+ * is in there but not what. `drawn` is heavy fabric pulled back to the
+ * sides, which frames the room instead of veiling it.
+ */
+export type CurtainStyle = 'net' | 'drawn';
+
+/**
  * The unusual thing a door does, if it does anything.
  *
  * Most doors are ordinary. These are rare on purpose: a surprise that
@@ -107,8 +116,12 @@ export interface DoorCharacter {
   hasLetterbox: boolean;
   hasKickPlate: boolean;
   hasPeephole: boolean;
-  /** A net curtain hangs across the doorway, stirring in the draught. */
+  /** A curtain hangs in the doorway, stirring in the draught. */
   hasCurtain: boolean;
+  /** Which kind it is. */
+  curtainStyle: CurtainStyle;
+  /** The colour of a drawn curtain. Net curtains are always white. */
+  curtainHue: number;
   /** Someone has been at this one with a spray can. */
   hasGraffiti: boolean;
   /** How that particular tag was sprayed. Null when the door is clean. */
@@ -376,6 +389,8 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     hasKickPlate: chance(`${id}:kickplate`, 0.33),
     hasPeephole: chance(`${id}:peephole`, 0.3),
     hasCurtain: chance(`${id}:curtain`, 0.16),
+    curtainStyle: chance(`${id}:curtainstyle`, 0.55) ? 'net' : 'drawn',
+    curtainHue: Math.round(hashToFraction(`${id}:curtainhue`) * 360),
     hasGraffiti: chance(`${id}:graffiti`, 0.12),
     graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id, ordinal) : null,
     number,

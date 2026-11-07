@@ -18,13 +18,24 @@
   }
 
   <!--
-    A net curtain across the doorway. It hides the room without concealing
-    it: you can see that something is in there, but not what.
+    Some doorways are curtained. Netting hangs closed across the opening and
+    veils the room; heavy curtains are drawn back and frame it instead.
   -->
   @if (hasCurtain) {
-    <span class="doorway-curtain" aria-hidden="true">
-      @for (strip of curtainStrips; track $index) {
-        <span class="doorway-curtain__strip" [style.--strip]="$index"></span>
+    <span
+      class="doorway-curtain"
+      [class.doorway-curtain--net]="curtainStyle === 'net'"
+      [class.doorway-curtain--drawn]="curtainStyle === 'drawn'"
+      [style.--curtain-colour]="curtainColour"
+      aria-hidden="true"
+    >
+      @if (curtainStyle === 'drawn') {
+        <span class="doorway-curtain__half doorway-curtain__half--left"></span>
+        <span class="doorway-curtain__half doorway-curtain__half--right"></span>
+      } @else {
+        @for (strip of curtainStrips; track $index) {
+          <span class="doorway-curtain__strip" [style.--strip]="$index"></span>
+        }
       }
     </span>
   }
