@@ -9,8 +9,6 @@ import { QoutesService } from './qoutes.service';
   standalone: false,
 })
 export class QoutesRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
   quote: any = {};
 
   constructor(private qoutesStream: QoutesService) {}
@@ -19,12 +17,5 @@ export class QoutesRoomComponent implements OnInit {
     this.qoutesStream.loadData().subscribe((data) => {
       this.quote = data[0];
     });
-  }
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
   }
 }

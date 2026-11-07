@@ -1,0 +1,140 @@
+/*
+ * The room's contents are not shown until the door is open.
+ *
+ * Being behind the door is not enough: glass and frosted doors are
+ * translucent on purpose, so whatever was in the room could be read through
+ * them — including "nothing in here yet", which gives away the surprise and
+ * looks like a bug. The contents fade in as the door clears.
+ */
+.room-content--hidden {
+  opacity: 0;
+}
+
+.room-content {
+  transition: opacity 400ms ease-in 500ms;
+}
+
+/* Stepping aside for a jump scare should be immediate, not a slow fade. */
+.room-content--upstaged {
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+/*
+ * What is waiting in the doorway. Both sit behind the doors, so they are
+ * revealed as a door swings aside rather than drawn on top of it.
+ */
+
+/* ------------------------------------------------------------- fire */
+
+.doorway-fire {
+  position: absolute;
+  inset: auto 0 0;
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 4%;
+  pointer-events: none;
+  /* Lights the whole doorway, not just where the flames are. */
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 100%,
+    rgba(255, 140, 20, 0.45),
+    transparent 70%
+  );
+}
+
+.doorway-fire__flame {
+  width: 13%;
+  height: 40%;
+  border-radius: 50% 50% 46% 46% / 72% 72% 28% 28%;
+  background: linear-gradient(
+    to top,
+    #ffd24a 0%,
+    #ff9d1e 38%,
+    #ff5a16 70%,
+    rgba(255, 60, 0, 0) 100%
+  );
+  filter: blur(1px);
+  transform-origin: bottom center;
+  animation: flame-lick 900ms ease-in-out infinite alternate;
+}
+
+/* Each flame on its own clock, or they move as one solid block. */
+.doorway-fire__flame:nth-child(2) { height: 62%; animation-duration: 700ms; }
+.doorway-fire__flame:nth-child(3) { height: 78%; animation-duration: 1100ms; }
+.doorway-fire__flame:nth-child(4) { height: 58%; animation-duration: 820ms; }
+.doorway-fire__flame:nth-child(5) { height: 36%; animation-duration: 960ms; }
+
+@keyframes flame-lick {
+  from {
+    transform: scaleY(0.85) skewX(-4deg);
+    opacity: 0.85;
+  }
+  to {
+    transform: scaleY(1.12) skewX(5deg);
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------- monster */
+
+.doorway-monster {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Above the doors: it is coming out at you, not waiting politely behind
+     a door that is still swinging. */
+  z-index: 50;
+  display: grid;
+  place-content: center;
+  gap: 8% 18%;
+  grid-template-columns: auto auto;
+  /* Rushes at you from the dark, then is gone. */
+  animation: monster-lunge 900ms ease-out forwards;
+}
+
+.doorway-monster__eye {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff4b0, #ffb300 45%, #a81b00);
+  box-shadow: 0 0 18px rgba(255, 140, 0, 0.9);
+}
+
+.doorway-monster__maw {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 86px;
+  height: 34px;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  background: #1a0505;
+  box-shadow: inset 0 -6px 0 #6b0f0f;
+  /* Teeth. */
+  background-image: repeating-linear-gradient(
+    90deg,
+    #f3e7d3 0 6px,
+    transparent 6px 13px
+  );
+  background-size: 100% 11px;
+  background-repeat: no-repeat;
+}
+
+@keyframes monster-lunge {
+  0% {
+    transform: scale(0.25) translateZ(0);
+    opacity: 0;
+  }
+  35% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}

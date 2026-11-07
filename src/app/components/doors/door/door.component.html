@@ -1,23 +1,144 @@
+<!--
+  The door itself is tappable: tapping tells you what it is made of. Opening
+  it is the handle's job, which is why the handle stops the tap going through.
+  A div rather than a button, because the handle inside it is the control —
+  tapping is flavour, and the keyboard path to the room is the handle.
+-->
 <div
-  class="door"
+  [class]="
+    'door door--' + resolvedMaterial +
+    ' door--' + resolvedDesign +
+    ' door--wear-' + wear +
+    ' door--finish-' + finish
+  "
   [class.door--open]="open"
-  [class.door--hinge-right]="handleSide === 'left'"
-  [style.backgroundColor]="colour"
+  [class.door--hinge-right]="resolvedHandleSide === 'left'"
+  [class.door--creak]="resolvedOpenStyle === 'creak'"
+  [class.door--refusing]="refusing"
+  [attr.data-cracks]="cracks || null"
+  [style.--door-colour]="resolvedColour"
+  (click)="onTap()"
 >
-  <div class="door__panels door__panels--top">
-    <div class="door__panel"></div>
-    <div class="door__panel"></div>
-  </div>
+  <!-- The face. Designs drawn entirely in CSS need no markup. -->
+  @switch (resolvedDesign) {
+    @case ('glazed-top') {
+      <span class="door__glazing"></span>
+      <div class="door__panels">
+        @for (panel of panels; track $index) {
+          <span class="door__panel"></span>
+        }
+      </div>
+    }
+    @case ('panes') {
+      <div class="door__panes">
+        @for (pane of panels; track $index) {
+          <span class="door__pane"></span>
+        }
+      </div>
+    }
+    @case ('leaded') {
+      <div class="door__panes door__panes--leaded">
+        @for (pane of panels; track $index) {
+          <span class="door__pane"></span>
+        }
+      </div>
+    }
+    @case ('porthole') {
+      <span class="door__porthole"></span>
+    }
+    @case ('ledged') {
+      <span class="door__rail door__rail--top"></span>
+      <span class="door__rail door__rail--middle"></span>
+      <span class="door__rail door__rail--bottom"></span>
+    }
+    @case ('studded') {
+      <span class="door__studs"></span>
+    }
+    @case ('carved') {
+      <span class="door__carving"></span>
+    }
+    @default {
+      @if (panels.length) {
+        <div class="door__panels">
+          @for (panel of panels; track $index) {
+            <span class="door__panel"></span>
+          }
+        </div>
+      }
+    }
+  }
+
+  <!-- Furniture. Which of these a door has is decided by its id. -->
+  @if (hasKnocker) {
+    <span class="door__knocker" aria-hidden="true"></span>
+  }
+  @if (hasLetterbox) {
+    <span class="door__letterbox" aria-hidden="true"></span>
+  }
+  @if (hasKickPlate) {
+    <span class="door__kick-plate" aria-hidden="true"></span>
+  }
+  @if (hasPeephole) {
+    <span class="door__peephole" aria-hidden="true"></span>
+  }
+  @if (doorNumber !== null) {
+    <span class="door__number" aria-hidden="true">{{ doorNumber }}</span>
+  }
+
+  <!--
+    Someone has tagged this one. Real graffiti is lettering, so these are
+    words in a marker hand -- the site's own name, occasionally a signature
+    -- or a drawing. Never an abstract squiggle, which is what this was and
+    which looked like a sticker.
+  -->
+  @if (graffiti; as tag) {
+    <span
+      class="door__graffiti"
+      aria-hidden="true"
+      [class.door__graffiti--signature]="tag.kind === 'signature'"
+      [style.--tag-ink]="'hsl(' + tag.hue + ' 92% 58%)'"
+      [style.--tag-accent]="'hsl(' + tag.hueAccent + ' 92% 62%)'"
+      [style.--tag-x]="tag.shiftX + '%'"
+      [style.--tag-y]="tag.shiftY + '%'"
+      [style.--tag-rotate]="tag.rotate + 'deg'"
+      [style.--tag-scale]="tag.scale"
+    >
+      @if (tag.kind === 'cat') {
+        <!-- A cat mid-stride, drawn in one marker line. -->
+        <svg class="door__cat" viewBox="0 0 120 72" fill="none" aria-hidden="true">
+          <!-- Back and rump, rising to the shoulders. -->
+          <path class="door__cat-line" d="M30 46 C27 31 40 26 58 26 C70 26 78 29 83 34" />
+          <!-- Belly. -->
+          <path class="door__cat-line" d="M34 46 C46 51 64 51 78 46" />
+          <!-- Tail, up and curled over, the way a cat walks. -->
+          <path class="door__cat-line" d="M30 46 C17 44 9 31 18 22 C23 17 30 21 28 28" />
+          <!-- Head. -->
+          <circle class="door__cat-line" cx="92" cy="30" r="12" />
+          <!-- Ears: big and triangular, which is most of what says cat. -->
+          <path class="door__cat-line" d="M83 23 L81 9 L93 18" />
+          <path class="door__cat-line" d="M96 17 L107 7 L104 22" />
+          <!-- Legs mid-stride, front pair ahead of the back pair. -->
+          <path class="door__cat-line" d="M38 48 L34 64" />
+          <path class="door__cat-line" d="M50 50 L55 64" />
+          <path class="door__cat-line" d="M74 49 L70 64" />
+          <path class="door__cat-line" d="M82 47 L88 63" />
+          <!-- Eye and whiskers. -->
+          <circle class="door__cat-dot" cx="95" cy="28" r="2.2" />
+          <path class="door__cat-line door__cat-line--fine" d="M101 34 L112 32" />
+          <path class="door__cat-line door__cat-line--fine" d="M101 36 L111 38" />
+        </svg>
+      } @else {
+        <span class="door__tag-text">{{ tag.text }}</span>
+        <span class="door__drip"></span>
+      }
+    </span>
+  }
 
   <app-handle
-    [side]="handleSide"
+    [side]="resolvedHandleSide"
     [pressed]="open"
     [label]="label"
+    [stuck]="isStuck"
     (used)="onHandleUsed()"
   ></app-handle>
-
-  <div class="door__panels door__panels--bottom">
-    <div class="door__panel"></div>
-    <div class="door__panel"></div>
-  </div>
 </div>

@@ -8,18 +8,9 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   standalone: false,
 })
 export class GameRoomComponent implements OnInit {
-  // input from app component
-  openedDoor: boolean = false;
 
   constructor() {}
 
   ngOnInit(): void {}
 
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
-  }
 }

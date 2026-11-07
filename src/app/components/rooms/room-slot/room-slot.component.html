@@ -1,0 +1,54 @@
+<app-room (mouseleave)="closeDoor()">
+  <!-- The doorway's own theatrics, behind the door so they are revealed. -->
+  @if (burning) {
+    <span class="doorway-fire" aria-hidden="true">
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+      <span class="doorway-fire__flame"></span>
+    </span>
+  }
+  @if (lunging) {
+    <span class="doorway-monster" aria-hidden="true">
+      <span class="doorway-monster__eye"></span>
+      <span class="doorway-monster__eye"></span>
+      <span class="doorway-monster__maw"></span>
+    </span>
+  }
+
+
+  <!--
+    The door is given the resolved character, not the registry's raw
+    overrides. Passing room.openStyle straight through let the door be stuck
+    while this component believed it was not, so a door onto an empty room
+    stayed locked despite being unlocked here.
+  -->
+  <app-door
+    [id]="room.id"
+    [ordinal]="ordinal"
+    [open]="open"
+    (opened)="openDoor()"
+    (tapped)="onTap($event)"
+    (refused)="onRefused($event)"
+    [colour]="character.colour"
+    [material]="character.material"
+    [openStyle]="character.openStyle"
+    [handleSide]="character.handleSide"
+    [label]="doorLabel"
+  ></app-door>
+
+  <!--
+    The room's own contents step aside while something is happening in the
+    doorway, so a jump scare is not captioned "nothing in here yet".
+  -->
+  <span
+    class="room-content"
+    [class.room-content--hidden]="!open"
+    [class.room-content--upstaged]="burning || lunging"
+  >
+    <ng-container
+      *ngComponentOutlet="room.component; inputs: contentInputs"
+    ></ng-container>
+  </span>
+</app-room>

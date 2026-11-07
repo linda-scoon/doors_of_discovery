@@ -1,28 +1,20 @@
-<app-room (mouseleave)="exitRoom()">
-  <app-door
-    [open]="openedDoor"
-    (opened)="enterRoom()"
-    colour="#BA9238"
-    label="the video room"
-  ></app-door>
-  <div class="room-container">
-    <h2>{{ videoTitle }}</h2>
-    <!--
-      The safe pipe returns null for a URL it will not vouch for, including the
-      empty string we start with. Rendering the iframe only once we have a
-      trusted URL avoids binding null to src.
-    -->
-    @if (videoURL | safe; as trustedVideoURL) {
-      <iframe
-        [src]="trustedVideoURL"
-        width="480"
-        height="270"
-        allowfullscreen="true"
-        mozallowfullscreen="true"
-        webkitallowfullscreen="true"
-        frameborder="no"
-        scrolling="no"
-      ></iframe>
-    }
-  </div>
-</app-room>
+<div class="room-container">
+  <h2>{{ videoTitle }}</h2>
+  <!--
+    The safe pipe returns null for a URL it will not vouch for, including the
+    empty string we start with. Rendering the iframe only once we have a
+    trusted URL avoids binding null to src.
+  -->
+  @if (videoURL | safe; as trustedVideoURL) {
+    <iframe
+      [src]="trustedVideoURL"
+      width="480"
+      height="270"
+      allowfullscreen="true"
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      frameborder="no"
+      scrolling="no"
+    ></iframe>
+  }
+</div>

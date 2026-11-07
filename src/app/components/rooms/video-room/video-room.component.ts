@@ -9,7 +9,6 @@ import { VideosService } from './videos.service';
   standalone: false,
 })
 export class VideoRoomComponent implements OnInit {
-  openedDoor: boolean = false;
   videoURL: string = '';
   videoTitle: string = '';
 
@@ -55,11 +54,4 @@ export class VideoRoomComponent implements OnInit {
     return (trailer ?? onYouTube[0])?.key;
   }
 
-  enterRoom(): void {
-    this.openedDoor = true;
-  }
-
-  exitRoom(): void {
-    this.openedDoor = false;
-  }
 }
