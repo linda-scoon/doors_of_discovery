@@ -258,15 +258,6 @@ describe('RoomSlotComponent', () => {
     expect(content.classList).not.toContain('room-content--hidden');
   });
 
-  it('never leaves a door onto an empty room stuck', async () => {
-    await createWith({ ...plainRoom, openStyle: 'stuck', isEmpty: true });
-
-    handle().click();
-    fixture.detectChanges();
-
-    expect(door().classList).toContain('door--open');
-  });
-
   it('still allows a stuck door onto a room with something in it', async () => {
     await createWith({ ...plainRoom, openStyle: 'stuck' });
 

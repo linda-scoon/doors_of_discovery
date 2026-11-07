@@ -112,13 +112,7 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
     // room asking for a creaky door would have opened silently.
     const derived = characterForDoor(this.room.id, this.ordinal);
 
-    let openStyle = this.room.openStyle ?? derived.openStyle;
-
-    // A door onto an empty room is never stuck. Refusing to open, and then
-    // having nothing behind it, is two disappointments rather than one.
-    if (this.room.isEmpty && openStyle === 'stuck') {
-      openStyle = 'swing';
-    }
+    const openStyle = this.room.openStyle ?? derived.openStyle;
 
     this.character = {
       ...derived,
@@ -244,7 +238,7 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
    * Whether the room's own contents should step aside.
    *
    * A doorway with something in it is not an empty room, so it must never
-   * be captioned "nothing in here yet" — not even for the moment between
+   * be shown with the room's own contents in front of it — not even for the moment between
    * the door opening and the monster arriving.
    */
   get upstaged(): boolean {

@@ -266,3 +266,21 @@ describe('graffiti placement', () => {
     expect(again).toEqual(once);
   });
 });
+
+describe('the jump scare', () => {
+  // Rare on purpose -- a scare people expect does not scare -- but it must
+  // actually be out there to be met.
+  it('is behind about one door in a hundred, never none', () => {
+    let monsters = 0;
+    let fires = 0;
+    for (let i = 1; i <= 5000; i += 1) {
+      const { surprise } = characterForDoor(`door-${i}`, i - 1);
+      if (surprise === 'monster') monsters += 1;
+      if (surprise === 'fire') fires += 1;
+    }
+    expect(monsters).toBeGreaterThan(25);
+    expect(monsters).toBeLessThan(100);
+    expect(fires).toBeGreaterThan(25);
+    expect(fires).toBeLessThan(100);
+  });
+});

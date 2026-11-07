@@ -1,6 +1,5 @@
 import { Type } from '@angular/core';
 
-import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.component';
 
 import { HandleSide, OpenStyle } from './components/doors/door/door.component';
 import { DoorMaterial } from './components/doors/door/door-material';
@@ -28,15 +27,6 @@ export interface RoomDefinition {
 
   /** How the door behaves when opened. Some doors are stuck and never do. */
   openStyle?: OpenStyle;
-
-  /**
-   * There is nothing behind this door yet.
-   *
-   * Such a door is never stuck. A door that will not open onto a room with
-   * nothing in it is two disappointments rather than one, and the stuck
-   * ones are only worth meeting when there is something to find.
-   */
-  isEmpty?: boolean;
 
   /** Which side the handle is on. Defaults to the right. */
   handleSide?: HandleSide;
@@ -85,9 +75,6 @@ export interface RoomKind {
   load: () => Promise<Type<unknown>>;
 
   rarity: Rarity;
-
-  /** See RoomDefinition. */
-  isEmpty?: boolean;
 
   /** See RoomDefinition. */
   needsDoorState?: boolean;
@@ -257,15 +244,5 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     load: () =>
       import('./components/rooms/tic-tac-toe-room/tic-tac-toe-room.component').then((m) => m.TicTacToeRoomComponent),
     rarity: 'rare',
-  },
-
-  // Kept, rarely: an empty room is a pause in the wall, and it is where the
-  // next room goes.
-  {
-    kind: 'empty',
-    name: 'Empty Room',
-    load: () => Promise.resolve(EmptyRoomComponent),
-    rarity: 'rare',
-    isEmpty: true,
   },
 ];
