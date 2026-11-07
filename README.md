@@ -153,12 +153,12 @@ src/app/
 
 ## The plug
 
-The bookshop now and then recommends one of the owner's own stories from
-[Silver Footfalls](https://silverfootfalls.com) instead of a book, marked
-"From our own shelf" and 18+. The server finds the stories from that site's
-sitemap and each story page's Open Graph tags (`server/plugs.js`), so a new
-story turns up on its own within six hours. Its covers are not shown while
-`SHOW_OWN_COVERS` in `book-room.component.ts` is false.
+The bookshop now and then shows one of the owner's own stories from
+[Silver Footfalls](https://silverfootfalls.com) instead of a book: its
+cover with the title over it, marked 18+, a short synopsis and a link to the
+site. The server finds the stories from that site's sitemap and each story
+page's Open Graph tags (`server/plugs.js`), once a day, so a new story
+turns up on its own within a day, with no key.
 
 ## Security and caching
 

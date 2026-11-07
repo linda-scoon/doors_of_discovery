@@ -1,4 +1,4 @@
-import { BookRoomComponent, SHOW_OWN_COVERS } from './book-room.component';
+import { BookRoomComponent } from './book-room.component';
 import { openRoom } from '../room-frame/room-testing';
 import subjects from '../../../../../shared/book-subjects.json';
 
@@ -32,18 +32,20 @@ describe('BookRoomComponent', () => {
     expect(room.fixture.nativeElement.querySelector('img').src).toContain('/b/id/123-M.jpg');
   });
 
-  it('now and then recommends one of our own stories, marked 18+', async () => {
+  it('now and then shows one of our own stories: its cover, title, 18+, synopsis, link', async () => {
     spyOn(Math, 'random').and.returnValue(0.1);
     const room = await openRoom(BookRoomComponent);
     room.server.expectOne('/api/silverfoot').flush({ stories: [ownStory] });
 
-    expect(room.text()).toContain('From our own shelf');
-    expect(room.text()).toContain('18+');
     expect(room.text()).toContain('Well Then');
-    const link: HTMLAnchorElement = room.fixture.nativeElement.querySelector('a.book-room__read');
-    expect(link.href).toBe('https://silverfootfalls.com/story/well-then');
-    // Words only, for now: the covers are not for an all-ages wall.
-    expect(Boolean(room.fixture.nativeElement.querySelector('img'))).toBe(SHOW_OWN_COVERS);
+    expect(room.text()).toContain('18+');
+    expect(room.text()).toContain('Three years married');
+    expect(room.text()).not.toContain('own shelf');
+    expect(room.fixture.nativeElement.querySelector('img').src).toBe(ownStory.cover);
+
+    const site: HTMLAnchorElement = room.fixture.nativeElement.querySelector('a.book-room__site');
+    expect(site.textContent!.trim()).toBe('Silver Footfalls');
+    expect(site.href).toBe('https://silverfootfalls.com/story/well-then');
   });
 
   it('recommends a book instead if our own stories cannot be read', async () => {

@@ -44,20 +44,14 @@ export type Recommendation =
 /** How often the pick is one of the site owner's own stories instead. */
 export const OWN_STORY_CHANCE = 0.25;
 
-/**
- * Whether the Silver Footfalls covers are shown. Its stories are 18+ and
- * its covers are romance covers, while this site is for everyone, so for
- * now the plug is words only. Set to true to show them.
- */
-export const SHOW_OWN_COVERS = false;
-
 /** Open Library's lists are fetched fifty at a time; see server/apis.js. */
 const PAGES = 5;
 
 /**
  * A bookshop: one book recommended from a random subject, from Open
- * Library. Now and then the recommendation is one of the site owner's own
- * stories from Silver Footfalls, marked as their own and as 18+.
+ * Library. Now and then it is one of the site owner's stories from Silver
+ * Footfalls instead: its cover with the title over it, marked 18+, a short
+ * synopsis and a link to the site.
  */
 @Component({
   selector: 'app-book-room',
@@ -68,7 +62,6 @@ const PAGES = 5;
 })
 export class BookRoomComponent {
   private readonly http = inject(HttpClient);
-  readonly showOwnCovers = SHOW_OWN_COVERS;
 
   readonly pick = roomLoad(() =>
     // If the owner's stories cannot be read, recommend a book instead.

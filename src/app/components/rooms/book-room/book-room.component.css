@@ -32,11 +32,6 @@ app-room-frame {
   transform: rotate(-3deg);
 }
 
-.book-room__sign--own {
-  background: #10162b;
-  color: #d8dff0;
-}
-
 .book-room__cover {
   display: block;
   width: 44cqi;
@@ -70,11 +65,6 @@ app-room-frame {
   box-shadow: 0 1.5cqi 4cqi rgba(0, 0, 0, 0.45);
 }
 
-.book-room__card--own {
-  background: linear-gradient(to bottom, #1a2342, #0c1124);
-  color: #e3e8f5;
-}
-
 .book-room__title {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(0.9rem, 7cqi, 1.3rem);
@@ -82,18 +72,79 @@ app-room-frame {
   line-height: 1.15;
 }
 
-.book-room__badge {
-  font-size: clamp(0.55rem, 3.6cqi, 0.7rem);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #b9c5e6;
-}
-
-.book-room__blurb {
-  font-style: italic;
-  opacity: 0.9;
-}
-
-.book-room__read {
+/*
+ * One of the owner's own stories: the cover, face out, with the title
+ * across the bottom of it and an 18+ mark in the corner, then a few lines
+ * of synopsis and the site's name.
+ */
+.book-room__own {
+  position: relative;
+  display: block;
+  width: 58cqi;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 0 1.5cqi 1.5cqi 0;
+  background: linear-gradient(to bottom, #2b1830, #0d0a14);
+  box-shadow: -1cqi 0 0 rgba(0, 0, 0, 0.3) inset, 0 2cqi 6cqi rgba(0, 0, 0, 0.6);
+  color: #ffffff;
   text-decoration: none;
+}
+
+.book-room__own-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-room__own-title {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 14cqi 4cqi 4cqi;
+  background: linear-gradient(to bottom, transparent, rgba(8, 4, 10, 0.85) 55%);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.95rem, 8cqi, 1.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0.5cqi 2cqi rgba(0, 0, 0, 0.8);
+}
+
+.book-room__age {
+  position: absolute;
+  top: 2.5cqi;
+  right: 2.5cqi;
+  display: grid;
+  place-items: center;
+  width: 10cqi;
+  aspect-ratio: 1;
+  border: 0.6cqi solid #ffffff;
+  border-radius: 50%;
+  background: #b3122a;
+  font-size: clamp(0.55rem, 3.6cqi, 0.75rem);
+  font-weight: 800;
+}
+
+/* On a dark panel, so it reads over the busy shelves. */
+.book-room__synopsis {
+  width: 100%;
+  padding: 2.5cqi 3.5cqi;
+  border-radius: 1.5cqi;
+  background: rgba(16, 10, 8, 0.82);
+  color: #f2ece4;
+  font-size: clamp(0.68rem, 4.6cqi, 0.88rem);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.book-room__site {
+  padding: 0.4em 1.1em;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #2a1d12;
+  font-size: clamp(0.7rem, 5cqi, 0.9rem);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 1cqi 2cqi rgba(0, 0, 0, 0.4);
 }

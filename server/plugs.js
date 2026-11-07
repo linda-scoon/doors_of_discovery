@@ -4,7 +4,8 @@
  *
  * Found the way a search engine finds them: the sitemap lists the stories,
  * and each story's page describes itself with Open Graph tags. So a new
- * story appears here on its own, a few hours after it is published.
+ * story appears here on its own, within a day of being published, with no
+ * key and nothing to keep in step.
  *
  * Only ever talks to silverfootfalls.com, and only reads: nothing the
  * browser sends goes into a request.
@@ -14,7 +15,8 @@ const SITE = 'https://silverfootfalls.com';
 const STORY_URL = /^https:\/\/silverfootfalls\.com\/story\/[a-z0-9-]{1,100}$/;
 const TIMEOUT_MS = 8_000;
 const MAX_STORIES = 40;
-const KEEP_FOR_MS = 6 * 60 * 60 * 1000;
+/** Stories are not published often, so once a day is plenty, and light. */
+const KEEP_FOR_MS = 24 * 60 * 60 * 1000;
 const HEADERS = { 'User-Agent': 'WebOfDoors/1.0 (https://doors.purplefootsteps.co.uk)' };
 
 let kept = { until: 0, stories: [] };
