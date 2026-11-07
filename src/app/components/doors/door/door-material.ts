@@ -12,11 +12,15 @@
  */
 
 /*
- * Nothing on a door is a letter, numeral or symbol, and nothing should be.
- * Marks acquire meanings their author never intended — a diagonal brace
- * reads as a Z, and two-digit house numbers include several that are known
- * extremist codes. With doors generated endlessly and nobody reviewing each
- * one, the only safe rule is that doors carry hardware, not characters.
+ * No symbols or lettering on a door. Marks acquire meanings their author
+ * never intended — a diagonal brace across two rails reads as a letter Z,
+ * which is why that design is not here.
+ *
+ * House numbers are the exception, because a number on a door is a house
+ * number and reads as nothing else. A short list of them is skipped all the
+ * same: a handful of two-digit numbers are established extremist codes, and
+ * with doors generated endlessly nobody would be reviewing the one that
+ * came up. Graffiti is drawn as loops and arcs, never anything legible.
  */
 
 export type DoorMaterial = 'wood' | 'glass' | 'stone' | 'metal';
@@ -55,6 +59,26 @@ export type Wear = 'clean' | 'scuffed' | 'peeling';
  */
 export type Surprise = 'none' | 'crack' | 'fire' | 'monster' | 'knocks-back';
 
+/**
+ * The variables that make one tag different from the next.
+ *
+ * Without these every tagged door carried an identical mark in an identical
+ * place, which reads as a stamp rather than as graffiti.
+ */
+export interface GraffitiTag {
+  /** Hues for the three coloured strokes. */
+  hueLoop: number;
+  hueArc: number;
+  hueBlob: number;
+  /** Where the whole tag sits, as a percentage offset. */
+  shiftX: number;
+  shiftY: number;
+  /** How far it is turned, in degrees. */
+  rotate: number;
+  /** How big it is, as a multiplier. */
+  scale: number;
+}
+
 /** Everything about one door. */
 export interface DoorCharacter {
   material: DoorMaterial;
@@ -68,6 +92,12 @@ export interface DoorCharacter {
   hasLetterbox: boolean;
   hasKickPlate: boolean;
   hasPeephole: boolean;
+  /** Someone has been at this one with a spray can. */
+  hasGraffiti: boolean;
+  /** How that particular tag was sprayed. Null when the door is clean. */
+  graffiti: GraffitiTag | null;
+  /** The number on the door, or null when it has no number plate. */
+  number: number | null;
   surprise: Surprise;
 }
 
@@ -212,8 +242,56 @@ export function doorLayersFor(id: string): number {
   return 1;
 }
 
-/** Everything about one door, in one go. */
-export function characterForDoor(id: string): DoorCharacter {
+/** How a particular door was tagged. */
+function graffitiFor(id: string): GraffitiTag {
+  const spread = (seed: string, from: number, to: number) =>
+    Math.round(from + hashToFraction(`${id}:${seed}`) * (to - from));
+
+  return {
+    hueLoop: spread('tagloop', 0, 360),
+    // The second and third strokes are offset round the wheel from the
+    // first, so a tag looks like one person's colours rather than three
+    // unrelated ones.
+    hueArc: (spread('tagloop', 0, 360) + spread('tagarc', 70, 180)) % 360,
+    hueBlob: (spread('tagloop', 0, 360) + spread('tagblob', 180, 300)) % 360,
+    shiftX: spread('tagx', -14, 14),
+    shiftY: spread('tagy', -16, 16),
+    rotate: spread('tagrot', -22, 22),
+    scale: 0.72 + hashToFraction(`${id}:tagscale`) * 0.5,
+  };
+}
+
+/**
+ * Numbers that are not used, because they are known extremist codes rather
+ * than ordinary house numbers.
+ */
+const SKIPPED_NUMBERS = new Set([14, 18, 88]);
+
+/**
+ * The number on a door, from its position along the wall.
+ *
+ * Taken from position rather than a hash so that no two doors in a long run
+ * share a number: multiplying by a value coprime with the range steps
+ * through every number once before repeating, which scatters them instead
+ * of counting up. Walking down the wall gives 138, 276, 15, 153 — numbers
+ * that look like a street rather than a list.
+ */
+function numberForDoor(ordinal: number): number | null {
+  const range = 499;
+  const stride = 137; // Coprime with the range, so nothing repeats early.
+  const number = ((ordinal * stride) % range) + 1;
+
+  return SKIPPED_NUMBERS.has(number) ? null : number;
+}
+
+/**
+ * Everything about one door, in one go.
+ *
+ * `ordinal` is the door's place along the wall, used only for its number.
+ * Everything else comes from the id, so a door's appearance does not depend
+ * on where it happens to sit.
+ */
+export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
   const material = materialForDoor(id);
   const surprise = pickWeighted(SURPRISE_WEIGHTS, `${id}:surprise`);
 
@@ -229,6 +307,9 @@ export function characterForDoor(id: string): DoorCharacter {
     hasLetterbox: chance(`${id}:letterbox`, 0.4),
     hasKickPlate: chance(`${id}:kickplate`, 0.33),
     hasPeephole: chance(`${id}:peephole`, 0.3),
+    hasGraffiti: chance(`${id}:graffiti`, 0.12),
+    graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id) : null,
+    number: chance(`${id}:plate`, 0.45) ? numberForDoor(ordinal) : null,
     surprise,
   };
 }

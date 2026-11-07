@@ -579,3 +579,108 @@
     ),
     radial-gradient(circle 7% at 52% 46%, rgba(0, 0, 0, 0.55), transparent 70%);
 }
+
+/* ======================================================= house number */
+
+.door__number {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  translate: -50% 0;
+
+  font-size: clamp(10px, 8cqw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--door-furniture);
+  /* Screwed to the door rather than painted on it. */
+  text-shadow: 0 1px 0 var(--door-furniture-dark), 0 2px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================================== graffiti */
+/*
+ * Spray paint: loops and arcs, never anything legible. Each tag is a shape
+ * with a thick coloured border and no fill, blurred very slightly so the
+ * edges look sprayed rather than drawn.
+ */
+
+.door__graffiti {
+  position: absolute;
+  inset: 0;
+  /* Every tag is turned, shifted and sized differently, or the same mark
+     appears on every tagged door and reads as a stamp. */
+  translate: var(--tag-x, 0) var(--tag-y, 0);
+  rotate: var(--tag-rotate, 0deg);
+  scale: var(--tag-scale, 1);
+  pointer-events: none;
+  overflow: hidden;
+  /* Paint sits on the surface, so it goes over panels and furniture. */
+  z-index: 3;
+  opacity: 0.85;
+  mix-blend-mode: screen;
+}
+
+.door__tag {
+  position: absolute;
+  border-style: solid;
+  border-color: transparent;
+  filter: blur(0.4px) drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+}
+
+/* A big looping scrawl across the middle. */
+.door__tag--loop {
+  top: 32%;
+  left: 12%;
+  width: 56%;
+  height: 30%;
+  border-width: 7px;
+  border-color: var(--tag-loop) var(--tag-loop) transparent var(--tag-loop);
+  border-radius: 55% 45% 40% 60% / 60% 55% 45% 40%;
+  rotate: -8deg;
+}
+
+/* A sweep under it, in another colour, as a second hand would add. */
+.door__tag--arc {
+  top: 52%;
+  left: 22%;
+  width: 54%;
+  height: 22%;
+  border-width: 6px;
+  border-color: transparent transparent var(--tag-arc) var(--tag-arc);
+  border-radius: 0 0 60% 55% / 0 0 100% 100%;
+  rotate: 6deg;
+}
+
+/* A hard diagonal stroke. */
+.door__tag--slash {
+  top: 24%;
+  left: 46%;
+  width: 34%;
+  height: 5px;
+  border: none;
+  background: var(--tag-arc);
+  border-radius: 3px;
+  rotate: 38deg;
+}
+
+/* And a blown patch where the can was held too close, with a drip. */
+.door__tag--blob {
+  top: 66%;
+  left: 58%;
+  width: 16%;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 50% 50% 46% 54% / 48% 44% 56% 52%;
+  background: var(--tag-blob);
+  filter: blur(1px);
+}
+
+.door__tag--blob::after {
+  content: '';
+  position: absolute;
+  top: 80%;
+  left: 42%;
+  width: 4px;
+  height: 160%;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(var(--tag-blob), transparent);
+}

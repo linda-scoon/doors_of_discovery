@@ -3,8 +3,8 @@
     The rooms with an API behind them come first; everything after is
     generated as the visitor scrolls. See src/app/rooms.ts.
   -->
-  @for (room of rooms; track room.id) {
-    <app-room-slot class="app-room" [room]="room"></app-room-slot>
+  @for (room of rooms; track room.id; let i = $index) {
+    <app-room-slot class="app-room" [room]="room" [ordinal]="i"></app-room-slot>
   }
 </div>
 

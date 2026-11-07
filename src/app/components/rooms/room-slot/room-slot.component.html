@@ -24,6 +24,7 @@
   @for (layer of layers; track layer.id) {
     <app-door
       [id]="layer.id"
+      [ordinal]="ordinal + layer.depth"
       [open]="isOpen(layer)"
       (opened)="openDoor(layer)"
       (tapped)="onTap($event)"

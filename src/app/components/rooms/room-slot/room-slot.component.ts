@@ -39,6 +39,9 @@ export class RoomSlotComponent implements OnInit {
 
   @Input({ required: true }) room!: RoomDefinition;
 
+  /** This room's place along the wall, which decides its door's number. */
+  @Input() ordinal = 0;
+
   /** Outermost first. Usually one; now and then two or three. */
   layers: DoorLayer[] = [];
 

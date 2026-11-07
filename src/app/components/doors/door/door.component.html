@@ -81,6 +81,32 @@
   @if (hasPeephole) {
     <span class="door__peephole" aria-hidden="true"></span>
   }
+  @if (doorNumber !== null) {
+    <span class="door__number" aria-hidden="true">{{ doorNumber }}</span>
+  }
+
+  <!--
+    Someone has tagged this one. The marks are loops and arcs only: nothing
+    legible, so nothing that can turn out to mean something.
+  -->
+  @if (graffiti; as tag) {
+    <span
+      class="door__graffiti"
+      aria-hidden="true"
+      [style.--tag-loop]="'hsl(' + tag.hueLoop + ' 95% 60%)'"
+      [style.--tag-arc]="'hsl(' + tag.hueArc + ' 90% 58%)'"
+      [style.--tag-blob]="'hsl(' + tag.hueBlob + ' 95% 62%)'"
+      [style.--tag-x]="tag.shiftX + '%'"
+      [style.--tag-y]="tag.shiftY + '%'"
+      [style.--tag-rotate]="tag.rotate + 'deg'"
+      [style.--tag-scale]="tag.scale"
+    >
+      <span class="door__tag door__tag--loop"></span>
+      <span class="door__tag door__tag--arc"></span>
+      <span class="door__tag door__tag--slash"></span>
+      <span class="door__tag door__tag--blob"></span>
+    </span>
+  }
 
   @if (cracks) {
     <span class="door__cracks" aria-hidden="true"></span>

@@ -43,15 +43,30 @@ export class DoorComponent {
   @Input()
   set id(value: string) {
     this.doorId = value;
-    // Derived once per door rather than on every change detection run: the
-    // template reads a dozen properties off it.
-    this.character = characterForDoor(value);
+    this.rebuildCharacter();
   }
   get id(): string {
     return this.doorId;
   }
+
+  /** Where this door sits along the wall. Decides its number, nothing else. */
+  @Input()
+  set ordinal(value: number) {
+    this.doorOrdinal = value;
+    this.rebuildCharacter();
+  }
+
   private doorId = 'door';
+  private doorOrdinal = 0;
   private character: DoorCharacter = characterForDoor('door');
+
+  /**
+   * Derived once per door rather than on every change detection run: the
+   * template reads a dozen properties off it.
+   */
+  private rebuildCharacter(): void {
+    this.character = characterForDoor(this.doorId, this.doorOrdinal);
+  }
 
   /** Whether the door stands open. */
   @Input() open: boolean = false;
@@ -126,6 +141,18 @@ export class DoorComponent {
 
   get hasPeephole(): boolean {
     return this.character.hasPeephole;
+  }
+
+  get hasGraffiti(): boolean {
+    return this.character.hasGraffiti;
+  }
+
+  get graffiti() {
+    return this.character.graffiti;
+  }
+
+  get doorNumber(): number | null {
+    return this.character.number;
   }
 
   get surprise(): Surprise {
