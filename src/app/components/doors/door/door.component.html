@@ -103,6 +103,12 @@
       [style.--tag-rotate]="tag.rotate + 'deg'"
       [style.--tag-scale]="tag.scale"
     >
+      <!--
+        The mark is turned and shifted on this inner span rather than on the
+        layer above it, so the layer can stay the size of the door and clip
+        whatever hangs over the edge.
+      -->
+      <span class="door__tag">
       @if (tag.kind === 'cat') {
         <!-- A cat mid-stride, drawn in one marker line. -->
         <svg class="door__cat" viewBox="0 0 120 72" fill="none" aria-hidden="true">
@@ -131,6 +137,7 @@
         <span class="door__tag-text">{{ tag.text }}</span>
         <span class="door__drip"></span>
       }
+      </span>
     </span>
   }
 

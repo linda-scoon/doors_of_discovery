@@ -273,7 +273,81 @@ const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
   ['signature', 18],
 ];
 
-function graffitiFor(id: string, ordinal: number): GraffitiTag {
+/**
+ * Which stretches of the door already have something screwed to them.
+ *
+ * Each entry is [top, bottom] as a percentage of the door's height, and
+ * they match where door.component.css actually puts each piece. The handle
+ * is always there, so it is always in the list.
+ */
+function furnitureBands(furniture: DoorFurniture): Array<[number, number]> {
+  // A little wider than each piece really is. A tag is sprayed at an angle,
+  // so its corners reach further than the lettering suggests, and paint
+  // that just grazes a handle still looks like it was meant to miss.
+  const margin = 2;
+  const band = (top: number, bottom: number): [number, number] => [
+    top - margin,
+    bottom + margin,
+  ];
+
+  // Measured in a browser rather than read off the stylesheet. The handle
+  // in particular runs to 63% on a narrow door, not the 52% its `top` and
+  // percentage height suggest, because its plate has a fixed height in
+  // pixels -- and a tag was landing on the bottom of it on phones.
+  const bands: Array<[number, number]> = [band(43, 63)]; // the handle
+
+  if (furniture.hasNumber) bands.push(band(10, 18));
+  if (furniture.hasPeephole) bands.push(band(16, 23));
+  if (furniture.hasKnocker) bands.push(band(25, 36));
+  if (furniture.hasLetterbox) bands.push(band(55, 62));
+  if (furniture.hasKickPlate) bands.push(band(81, 96));
+
+  return bands.sort((a, b) => a[0] - b[0]);
+}
+
+/**
+ * How tall a two-line tag is at scale 1, as a percentage of the door's
+ * height. Generous on purpose: a tag is sprayed at an angle, so it takes up
+ * more room than the lettering alone. `scale` multiplies this, so a tag's
+ * real height is always TAG_HEIGHT * scale.
+ */
+const TAG_HEIGHT = 19;
+
+/**
+ * Finds the clear stretches of door between the furniture.
+ *
+ * Returns them widest first. A tag goes in one of these rather than in the
+ * middle of the door, because the middle of the door is exactly where the
+ * letterbox is -- and since paint now goes under the furniture rather than
+ * over it, a tag placed there is a tag with its second line hidden.
+ */
+function clearBands(furniture: DoorFurniture): Array<[number, number]> {
+  const gaps: Array<[number, number]> = [];
+  let edge = 5; // The paint stops short of the very top and bottom.
+
+  for (const [top, bottom] of furnitureBands(furniture)) {
+    if (top > edge) gaps.push([edge, top]);
+    edge = Math.max(edge, bottom);
+  }
+  if (edge < 95) gaps.push([edge, 95]);
+
+  return gaps.sort((a, b) => b[1] - b[0] - (a[1] - a[0]));
+}
+
+/** What is screwed to a door, as far as placing a tag is concerned. */
+interface DoorFurniture {
+  hasKnocker: boolean;
+  hasLetterbox: boolean;
+  hasKickPlate: boolean;
+  hasPeephole: boolean;
+  hasNumber: boolean;
+}
+
+function graffitiFor(
+  id: string,
+  ordinal: number,
+  furniture: DoorFurniture
+): GraffitiTag {
   const spread = (seed: string, from: number, to: number) =>
     Math.round(from + hashToFraction(`${id}:${seed}`) * (to - from));
 
@@ -292,10 +366,53 @@ function graffitiFor(id: string, ordinal: number): GraffitiTag {
     // Offset round the wheel, so a tag looks like one person's two cans
     // rather than two unrelated colours.
     hueAccent: (hue + spread('tagaccent', 110, 250)) % 360,
-    shiftX: spread('tagx', -10, 10),
-    shiftY: spread('tagy', -14, 14),
+    // Kept modest on purpose. The paint is clipped to the door, so a big
+    // shift does not spill onto the frame any more -- it just loses a
+    // letter off the side, which looks worse than a tag that fits.
+    shiftX: spread('tagx', -6, 6),
     rotate: spread('tagrot', -14, 14),
-    scale: 0.8 + hashToFraction(`${id}:tagscale`) * 0.4,
+    ...placeTag(id, furniture),
+  };
+}
+
+/**
+ * Where the tag goes and how big it is.
+ *
+ * The two decisions are made together because they depend on each other:
+ * the tag goes in a clear stretch of door, and if the only clear stretch is
+ * a short one the tag is sprayed smaller to fit it. A door carrying every
+ * piece of furniture has no gap a full-size tag fits in, so without this a
+ * tag on one of those would always end up across the kick plate.
+ */
+function placeTag(
+  id: string,
+  furniture: DoorFurniture
+): { shiftY: number; scale: number } {
+  const bands = clearBands(furniture);
+  const wanted = 0.78 + hashToFraction(`${id}:tagscale`) * 0.3;
+
+  // The bands a tag of the size we wanted would fit in. Picking among them
+  // rather than always taking the tallest keeps two doors with the same
+  // furniture from being tagged in the same place.
+  const roomy = bands.filter(
+    ([top, bottom]) => bottom - top >= TAG_HEIGHT * wanted
+  );
+
+  const [top, bottom] = roomy.length
+    ? roomy[Math.floor(hashToFraction(`${id}:tagband`) * roomy.length)]
+    : bands[0];
+
+  // A percent of margin, so rounding the offset below cannot nudge the
+  // paint onto the furniture.
+  const room = bottom - top - 1;
+  const scale = Math.min(wanted, room / TAG_HEIGHT);
+
+  const slack = (room - TAG_HEIGHT * scale) / 2;
+  const jitter = (hashToFraction(`${id}:tagy`) * 2 - 1) * slack;
+
+  return {
+    shiftY: Math.round((top + bottom) / 2 + jitter - 50),
+    scale,
   };
 }
 
@@ -361,6 +478,18 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     ? pickWeighted(UNLUCKY_SURPRISES, `${id}:unlucky`)
     : pickWeighted(SURPRISE_WEIGHTS, `${id}:surprise`);
 
+  // Worked out before the tag, because where a tag goes depends on what is
+  // already screwed to the door.
+  const furniture: DoorFurniture = {
+    hasKnocker: chance(`${id}:knocker`, 0.35),
+    hasLetterbox: chance(`${id}:letterbox`, 0.4),
+    hasKickPlate: chance(`${id}:kickplate`, 0.33),
+    hasPeephole: chance(`${id}:peephole`, 0.3),
+    hasNumber: number !== null,
+  };
+
+  const hasGraffiti = chance(`${id}:graffiti`, 0.12);
+
   return {
     material,
     design: designForDoor(id, material),
@@ -369,12 +498,12 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
     openStyle: openStyleForDoor(id, surprise),
     finish: pick(FINISHES, `${id}:finish`),
     wear: pick(WEARS, `${id}:wear`),
-    hasKnocker: chance(`${id}:knocker`, 0.35),
-    hasLetterbox: chance(`${id}:letterbox`, 0.4),
-    hasKickPlate: chance(`${id}:kickplate`, 0.33),
-    hasPeephole: chance(`${id}:peephole`, 0.3),
-    hasGraffiti: chance(`${id}:graffiti`, 0.12),
-    graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id, ordinal) : null,
+    hasKnocker: furniture.hasKnocker,
+    hasLetterbox: furniture.hasLetterbox,
+    hasKickPlate: furniture.hasKickPlate,
+    hasPeephole: furniture.hasPeephole,
+    hasGraffiti,
+    graffiti: hasGraffiti ? graffitiFor(id, ordinal, furniture) : null,
     number,
     surprise,
   };
