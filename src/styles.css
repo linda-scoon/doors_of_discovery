@@ -31,6 +31,12 @@
   --swing-open-angle: 90deg;
 
   /* type */
+  /*
+   * The reader's own system font. Nothing is fetched for body text: it is
+   * a handful of labels, and a webfont for those would be a round trip to
+   * somebody else's server for no visible gain. Roboto is named for
+   * Android, where it is already installed.
+   */
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
 }

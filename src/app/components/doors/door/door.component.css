@@ -62,6 +62,93 @@
   100% { transform: perspective(1200px) rotateY(var(--swing-open-angle)); }
 }
 
+/*
+ * A door something comes out of is flung open, not swung. The monster is
+ * out 150ms after the handle is used, so the door has to be clear of the
+ * doorway by then; at the usual 1.6s the scare happened behind it.
+ *
+ * A flung door that also creaks still creaks -- it starts slow and judders
+ * like any other, just over a much shorter beat, so the one thing that
+ * tells you a stiff door is about to open is also what gets you.
+ */
+.door--flung {
+  --swing-duration: 0.45s;
+  --swing-easing: cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/*
+ * Scorched: this one has had fire behind it before, and the heat came
+ * through. It is the one surprise you can see coming from outside, which
+ * is the point -- the marks are a warning, and opening it anyway is your
+ * own doing.
+ *
+ * Soot is blotchy. The first attempt at this cut a zigzag char line across
+ * the top with clip-path, and a hard sawtooth edge read as bunting rather
+ * than as burning. It is all soft-edged patches now: a scatter of them,
+ * heaviest at the top where the heat collected and down the edges where it
+ * escaped round the door.
+ *
+ * Drawn as its own element rather than as ::after on the door, because the
+ * wear styles already claim that pseudo-element -- and being defined later
+ * in this file they silently replaced the whole burn on any door that was
+ * also scuffed or peeling.
+ */
+.door__scorch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /*
+   * Above the panels -- which are elements in the door's own colour, and
+   * were painting straight over the soot -- but under the paint and the
+   * furniture. Burning happened to the door; the tag and the letterbox
+   * are on top of it.
+   */
+  z-index: 1;
+
+  background-image:
+    /* The worst of it, along the top. */
+    radial-gradient(ellipse 26% 13% at 14% 4%, rgba(9, 6, 4, 0.94), rgba(9, 6, 4, 0.6) 48%, transparent 78%),
+    radial-gradient(ellipse 30% 15% at 47% 2%, rgba(7, 4, 3, 0.96), rgba(7, 4, 3, 0.62) 46%, transparent 76%),
+    radial-gradient(ellipse 24% 12% at 82% 6%, rgba(9, 6, 4, 0.9), rgba(9, 6, 4, 0.55) 50%, transparent 80%),
+    radial-gradient(ellipse 14% 8% at 30% 16%, rgba(12, 7, 5, 0.8), transparent 72%),
+    radial-gradient(ellipse 11% 7% at 66% 19%, rgba(12, 7, 5, 0.72), transparent 74%),
+    /* Where it licked round the edges. */
+    radial-gradient(ellipse 9% 20% at 1% 34%, rgba(10, 6, 4, 0.85), transparent 70%),
+    radial-gradient(ellipse 8% 17% at 99% 44%, rgba(10, 6, 4, 0.8), transparent 72%),
+    radial-gradient(ellipse 7% 14% at 2% 66%, rgba(12, 7, 5, 0.6), transparent 74%),
+    /* Odd patches further down, so it is not a neat band. */
+    radial-gradient(ellipse 13% 7% at 58% 41%, rgba(14, 9, 6, 0.5), transparent 76%),
+    radial-gradient(ellipse 10% 6% at 24% 57%, rgba(14, 9, 6, 0.42), transparent 78%),
+    radial-gradient(ellipse 16% 6% at 71% 74%, rgba(16, 10, 7, 0.36), transparent 80%),
+    /* And the smoke that rose over everything. */
+    linear-gradient(to top, transparent 46%, rgba(14, 9, 6, 0.42) 88%, rgba(10, 6, 4, 0.66) 100%);
+}
+
+/*
+ * Blistered paint: the finish lifted in small patches where it got hottest.
+ * Speckle rather than wash, which is what separates a burnt door from one
+ * standing in shadow.
+ */
+.door__blisters {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 46%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.62;
+
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(0, 0, 0, 0.9) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 63% 8%, rgba(0, 0, 0, 0.9) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 39% 24%, rgba(0, 0, 0, 0.85) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 86% 18%, rgba(0, 0, 0, 0.85) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 8% 30%, rgba(0, 0, 0, 0.8) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 74% 34%, rgba(0, 0, 0, 0.8) 0 1.5px, transparent 2px);
+  background-size: 23% 34%, 31% 41%, 19% 29%, 27% 37%, 21% 31%, 29% 39%;
+  /* Densest at the top, gone by halfway down. */
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
 /* A stuck door gives a little and stays shut. */
 .door--refusing {
   animation: door-refuse 400ms ease-in-out;
@@ -387,7 +474,7 @@
 
 .door__knocker {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 26%;
   left: 50%;
   translate: -50% 0;
@@ -407,7 +494,7 @@
 
 .door__letterbox {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 56%;
   left: 50%;
   translate: -50% 0;
@@ -424,7 +511,7 @@
 
 .door__kick-plate {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset: auto 8% 5%;
   height: 12%;
 
@@ -437,7 +524,7 @@
 
 .door__peephole {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 17%;
   left: 50%;
   translate: -50% 0;
@@ -544,7 +631,7 @@
   pointer-events: none;
   background-repeat: no-repeat;
   /* Damage to the surface, so it sits with the paint, under the furniture. */
-  z-index: 1;
+  z-index: 2;
 }
 
 [data-cracks='1'] .door__cracks {
@@ -596,7 +683,7 @@
 
 .door__number {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 11%;
   left: 50%;
   translate: -50% 0;
@@ -621,19 +708,38 @@
  * covers the timber; they do not paint over the handle, the letterbox or
  * the kick plate, and a tag that did would look like a mistake.
  *
- * The doorway stacks: the face of the door, then paint and damage over it,
- * then the furniture screwed on top of everything.
+ * The door stacks in the order these things happened to it:
+ *
+ *   face and panels   (auto)  what the door is
+ *   scorching         (1)     what the fire behind it did
+ *   paint and damage  (2)     what people did to it afterwards
+ *   furniture         (3)     what is screwed to it, over everything
+ */
+/*
+ * The paint stops at the edge of the door. Somebody tagging a door sprays
+ * the door; letters that carried on across the frame and onto the next
+ * door read as a drawing mistake rather than as graffiti.
+ *
+ * This layer is always exactly the door, and clips. Nothing is turned or
+ * shifted here -- that happens on .door__tag inside it, so moving the mark
+ * about cannot move the clip with it.
  */
 .door__graffiti {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* Every tag is turned, shifted and sized differently, or the same mark
+   appears on every tagged door and reads as a stamp. */
+.door__tag {
+  position: absolute;
+  inset: 0;
   display: grid;
   place-content: center;
-  pointer-events: none;
-  z-index: 1;
 
-  /* Every tag is turned, shifted and sized differently, or the same mark
-     appears on every tagged door and reads as a stamp. */
   translate: var(--tag-x, 0) var(--tag-y, 0);
   rotate: var(--tag-rotate, -8deg);
   scale: var(--tag-scale, 1);
@@ -641,10 +747,18 @@
 
 .door__tag-text {
   position: relative;
-  max-width: 88%;
+  max-width: 82%;
 
-  font-family: 'Permanent Marker', 'Comic Sans MS', cursive;
-  font-size: clamp(13px, 17cqw, 30px);
+  /* Whichever hand this door was tagged in. */
+  font-family: var(--tag-font, 'Permanent Marker'), 'Comic Sans MS', cursive;
+  /*
+   * Sized against the door, not the viewport, so a tag covers the same
+   * share of every door. The old `clamp(13px, 17cqw, 30px)` only hit its
+   * 30px ceiling on wide doors, which left narrow ones -- every door on a
+   * phone -- carrying lettering half again as large in proportion, and
+   * that is what pushed the paint off the edge.
+   */
+  font-size: max(11px, 13cqw);
   line-height: 0.95;
   text-align: center;
   color: var(--tag-ink);
@@ -656,35 +770,99 @@
 
 /* The signature is a different hand entirely -- a flourish, not a tag. */
 .door__graffiti--signature .door__tag-text {
-  font-family: 'Dancing Script', 'Segoe Script', cursive;
-  font-size: clamp(22px, 30cqw, 54px);
+  font-family: var(--tag-font, 'Dancing Script'), 'Segoe Script', cursive;
+  font-size: max(18px, 24cqw);
   font-weight: 700;
   color: var(--tag-accent);
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5),
     0 0 16px color-mix(in srgb, var(--tag-accent) 70%, transparent);
 }
 
-/* Paint ran before it dried. */
-.door__drip {
-  position: absolute;
-  top: 62%;
-  left: 62%;
-  width: 3px;
-  height: 26%;
-  border-radius: 0 0 3px 3px;
-  background: linear-gradient(var(--tag-ink), transparent);
-  opacity: 0.8;
+/*
+ * A line of the lettering. Sized to its own words rather than to the box
+ * around them, so a run hung at 40% across sits 40% across those words --
+ * which is the whole point of hanging runs off letters.
+ */
+.door__tag-line {
+  display: block;
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+  white-space: nowrap;
 }
 
-.door__graffiti--signature .door__drip {
-  left: 30%;
+/*
+ * Paint that ran off a letter, starting at the foot of that letter's line.
+ *
+ * Turned back by however far the tag was turned, because paint falls
+ * straight down whatever angle the lettering was sprayed at. Its length is
+ * in container units, so a run is the same share of every door.
+ */
+.door__run {
+  position: absolute;
+  top: 100%;
+  left: var(--run-x);
+  width: var(--run-thickness);
+  height: calc(var(--run-length) * 1cqw);
+
+  /* Heaviest where it left the letter, thinning as it runs out of paint. */
+  background: linear-gradient(var(--tag-ink), transparent);
+  border-radius: calc(var(--run-thickness) / 2) calc(var(--run-thickness) / 2)
+    3px 3px;
+  opacity: 0.8;
+
+  rotate: calc(-1 * var(--tag-rotate, -8deg));
+  transform-origin: top center;
+}
+
+/*
+ * A speck of a splash: thrown at the door rather than run down it, so it
+ * is round and at full strength, never having travelled far enough to thin
+ * out. The heavy ones ran a little once they landed.
+ */
+.door__speck {
+  position: absolute;
+  left: var(--speck-x);
+  top: var(--speck-y);
+  width: var(--speck-size);
+  height: calc(var(--speck-size) + var(--speck-tail) * 1cqw);
+
+  background: linear-gradient(
+    var(--tag-ink),
+    var(--tag-ink) var(--speck-size),
+    transparent
+  );
+  /* Rounded by half its own width, so a blob with a tail reads as a drop
+     of paint rather than as a rectangle sitting on the door. */
+  border-radius: calc(var(--speck-size) / 2);
+  opacity: 0.75;
+}
+
+.door__graffiti--signature .door__run {
   background: linear-gradient(var(--tag-accent), transparent);
+}
+
+.door__graffiti--signature .door__speck {
+  background: linear-gradient(
+    var(--tag-accent),
+    var(--tag-accent) var(--speck-size),
+    transparent
+  );
+}
+
+/*
+ * Sprayed from too far back, so the paint arrived half dry and nothing has
+ * a hard edge. Blurred in container units rather than pixels, or the same
+ * blur would wipe a phone-sized tag out while barely softening a wide one.
+ */
+.door__graffiti--soft {
+  filter: blur(0.5cqw);
 }
 
 /* --- the cat ------------------------------------------------------------- */
 
 .door__cat {
-  width: clamp(70px, 72cqw, 150px);
+  width: max(60px, 62cqw);
   overflow: visible;
   filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.5))
     drop-shadow(0 0 7px color-mix(in srgb, var(--tag-ink) 55%, transparent));

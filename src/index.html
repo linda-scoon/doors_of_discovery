@@ -1,17 +1,39 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Web of Doors</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <!-- Graffiti lettering. Permanent Marker for tags, Dancing Script for the signature. -->
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-</head>
-<body >
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Web of Doors</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!--
+      The lettering on the doors, served from this site. Nothing is fetched
+      from a font CDN: a wall of doors with no graffiti on it because someone
+      else's server moved is not a trade worth making, and an installed app
+      has to work offline. See assets/fonts/CREDITS.md.
+    -->
+    <link href="assets/graffiti-fonts.css" rel="stylesheet" />
+
+    <!--
+      Installable: the wall can be added to a home screen and opened like any
+      other app, and once installed it works with no connection at all. The
+      rooms behind the doors need one; the doors themselves do not.
+    -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#140f0a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Web of Doors" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png" />
+  </head>
+  <body>
+    <app-root></app-root>
+    <noscript
+      >Please enable JavaScript to continue using this application.</noscript
+    >
+  </body>
 </html>

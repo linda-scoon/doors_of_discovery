@@ -9,8 +9,9 @@
   cursor: pointer;
 
   position: absolute;
-  /* Above the paint: graffiti covers the door, not its ironmongery. */
-  z-index: 2;
+  /* Above the paint and the soot: graffiti and fire mark the door, not
+     its ironmongery. */
+  z-index: 3;
   /* Positioned explicitly rather than left to the flex flow, which put it
      below the panels. Slightly above centre, where a door handle sits. */
   top: 44%;
@@ -69,7 +70,30 @@
   transition: transform 150ms ease-in;
 }
 
+/*
+ * Pressed, the free end of the lever drops -- that is what using a handle
+ * looks like. The lever reaches left from its mounting, so the end that
+ * moves is the left one, and about an origin on the right it is an
+ * anticlockwise turn that takes it down. Clockwise lifted it instead.
+ */
 .handle__lever--pressed {
+  transform: rotate(-25deg);
+}
+
+/*
+ * A lever reaches in across the door, away from the edge it is mounted on,
+ * because that is the way your hand comes at it. On a left-hand handle it
+ * therefore points right, and it was pointing left on both -- which read
+ * as a lever hanging off the side of the door into the frame.
+ */
+.handle--left .handle__lever {
+  right: auto;
+  left: 20%;
+  transform-origin: left center;
+}
+
+/* Mirrored, so clockwise is what drops this one. */
+.handle--left .handle__lever--pressed {
   transform: rotate(25deg);
 }
 

@@ -76,11 +76,57 @@ export type Surprise =
  */
 export type GraffitiKind = 'words' | 'signature' | 'cat';
 
+/**
+ * What the paint did after it left the can.
+ *
+ * `single` is one run from a letter. `curtain` is a whole row of runs, the
+ * look of a can held still for too long. `splash` is paint flung at the
+ * door rather than sprayed. `soft` is overspray: sprayed from too far back,
+ * so nothing quite has an edge.
+ */
+export type DripStyle = 'single' | 'curtain' | 'splash' | 'soft';
+
+/**
+ * Paint that ran off a letter.
+ *
+ * Runs belong to a line of the lettering rather than to the door, because
+ * paint comes off a letter -- it does not appear in the gap after the last
+ * word. A run off the top line is long enough to pass the line below it.
+ */
+export interface PaintRun {
+  /** Across that line of lettering, as a percentage of its width. */
+  x: number;
+  /** How thick the run is, in pixels. */
+  thickness: number;
+  /** How far it runs, in hundredths of the door's width. */
+  length: number;
+}
+
+/** One line of the lettering, and whatever ran off it. */
+export interface TagLine {
+  text: string;
+  runs: PaintRun[];
+}
+
+/** A speck of a splash: paint thrown at the door, off no letter at all. */
+export interface PaintSpeck {
+  /** Across the door, as a percentage of its width. */
+  x: number;
+  /** Down the door, as a percentage of its height. */
+  y: number;
+  /** How wide the speck is, in pixels. */
+  size: number;
+  /** How far the heavy ones ran afterwards, in hundredths of the width. */
+  tail: number;
+}
+
 export interface GraffitiTag {
   /** Whether this one is a tag, a signature, or a drawing. */
   kind: GraffitiKind;
-  /** The words sprayed, for a tag. Empty for a drawing. */
-  text: string;
+  /** The lines sprayed, for a tag. Empty for a drawing. */
+  lines: TagLine[];
+  /** The hand it was written in. */
+  font: string;
   /** The paint colour, and the darker outline sprayed behind it. */
   hue: number;
   /** A second colour, for the drip and the highlight. */
@@ -92,6 +138,10 @@ export interface GraffitiTag {
   rotate: number;
   /** How big it is, as a multiplier. */
   scale: number;
+  /** What the paint did on its way down the door. */
+  drip: DripStyle;
+  /** Paint flung at the door. Only a splash has any. */
+  specks: PaintSpeck[];
 }
 
 /** Everything about one door. */
@@ -231,6 +281,19 @@ export function designForDoor(id: string, material: DoorMaterial): DoorDesign {
 }
 
 /**
+ * The faces with nothing on them: no panels, no studs, no window, no arch.
+ *
+ * Only these carry a number. A plate screwed across a panel edge or over an
+ * arch reads as a mistake rather than as an address, and every material has
+ * one of these so any door can be given a number if it has to be.
+ */
+const PLAIN_DESIGNS: readonly DoorDesign[] = ['slab', 'planked', 'frosted'];
+
+export function isPlainDesign(design: DoorDesign): boolean {
+  return PLAIN_DESIGNS.includes(design);
+}
+
+/**
  * The colour of a door. This is why adding an API does not mean choosing a
  * hex code: a new room gets a colour that suits its material, and keeps it.
  */
@@ -267,13 +330,155 @@ function openStyleForDoor(id: string, surprise: Surprise): OpenStyle {
  * Real graffiti is lettering, so these are words in a marker hand rather
  * than abstract loops, which looked like a decal.
  */
+/**
+ * The hands a tag can be written in.
+ *
+ * Spray and marker faces for a tag, scripts for a signature. Every one is
+ * served from this site -- see src/assets/fonts/CREDITS.md for where each
+ * came from and under what licence -- and every one has to be declared in
+ * src/assets/graffiti-fonts.css, or a door written in it falls back to
+ * whatever cursive face the browser happens to have.
+ */
+const TAG_FONTS: readonly string[] = [
+  "'Aaaiight'",
+  "'Beatstreet'",
+  "'Caveat Brush'",
+  "'Degrassi'",
+  "'Desiderium'",
+  "'Don Graffiti'",
+  "'Dripping Marker'",
+  "'Freedom Street'",
+  "'Graffiti Style'",
+  "'Graffiti Treat'",
+  "'Graffonti'",
+  "'Grafitik Riot'",
+  "'Lacquer'",
+  "'Maelstrom'",
+  "'Most Wasted'",
+  "'Muro'",
+  "'Permanent Marker'",
+  "'Planet Benson'",
+  "'Rock Salt'",
+  "'Rubik Marker Hatch'",
+  "'Rubik Spray Paint'",
+  "'Rubik Wet Paint'",
+  "'Sedgwick Ave Display'",
+  "'Souper'",
+  "'Soychango'",
+  "'Spray Tag'",
+  "'Stab'",
+  "'Subway'",
+  "'Thirsty Caps'",
+  "'Whoa'",
+  "'Zit Graffiti'",
+];
+
+const SIGNATURE_FONTS: readonly string[] = [
+  "'Caveat'",
+  "'Dancing Script'",
+  "'Just Another Hand'",
+  "'Nanum Pen Script'",
+  "'Reenie Beanie'",
+];
+
+/** What each kind of tag says, a line at a time. */
+const WORDS: Record<'words' | 'signature', string[]> = {
+  words: ['web of', 'doors'],
+  signature: ['Linda'],
+};
+
 const GRAFFITI_KINDS: ReadonlyArray<[GraffitiKind, number]> = [
   ['words', 58],
   ['cat', 24],
   ['signature', 18],
 ];
 
-function graffitiFor(id: string, ordinal: number): GraffitiTag {
+/**
+ * How the paint ran. Most tags have the one run; the rest are rarer so
+ * that coming across a splash or a curtain of runs still registers.
+ */
+const DRIP_STYLES: ReadonlyArray<[DripStyle, number]> = [
+  ['single', 44],
+  ['curtain', 22],
+  ['splash', 20],
+  ['soft', 14],
+];
+
+/**
+ * Which stretches of the door already have something screwed to them.
+ *
+ * Each entry is [top, bottom] as a percentage of the door's height, and
+ * they match where door.component.css actually puts each piece. The handle
+ * is always there, so it is always in the list.
+ */
+function furnitureBands(furniture: DoorFurniture): Array<[number, number]> {
+  // A little wider than each piece really is. A tag is sprayed at an angle,
+  // so its corners reach further than the lettering suggests, and paint
+  // that just grazes a handle still looks like it was meant to miss.
+  const margin = 2;
+  const band = (top: number, bottom: number): [number, number] => [
+    top - margin,
+    bottom + margin,
+  ];
+
+  // Measured in a browser rather than read off the stylesheet. The handle
+  // in particular runs to 63% on a narrow door, not the 52% its `top` and
+  // percentage height suggest, because its plate has a fixed height in
+  // pixels -- and a tag was landing on the bottom of it on phones.
+  const bands: Array<[number, number]> = [band(43, 63)]; // the handle
+
+  if (furniture.hasNumber) bands.push(band(10, 18));
+  if (furniture.hasPeephole) bands.push(band(16, 23));
+  if (furniture.hasKnocker) bands.push(band(25, 36));
+  if (furniture.hasLetterbox) bands.push(band(55, 62));
+  if (furniture.hasKickPlate) bands.push(band(81, 96));
+
+  return bands.sort((a, b) => a[0] - b[0]);
+}
+
+/**
+ * How tall a two-line tag is at scale 1, as a percentage of the door's
+ * height. Generous on purpose: a tag is sprayed at an angle, so it takes up
+ * more room than the lettering alone. `scale` multiplies this, so a tag's
+ * real height is always TAG_HEIGHT * scale.
+ */
+const TAG_HEIGHT = 19;
+
+/**
+ * Finds the clear stretches of door between the furniture.
+ *
+ * Returns them widest first. A tag goes in one of these rather than in the
+ * middle of the door, because the middle of the door is exactly where the
+ * letterbox is -- and since paint now goes under the furniture rather than
+ * over it, a tag placed there is a tag with its second line hidden.
+ */
+function clearBands(furniture: DoorFurniture): Array<[number, number]> {
+  const gaps: Array<[number, number]> = [];
+  let edge = 5; // The paint stops short of the very top and bottom.
+
+  for (const [top, bottom] of furnitureBands(furniture)) {
+    if (top > edge) gaps.push([edge, top]);
+    edge = Math.max(edge, bottom);
+  }
+  if (edge < 95) gaps.push([edge, 95]);
+
+  return gaps.sort((a, b) => b[1] - b[0] - (a[1] - a[0]));
+}
+
+/** What is screwed to a door, as far as placing a tag is concerned. */
+interface DoorFurniture {
+  hasKnocker: boolean;
+  hasLetterbox: boolean;
+  hasKickPlate: boolean;
+  hasPeephole: boolean;
+  hasNumber: boolean;
+}
+
+function graffitiFor(
+  id: string,
+  ordinal: number,
+  furniture: DoorFurniture
+): GraffitiTag {
   const spread = (seed: string, from: number, to: number) =>
     Math.round(from + hashToFraction(`${id}:${seed}`) * (to - from));
 
@@ -285,17 +490,173 @@ function graffitiFor(id: string, ordinal: number): GraffitiTag {
   // far apart and uses every hue on the wheel before any repeats.
   const hue = (ordinal * 47) % 360;
 
+  const drip = pickWeighted(DRIP_STYLES, `${id}:dripstyle`);
+  const placement = placeTag(id, furniture);
+
   return {
     kind,
-    text: kind === 'signature' ? 'Linda' : 'web of doors',
+    // Split into lines here rather than left to wrap, because a run has
+    // to know which line it came off.
+    lines: taggedLines(id, drip, kind === 'cat' ? [] : WORDS[kind]),
+    // A signature is somebody's name, so it gets a script; a tag gets a
+    // marker or a spray can.
+    font: pick(
+      kind === 'signature' ? SIGNATURE_FONTS : TAG_FONTS,
+      `${id}:tagfont`
+    ),
     hue,
     // Offset round the wheel, so a tag looks like one person's two cans
     // rather than two unrelated colours.
     hueAccent: (hue + spread('tagaccent', 110, 250)) % 360,
-    shiftX: spread('tagx', -10, 10),
-    shiftY: spread('tagy', -14, 14),
+    // Kept modest on purpose. The paint is clipped to the door, so a big
+    // shift does not spill onto the frame any more -- it just loses a
+    // letter off the side, which looks worse than a tag that fits.
+    shiftX: spread('tagx', -6, 6),
     rotate: spread('tagrot', -14, 14),
-    scale: 0.8 + hashToFraction(`${id}:tagscale`) * 0.4,
+    ...placement,
+    drip,
+    specks: paintSpecks(id, drip, placement),
+  };
+}
+
+/**
+ * Where the letters are along one line, as percentages across it.
+ *
+ * Every character is treated as the same width, which is close enough in a
+ * marker hand. Spaces are skipped, so a run never falls out of the gap
+ * between two words or off the end of the line -- which is exactly what it
+ * was doing when runs were spread evenly across a fixed band instead.
+ */
+function letterStops(line: string): number[] {
+  const stops: number[] = [];
+
+  for (let i = 0; i < line.length; i += 1) {
+    if (line[i] === ' ') continue;
+    stops.push(Math.round(((i + 0.5) / line.length) * 100));
+  }
+  return stops;
+}
+
+/**
+ * The lettering, with the paint that ran off it.
+ *
+ * Runs hang off particular letters, picked by hash from every letter on
+ * the tag. They can come off either line: one from the top line simply
+ * runs further, down past the line beneath it.
+ */
+function taggedLines(id: string, drip: DripStyle, words: string[]): TagLine[] {
+  // A splash was thrown at the door and ran off nothing.
+  const count =
+    drip === 'splash'
+      ? 0
+      : drip === 'curtain'
+        ? 5 + Math.floor(hashToFraction(`${id}:curtain`) * 4)
+        : 1;
+
+  // Every letter on the tag, as somewhere a run could start.
+  const letters = words.flatMap((word, line) =>
+    letterStops(word).map((x) => ({ line, x }))
+  );
+
+  // Shuffled by hash and taken from the front, which picks `count` of them
+  // without ever picking the same letter twice.
+  const chosen = letters
+    .map((letter, i) => ({ letter, order: hashToFraction(`${id}:run${i}`) }))
+    .sort((a, b) => a.order - b.order)
+    .slice(0, count)
+    .map(({ letter }) => letter);
+
+  return words.map((text, line) => ({
+    text,
+    runs: chosen
+      .filter((letter) => letter.line === line)
+      .map((letter, i) => ({
+        x: letter.x,
+        thickness: Math.round(2 + hashToFraction(`${id}:thick${line}${i}`) * 2),
+        // A run off an upper line has to get past the lines below it
+        // before it looks like it ran at all.
+        length: Math.round(
+          10 +
+            (words.length - 1 - line) * 16 +
+            hashToFraction(`${id}:len${line}${i}`) * 26
+        ),
+      })),
+  }));
+}
+
+/**
+ * Paint thrown at the door rather than sprayed on it.
+ *
+ * Placed by angle and distance from the middle of the tag rather than
+ * inside a box. The distance is deliberately not square-rooted: that would
+ * spread the specks evenly over the circle, and a splash is thickest where
+ * it hit.
+ */
+function paintSpecks(
+  id: string,
+  drip: DripStyle,
+  placement: { shiftY: number; scale: number }
+): PaintSpeck[] {
+  if (drip !== 'splash') return [];
+
+  const middle = 50 + placement.shiftY;
+  const count = 11 + Math.floor(hashToFraction(`${id}:splash`) * 6);
+  const of = (index: number, part: string) =>
+    hashToFraction(`${id}:speck${index}:${part}`);
+
+  return Array.from({ length: count }, (_unused, i) => {
+    const angle = of(i, 'angle') * Math.PI * 2;
+    const distance = of(i, 'dist');
+    // Most specks are small and a few are big, rather than all middling.
+    const weight = of(i, 'size') ** 2;
+
+    return {
+      x: Math.round(50 + Math.cos(angle) * distance * 34),
+      y: Math.round(middle + Math.sin(angle) * distance * 15),
+      size: Math.round(2 + weight * 10),
+      // Only the heaviest ran at all before they dried.
+      tail: weight > 0.55 ? Math.round(4 + of(i, 'tail') * 10) : 0,
+    };
+  });
+}
+/**
+ * Where the tag goes and how big it is.
+ *
+ * The two decisions are made together because they depend on each other:
+ * the tag goes in a clear stretch of door, and if the only clear stretch is
+ * a short one the tag is sprayed smaller to fit it. A door carrying every
+ * piece of furniture has no gap a full-size tag fits in, so without this a
+ * tag on one of those would always end up across the kick plate.
+ */
+function placeTag(
+  id: string,
+  furniture: DoorFurniture
+): { shiftY: number; scale: number } {
+  const bands = clearBands(furniture);
+  const wanted = 0.78 + hashToFraction(`${id}:tagscale`) * 0.3;
+
+  // The bands a tag of the size we wanted would fit in. Picking among them
+  // rather than always taking the tallest keeps two doors with the same
+  // furniture from being tagged in the same place.
+  const roomy = bands.filter(
+    ([top, bottom]) => bottom - top >= TAG_HEIGHT * wanted
+  );
+
+  const [top, bottom] = roomy.length
+    ? roomy[Math.floor(hashToFraction(`${id}:tagband`) * roomy.length)]
+    : bands[0];
+
+  // A percent of margin, so rounding the offset below cannot nudge the
+  // paint onto the furniture.
+  const room = bottom - top - 1;
+  const scale = Math.min(wanted, room / TAG_HEIGHT);
+
+  const slack = (room - TAG_HEIGHT * scale) / 2;
+  const jitter = (hashToFraction(`${id}:tagy`) * 2 - 1) * slack;
+
+  return {
+    shiftY: Math.round((top + bottom) / 2 + jitter - 50),
+    scale,
   };
 }
 
@@ -349,32 +710,53 @@ export function characterForDoor(id: string, ordinal = 0): DoorCharacter {
   const positionalNumber = numberForDoor(ordinal);
   const isUnlucky = positionalNumber === UNLUCKY_NUMBER;
 
-  // A 13 always shows its number. Left to chance it would be hidden more
-  // often than not, and a superstition nobody can see is not worth having.
-  const number = isUnlucky
-    ? UNLUCKY_NUMBER
-    : chance(`${id}:plate`, 0.45)
-      ? positionalNumber
-      : null;
+  // A 13 always shows its number -- a superstition nobody can see is not
+  // worth having -- and only a plain door carries a number at all, so a 13
+  // is given a plain face to show it on.
+  const design = isUnlucky
+    ? pick(DESIGNS_BY_MATERIAL[material].filter(isPlainDesign), `${id}:face`)
+    : designForDoor(id, material);
+
+  // A number goes on a flat door and nowhere else. Likelier than it was,
+  // because far fewer doors are now eligible for one.
+  const number = !isPlainDesign(design)
+    ? null
+    : isUnlucky
+      ? UNLUCKY_NUMBER
+      : chance(`${id}:plate`, 0.7)
+        ? positionalNumber
+        : null;
 
   const surprise = isUnlucky
     ? pickWeighted(UNLUCKY_SURPRISES, `${id}:unlucky`)
     : pickWeighted(SURPRISE_WEIGHTS, `${id}:surprise`);
 
+  // Worked out before the tag, because where a tag goes depends on what is
+  // already screwed to the door.
+  const furniture: DoorFurniture = {
+    hasKnocker: chance(`${id}:knocker`, 0.35),
+    hasLetterbox: chance(`${id}:letterbox`, 0.4),
+    hasKickPlate: chance(`${id}:kickplate`, 0.33),
+    hasPeephole: chance(`${id}:peephole`, 0.3),
+    hasNumber: number !== null,
+  };
+
+  const hasGraffiti = chance(`${id}:graffiti`, 0.12);
+
   return {
     material,
-    design: designForDoor(id, material),
+    design,
     colour: colourForDoor(id, material),
     handleSide: chance(`${id}:side`, 0.3) ? 'left' : 'right',
     openStyle: openStyleForDoor(id, surprise),
     finish: pick(FINISHES, `${id}:finish`),
     wear: pick(WEARS, `${id}:wear`),
-    hasKnocker: chance(`${id}:knocker`, 0.35),
-    hasLetterbox: chance(`${id}:letterbox`, 0.4),
-    hasKickPlate: chance(`${id}:kickplate`, 0.33),
-    hasPeephole: chance(`${id}:peephole`, 0.3),
-    hasGraffiti: chance(`${id}:graffiti`, 0.12),
-    graffiti: chance(`${id}:graffiti`, 0.12) ? graffitiFor(id, ordinal) : null,
+    hasKnocker: furniture.hasKnocker,
+    hasLetterbox: furniture.hasLetterbox,
+    hasKickPlate: furniture.hasKickPlate,
+    hasPeephole: furniture.hasPeephole,
+    hasGraffiti,
+    graffiti: hasGraffiti ? graffitiFor(id, ordinal, furniture) : null,
     number,
     surprise,
   };
