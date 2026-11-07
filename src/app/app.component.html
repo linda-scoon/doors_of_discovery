@@ -3,8 +3,12 @@
     Shuffled on every visit, and generated as the visitor scrolls. See
     src/app/wall.ts.
   -->
-  @for (door of doors; track door.room.id) {
-    <app-room-slot class="app-room" [room]="door.room" [ordinal]="door.ordinal"></app-room-slot>
+  @for (cell of doors; track cell.id) {
+    @if (cell.bricks) {
+      <app-bricks class="app-room app-bricks"></app-bricks>
+    } @else {
+      <app-room-slot class="app-room" [room]="cell.room" [ordinal]="cell.ordinal"></app-room-slot>
+    }
   }
 </div>
 

@@ -5,8 +5,8 @@
     </p>
   }
   @case ('failed') {
-    <p class="room-words room-frame__failed">Nobody's answering in here.</p>
-    <button type="button" class="room-button" (click)="retry.emit()">Knock again</button>
+    <!-- Bricked up. Opening the door again tries again. -->
+    <app-bricks [doorway]="true" label="This doorway is bricked up."></app-bricks>
   }
   @default {
     <ng-content></ng-content>

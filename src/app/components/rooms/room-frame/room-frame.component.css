@@ -37,7 +37,3 @@
   0%, 100% { opacity: 0.15; }
   40% { opacity: 1; }
 }
-
-.room-frame__failed {
-  opacity: 0.75;
-}

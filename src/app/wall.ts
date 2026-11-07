@@ -3,6 +3,11 @@ import { pickWeighted } from './components/doors/door/door-material';
 
 /** One door on the wall. */
 export interface WallDoor {
+  /** Its room's id, which is the door's identity. */
+  id: string;
+
+  bricks?: false;
+
   room: RoomDefinition;
 
   /**
@@ -16,6 +21,26 @@ export interface WallDoor {
   /** Which kind of room it opens onto. */
   kind: string;
 }
+
+/** A stretch of the wall with no door in it, just bricks. */
+export interface BrickCell {
+  id: string;
+  bricks: true;
+  kind: 'bricks';
+}
+
+/** One cell of the wall: a door, or bricks. */
+export type WallCell = WallDoor | BrickCell;
+
+/**
+ * About one cell in sixteen is bare wall. Enough that the doors read as set
+ * into a wall rather than tiled edge to edge; few enough that it is still a
+ * wall of doors.
+ */
+const BRICK_WEIGHTS: ReadonlyArray<[boolean, number]> = [
+  [true, 1],
+  [false, 15],
+];
 
 /** How many doors are shuffled together each time the deck runs out. */
 const DECK_SIZE = 36;
@@ -64,7 +89,7 @@ export function kindForDoor(id: string, kinds: readonly RoomKind[]): RoomKind {
  * keeps scrolling, and kept from putting the same kind of room in a clump.
  */
 export class Deck {
-  private readonly waiting: WallDoor[] = [];
+  private readonly waiting: WallCell[] = [];
   private readonly recent: string[] = [];
   private nextDoorNumber = 1;
 
@@ -73,14 +98,14 @@ export class Deck {
     private readonly random: () => number = Math.random
   ) {}
 
-  /** The next doors to hang. */
-  take(count: number): WallDoor[] {
-    const dealt: WallDoor[] = [];
+  /** The next cells of the wall: mostly doors, now and then bricks. */
+  take(count: number): WallCell[] {
+    const dealt: WallCell[] = [];
     while (dealt.length < count) dealt.push(this.next());
     return dealt;
   }
 
-  private next(): WallDoor {
+  private next(): WallCell {
     while (this.waiting.length < LOOK_AHEAD) {
       this.waiting.push(...shuffle(this.doors(DECK_SIZE), this.random));
     }
@@ -109,17 +134,26 @@ export class Deck {
   /**
    * The next run of doors, numbered in order. Their ids are stable, which is
    * what lets each one keep the same colour, material, face and room every
-   * time the page is loaded.
+   * time the page is loaded -- and keeps the bare stretches of wall where
+   * they were too.
    */
-  private doors(count: number): WallDoor[] {
-    const doors: WallDoor[] = [];
+  private doors(count: number): WallCell[] {
+    const doors: WallCell[] = [];
 
     for (let i = 0; i < count; i += 1) {
       const number = this.nextDoorNumber++;
       const id = `door-${number}`;
-      const kind = kindForDoor(id, this.kinds);
 
+      // Kept from landing next to another stretch of bricks by the same rule
+      // that keeps rooms apart, since it is dealt as a kind of its own.
+      if (pickWeighted(BRICK_WEIGHTS, `${id}:bricks`)) {
+        doors.push({ id, bricks: true, kind: 'bricks' });
+        continue;
+      }
+
+      const kind = kindForDoor(id, this.kinds);
       doors.push({
+        id,
         room: {
           id,
           name: kind.name,

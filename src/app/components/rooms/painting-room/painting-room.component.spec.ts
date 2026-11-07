@@ -26,9 +26,9 @@ describe('PaintingRoomComponent', () => {
     expect(img.src).toContain('/api/images/paintings/abc');
   });
 
-  it('says nobody is answering when the fetch fails', async () => {
+  it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(PaintingRoomComponent);
     failRequest(room.server, /\/api\/paintings/);
-    expect(room.text()).toContain("Nobody's answering");
+    expect(room.bricked()).toBeTrue();
   });
 });

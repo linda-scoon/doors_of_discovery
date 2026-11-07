@@ -1,4 +1,13 @@
-.room-container {
-  width: fit-content;
-  padding: 5px;
+:host {
+  display: contents;
+}
+
+/* A screen as wide as the doorway, in the shape of a film. */
+.video-room__player {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 1.5cqi;
+  background: #000;
 }

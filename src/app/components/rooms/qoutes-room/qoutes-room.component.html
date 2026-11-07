@@ -1,4 +1,4 @@
-<app-room-frame [status]="quote.status()" (retry)="quote.reload()">
+<app-room-frame [status]="quote.status()">
   @if (quote.value(); as q) {
     <blockquote class="qoutes-room__quote">
       <p class="room-words">&ldquo;{{ q.q }}&rdquo;</p>

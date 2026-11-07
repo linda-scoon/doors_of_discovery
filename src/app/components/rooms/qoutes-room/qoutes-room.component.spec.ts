@@ -17,12 +17,12 @@ describe('QoutesRoomComponent', () => {
       .expectOne('/api/quotes')
       .flush([{ q: 'Too many requests. Obtain an auth key.', a: 'zenquotes.io' }]);
 
-    expect(room.text()).toContain("Nobody's answering");
+    expect(room.bricked()).toBeTrue();
   });
 
-  it('says nobody is answering when the fetch fails', async () => {
+  it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(QoutesRoomComponent);
     failRequest(room.server, '/api/quotes');
-    expect(room.text()).toContain("Nobody's answering");
+    expect(room.bricked()).toBeTrue();
   });
 });

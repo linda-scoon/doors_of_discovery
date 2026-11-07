@@ -1,4 +1,4 @@
-<app-room-frame [status]="joke.status()" (retry)="joke.reload()">
+<app-room-frame [status]="joke.status()">
   @if (joke.value(); as j) {
     <p class="room-words">{{ j.setup }}</p>
     @if (j.punchline) {

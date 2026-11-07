@@ -28,9 +28,9 @@ describe('MusicRoomComponent', () => {
     expect(room.fixture.nativeElement.querySelector('audio')).toBeNull();
   });
 
-  it('says nobody is answering when the fetch fails', async () => {
+  it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(MusicRoomComponent);
     failRequest(room.server, '/api/music');
-    expect(room.text()).toContain("Nobody's answering");
+    expect(room.bricked()).toBeTrue();
   });
 });

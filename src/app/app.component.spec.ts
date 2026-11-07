@@ -33,7 +33,7 @@ describe('AppComponent', () => {
     const doors = fixture.componentInstance.doors;
 
     expect(doors.length).toBeGreaterThan(20);
-    doors.forEach((door) => expect(kinds).toContain(door.kind));
+    doors.forEach((door) => expect([...kinds, 'bricks']).toContain(door.kind));
   });
 
   it('renders one slot per door, each laid out by the grid', () => {
@@ -52,7 +52,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
 
-    const ids = fixture.componentInstance.doors.map((door) => door.room.id);
+    const ids = fixture.componentInstance.doors.map((door) => door.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });

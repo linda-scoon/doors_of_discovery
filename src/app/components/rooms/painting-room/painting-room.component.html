@@ -1,4 +1,4 @@
-<app-room-frame [status]="painting.status()" (retry)="painting.reload()">
+<app-room-frame [status]="painting.status()">
   @if (painting.value(); as p) {
     <img class="painting-room__canvas" [src]="p.image" [alt]="p.title + ', by ' + p.artist" />
     <p class="room-words room-words--small painting-room__title">{{ p.title }}</p>

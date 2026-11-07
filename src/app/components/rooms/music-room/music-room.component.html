@@ -1,4 +1,4 @@
-<app-room-frame [status]="track.status()" (retry)="track.reload()">
+<app-room-frame [status]="track.status()">
   @if (track.value(); as t) {
     <img class="music-room__cover" [src]="t.album.cover_medium" [alt]="t.album.title" />
     <p class="room-words room-words--small">{{ t.title }}</p>

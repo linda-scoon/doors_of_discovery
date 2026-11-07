@@ -47,7 +47,7 @@ describe('kindForDoor', () => {
 describe('Deck', () => {
   it('deals the doors in a different order on different visits', () => {
     const order = (seed: number) =>
-      new Deck(ROOM_KINDS, seeded(seed)).take(30).map((door) => door.room.id);
+      new Deck(ROOM_KINDS, seeded(seed)).take(30).map((door) => door.id);
 
     expect(order(1)).not.toEqual(order(2));
   });
@@ -57,7 +57,7 @@ describe('Deck', () => {
       new Map(
         new Deck(ROOM_KINDS, seeded(seed))
           .take(30)
-          .map((door) => [door.room.id, `${door.kind}#${door.ordinal}`])
+          .map((door) => [door.id, door.bricks ? 'bricks' : `${door.kind}#${door.ordinal}`])
       );
 
     const second = doors(2);
@@ -67,7 +67,7 @@ describe('Deck', () => {
   });
 
   it('never deals the same door twice', () => {
-    const ids = new Deck(ROOM_KINDS, seeded(4)).take(300).map((door) => door.room.id);
+    const ids = new Deck(ROOM_KINDS, seeded(4)).take(300).map((door) => door.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -81,5 +81,16 @@ describe('Deck', () => {
       if (dealt[i] === dealt[i - 1]) repeats += 1;
     }
     expect(repeats).toBe(0);
+  });
+
+  it('leaves about one cell in sixteen as bare wall, never two together', () => {
+    const cells = new Deck(ROOM_KINDS, seeded(6)).take(1600);
+    const bricks = cells.filter((cell) => cell.bricks).length;
+
+    expect(bricks).toBeGreaterThan(60);
+    expect(bricks).toBeLessThan(150);
+    for (let i = 1; i < cells.length; i += 1) {
+      expect(cells[i].bricks && cells[i - 1].bricks).toBeFalsy();
+    }
   });
 });

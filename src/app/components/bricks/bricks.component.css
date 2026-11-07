@@ -1,0 +1,37 @@
+/*
+ * The bricks are one tile of two staggered courses, drawn as an SVG and
+ * repeated. Sized as a share of the width, so a wall has about the same
+ * number of bricks across on a phone as on a desktop, only smaller.
+ */
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background-color: #5e554d;
+  background-image:
+    /* Light from above, and grime gathering low down. */
+    linear-gradient(to bottom, rgba(255, 240, 220, 0.08), rgba(0, 0, 0, 0.35)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='40' viewBox='0 0 60 40'%3E%3Crect width='60' height='40' fill='%235e554d'/%3E%3Crect x='1' y='1' width='28' height='18' rx='1' fill='%239a4a33'/%3E%3Crect x='31' y='1' width='28' height='18' rx='1' fill='%238c432f'/%3E%3Crect x='-14' y='21' width='28' height='18' rx='1' fill='%23a3543b'/%3E%3Crect x='16' y='21' width='28' height='18' rx='1' fill='%23914630'/%3E%3Crect x='46' y='21' width='28' height='18' rx='1' fill='%23a3543b'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 34% auto;
+  border: 1px solid var(--door-frame);
+}
+
+/* Bricked up behind a door: set back in the doorway, so darker and shaded
+   from the top and sides. */
+:host(.bricks--doorway) {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  filter: brightness(0.7);
+  box-shadow: inset 0 6cqi 8cqi rgba(0, 0, 0, 0.7), inset 0 0 6cqi rgba(0, 0, 0, 0.6);
+}
+
+/* For screen readers only. */
+.bricks__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,3 +1,6 @@
-<div class="room-container">
-  <img src="{{ gif.url }}" alt="random gif" />
-</div>
+<app-room-frame [status]="gif.status()">
+  @if (gif.value(); as g) {
+    <img class="gif-room__gif" [src]="g.url" [alt]="g.title" />
+    <p class="room-credit">Powered by GIPHY</p>
+  }
+</app-room-frame>

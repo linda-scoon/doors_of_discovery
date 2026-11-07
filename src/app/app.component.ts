@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { ROOM_KINDS } from './rooms';
-import { Deck, WallDoor } from './wall';
+import { Deck, WallCell } from './wall';
 
 /** How many doors to add each time the visitor reaches the bottom. */
 const DOORS_PER_PAGE = 12;
@@ -30,8 +30,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
   /** Every door, in this visit's order. */
   private readonly deck = new Deck(ROOM_KINDS);
 
-  /** The doors on the wall. It grows as the visitor scrolls. */
-  doors: WallDoor[] = [];
+  /** The wall, door by door. It grows as the visitor scrolls. */
+  doors: WallCell[] = [];
 
   constructor() {
     // Filled here rather than in ngAfterViewInit. Adding doors from a

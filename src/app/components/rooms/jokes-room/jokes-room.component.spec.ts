@@ -19,9 +19,9 @@ describe('JokesRoomComponent', () => {
     expect(room.text()).toContain('I used to be indecisive.');
   });
 
-  it('says nobody is answering when the fetch fails', async () => {
+  it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(JokesRoomComponent);
     failRequest(room.server, '/api/jokes');
-    expect(room.text()).toContain("Nobody's answering");
+    expect(room.bricked()).toBeTrue();
   });
 });

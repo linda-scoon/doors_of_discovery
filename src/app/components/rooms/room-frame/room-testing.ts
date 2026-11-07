@@ -9,6 +9,8 @@ export interface RoomUnderTest<T> {
   server: HttpTestingController;
   /** Everything the room shows, as one line of text. */
   text(): string;
+  /** Whether the doorway has been bricked up, as it is when a fetch fails. */
+  bricked(): boolean;
 }
 
 export async function openRoom<T>(room: Type<T>): Promise<RoomUnderTest<T>> {
@@ -26,6 +28,10 @@ export async function openRoom<T>(room: Type<T>): Promise<RoomUnderTest<T>> {
     text: () => {
       fixture.detectChanges();
       return (fixture.nativeElement as HTMLElement).textContent!.replace(/\s+/g, ' ').trim();
+    },
+    bricked: () => {
+      fixture.detectChanges();
+      return Boolean((fixture.nativeElement as HTMLElement).querySelector('app-bricks'));
     },
   };
 }

@@ -68,13 +68,18 @@ const apis = [
     cacheSeconds: 300,
   },
   {
+    // What is trending on Giphy, G-rated, fifty at a time. A new key is
+    // limited to about a hundred calls an hour, so each page is kept for an
+    // hour and the room picks a gif from it.
     id: 'gifs',
-    url: 'https://api.giphy.com/v1/gifs/random?tag=',
+    url: 'https://api.giphy.com/v1/gifs/trending?limit=50&rating=g',
     auth: {
       style: AuthStyle.QUERY_PARAM,
       keyName: 'GIFS_API_KEY',
       paramName: 'api_key',
     },
+    queryParams: { offset: { min: 0, max: 450 } },
+    cacheSeconds: 3600,
   },
   {
     id: 'jokes',
