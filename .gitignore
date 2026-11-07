@@ -43,3 +43,6 @@ Thumbs.db
 
 # API keys, read by the server at runtime. Never commit this.
 .env
+
+# TypeScript scratch output, kept out of the published dist/
+/out-tsc
