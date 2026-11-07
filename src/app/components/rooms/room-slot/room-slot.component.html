@@ -45,7 +45,7 @@
   <span
     class="room-content"
     [class.room-content--hidden]="!open"
-    [class.room-content--upstaged]="burning || lunging"
+    [class.room-content--upstaged]="upstaged"
   >
     <ng-container
       *ngComponentOutlet="room.component; inputs: contentInputs"

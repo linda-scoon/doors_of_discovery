@@ -1,0 +1,307 @@
+/*
+ * The hands the doors are tagged in.
+ *
+ * Served from this site rather than from Google, so the wall still has its
+ * lettering if someone else's CDN changes, disappears, or is unreachable --
+ * and so it works offline, which a site installed as an app has to.
+ *
+ * Each face is cut down to letters, digits, spaces and a little
+ * punctuation, which is all a tag ever says. That is what keeps thirty-six
+ * faces to about the weight of one photograph.
+ *
+ * `size-adjust` puts every face at the same cap height as Permanent Marker,
+ * which the door sizing was built around. Without it a tag in one hand came
+ * out half again as big as the same tag in another, and the careful fitting
+ * against the door furniture stopped meaning anything.
+ *
+ * THIS FILE IS GENERATED -- see scripts/build-fonts.md.
+ */
+
+@font-face {
+  font-family: 'Dripping Marker';
+  src: url('fonts/a_dripping_marker.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 115%;
+}
+@font-face {
+  font-family: 'Aaaiight';
+  src: url('fonts/aaaiight.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 85%;
+}
+@font-face {
+  font-family: 'Beatstreet';
+  src: url('fonts/beatstreet.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 111%;
+}
+@font-face {
+  font-family: 'Caveat Brush';
+  src: url('fonts/caveat-brush.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 112%;
+}
+@font-face {
+  font-family: 'Caveat';
+  src: url('fonts/caveat.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 121%;
+}
+@font-face {
+  font-family: 'Dancing Script';
+  src: url('fonts/dancing-script.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 103%;
+}
+@font-face {
+  font-family: 'Degrassi';
+  src: url('fonts/degrassi.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 99%;
+}
+@font-face {
+  font-family: 'Don Graffiti';
+  src: url('fonts/don_graffiti.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 101%;
+}
+@font-face {
+  font-family: 'Freedom Street';
+  src: url('fonts/freedom_street.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 104%;
+}
+@font-face {
+  font-family: 'Desiderium';
+  src: url('fonts/graffiti_desiderium.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 100%;
+}
+@font-face {
+  font-family: 'Graffiti Style';
+  src: url('fonts/graffiti_style.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Graffiti Treat';
+  src: url('fonts/graffiti_treat.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 110%;
+}
+@font-face {
+  font-family: 'Graffonti';
+  src: url('fonts/graffonti.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 86%;
+}
+@font-face {
+  font-family: 'Grafitik Riot';
+  src: url('fonts/grafitik_riot.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Just Another Hand';
+  src: url('fonts/just-another-hand.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Lacquer';
+  src: url('fonts/lacquer.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Maelstrom';
+  src: url('fonts/maelstrom.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 70%;
+}
+@font-face {
+  font-family: 'Most Wasted';
+  src: url('fonts/mostwasted.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 121%;
+}
+@font-face {
+  font-family: 'Muro';
+  src: url('fonts/muro_sp.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 99%;
+}
+@font-face {
+  font-family: 'Nanum Pen Script';
+  src: url('fonts/nanum-pen-script.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 110%;
+}
+@font-face {
+  font-family: 'Permanent Marker';
+  src: url('fonts/permanent-marker.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 100%;
+}
+@font-face {
+  font-family: 'Planet Benson';
+  src: url('fonts/planet_benson.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 118%;
+}
+@font-face {
+  font-family: 'Reenie Beanie';
+  src: url('fonts/reenie-beanie.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Rock Salt';
+  src: url('fonts/rock-salt.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 70%;
+}
+@font-face {
+  font-family: 'Rubik Marker Hatch';
+  src: url('fonts/rubik-marker-hatch.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Rubik Spray Paint';
+  src: url('fonts/rubik-spray-paint.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Rubik Wet Paint';
+  src: url('fonts/rubik-wet-paint.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Sedgwick Ave Display';
+  src: url('fonts/sedgwick-ave-display.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 78%;
+}
+@font-face {
+  font-family: 'Souper';
+  src: url('fonts/souper3.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 72%;
+}
+@font-face {
+  font-family: 'Soychango';
+  src: url('fonts/soychango.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Spray Tag';
+  src: url('fonts/spraytag.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 95%;
+}
+@font-face {
+  font-family: 'Stab';
+  src: url('fonts/stab.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 101%;
+}
+@font-face {
+  font-family: 'Subway';
+  src: url('fonts/subway.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Thirsty Caps';
+  src: url('fonts/thirsty_caps.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 107%;
+}
+@font-face {
+  font-family: 'Whoa';
+  src: url('fonts/whoa.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 106%;
+}
+@font-face {
+  font-family: 'Zit Graffiti';
+  src: url('fonts/zit_graffiti.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 98%;
+}

@@ -333,28 +333,52 @@ function openStyleForDoor(id: string, surprise: Surprise): OpenStyle {
 /**
  * The hands a tag can be written in.
  *
- * Marker and spray faces for a tag, scripts for a signature. All are
- * Google Fonts under the Open Font Licence or Apache 2.0; whichever is
- * picked has to be listed in index.html or the door falls back to
- * whatever cursive face the browser has.
+ * Spray and marker faces for a tag, scripts for a signature. Every one is
+ * served from this site -- see src/assets/fonts/CREDITS.md for where each
+ * came from and under what licence -- and every one has to be declared in
+ * src/assets/graffiti-fonts.css, or a door written in it falls back to
+ * whatever cursive face the browser happens to have.
  */
 const TAG_FONTS: readonly string[] = [
-  "'Permanent Marker'",
-  "'Rubik Spray Paint'",
+  "'Aaaiight'",
+  "'Beatstreet'",
+  "'Caveat Brush'",
+  "'Degrassi'",
+  "'Desiderium'",
+  "'Don Graffiti'",
+  "'Dripping Marker'",
+  "'Freedom Street'",
+  "'Graffiti Style'",
+  "'Graffiti Treat'",
+  "'Graffonti'",
+  "'Grafitik Riot'",
   "'Lacquer'",
-  "'Sedgwick Ave Display'",
+  "'Maelstrom'",
+  "'Most Wasted'",
+  "'Muro'",
+  "'Permanent Marker'",
+  "'Planet Benson'",
   "'Rock Salt'",
   "'Rubik Marker Hatch'",
+  "'Rubik Spray Paint'",
   "'Rubik Wet Paint'",
-  "'Caveat Brush'",
+  "'Sedgwick Ave Display'",
+  "'Souper'",
+  "'Soychango'",
+  "'Spray Tag'",
+  "'Stab'",
+  "'Subway'",
+  "'Thirsty Caps'",
+  "'Whoa'",
+  "'Zit Graffiti'",
 ];
 
 const SIGNATURE_FONTS: readonly string[] = [
-  "'Dancing Script'",
   "'Caveat'",
+  "'Dancing Script'",
+  "'Just Another Hand'",
   "'Nanum Pen Script'",
   "'Reenie Beanie'",
-  "'Just Another Hand'",
 ];
 
 /** What each kind of tag says, a line at a time. */

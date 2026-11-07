@@ -159,6 +159,24 @@ export class DoorComponent {
     return this.character.surprise;
   }
 
+  /**
+   * A door with fire behind it has been burnt from this side too. It is the
+   * one surprise you can see coming, which is the point: the scorching is a
+   * warning, and opening it anyway is your own doing.
+   */
+  get isScorched(): boolean {
+    return this.surprise === 'fire';
+  }
+
+  /**
+   * A door something comes out of is flung open rather than swung. The
+   * monster arrives while it is still moving, so a 1.6s swing left the
+   * scare happening behind a door that was still in the way.
+   */
+  get isFlung(): boolean {
+    return this.surprise === 'monster';
+  }
+
   get isStuck(): boolean {
     return this.resolvedOpenStyle === 'stuck';
   }

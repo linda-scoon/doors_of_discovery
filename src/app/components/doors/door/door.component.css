@@ -62,6 +62,93 @@
   100% { transform: perspective(1200px) rotateY(var(--swing-open-angle)); }
 }
 
+/*
+ * A door something comes out of is flung open, not swung. The monster is
+ * out 150ms after the handle is used, so the door has to be clear of the
+ * doorway by then; at the usual 1.6s the scare happened behind it.
+ *
+ * A flung door that also creaks still creaks -- it starts slow and judders
+ * like any other, just over a much shorter beat, so the one thing that
+ * tells you a stiff door is about to open is also what gets you.
+ */
+.door--flung {
+  --swing-duration: 0.45s;
+  --swing-easing: cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/*
+ * Scorched: this one has had fire behind it before, and the heat came
+ * through. It is the one surprise you can see coming from outside, which
+ * is the point -- the marks are a warning, and opening it anyway is your
+ * own doing.
+ *
+ * Soot is blotchy. The first attempt at this cut a zigzag char line across
+ * the top with clip-path, and a hard sawtooth edge read as bunting rather
+ * than as burning. It is all soft-edged patches now: a scatter of them,
+ * heaviest at the top where the heat collected and down the edges where it
+ * escaped round the door.
+ *
+ * Drawn as its own element rather than as ::after on the door, because the
+ * wear styles already claim that pseudo-element -- and being defined later
+ * in this file they silently replaced the whole burn on any door that was
+ * also scuffed or peeling.
+ */
+.door__scorch {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /*
+   * Above the panels -- which are elements in the door's own colour, and
+   * were painting straight over the soot -- but under the paint and the
+   * furniture. Burning happened to the door; the tag and the letterbox
+   * are on top of it.
+   */
+  z-index: 1;
+
+  background-image:
+    /* The worst of it, along the top. */
+    radial-gradient(ellipse 26% 13% at 14% 4%, rgba(9, 6, 4, 0.94), rgba(9, 6, 4, 0.6) 48%, transparent 78%),
+    radial-gradient(ellipse 30% 15% at 47% 2%, rgba(7, 4, 3, 0.96), rgba(7, 4, 3, 0.62) 46%, transparent 76%),
+    radial-gradient(ellipse 24% 12% at 82% 6%, rgba(9, 6, 4, 0.9), rgba(9, 6, 4, 0.55) 50%, transparent 80%),
+    radial-gradient(ellipse 14% 8% at 30% 16%, rgba(12, 7, 5, 0.8), transparent 72%),
+    radial-gradient(ellipse 11% 7% at 66% 19%, rgba(12, 7, 5, 0.72), transparent 74%),
+    /* Where it licked round the edges. */
+    radial-gradient(ellipse 9% 20% at 1% 34%, rgba(10, 6, 4, 0.85), transparent 70%),
+    radial-gradient(ellipse 8% 17% at 99% 44%, rgba(10, 6, 4, 0.8), transparent 72%),
+    radial-gradient(ellipse 7% 14% at 2% 66%, rgba(12, 7, 5, 0.6), transparent 74%),
+    /* Odd patches further down, so it is not a neat band. */
+    radial-gradient(ellipse 13% 7% at 58% 41%, rgba(14, 9, 6, 0.5), transparent 76%),
+    radial-gradient(ellipse 10% 6% at 24% 57%, rgba(14, 9, 6, 0.42), transparent 78%),
+    radial-gradient(ellipse 16% 6% at 71% 74%, rgba(16, 10, 7, 0.36), transparent 80%),
+    /* And the smoke that rose over everything. */
+    linear-gradient(to top, transparent 46%, rgba(14, 9, 6, 0.42) 88%, rgba(10, 6, 4, 0.66) 100%);
+}
+
+/*
+ * Blistered paint: the finish lifted in small patches where it got hottest.
+ * Speckle rather than wash, which is what separates a burnt door from one
+ * standing in shadow.
+ */
+.door__blisters {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 46%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.62;
+
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(0, 0, 0, 0.9) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 63% 8%, rgba(0, 0, 0, 0.9) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 39% 24%, rgba(0, 0, 0, 0.85) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 86% 18%, rgba(0, 0, 0, 0.85) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 8% 30%, rgba(0, 0, 0, 0.8) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 74% 34%, rgba(0, 0, 0, 0.8) 0 1.5px, transparent 2px);
+  background-size: 23% 34%, 31% 41%, 19% 29%, 27% 37%, 21% 31%, 29% 39%;
+  /* Densest at the top, gone by halfway down. */
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
 /* A stuck door gives a little and stays shut. */
 .door--refusing {
   animation: door-refuse 400ms ease-in-out;
@@ -387,7 +474,7 @@
 
 .door__knocker {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 26%;
   left: 50%;
   translate: -50% 0;
@@ -407,7 +494,7 @@
 
 .door__letterbox {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 56%;
   left: 50%;
   translate: -50% 0;
@@ -424,7 +511,7 @@
 
 .door__kick-plate {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   inset: auto 8% 5%;
   height: 12%;
 
@@ -437,7 +524,7 @@
 
 .door__peephole {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 17%;
   left: 50%;
   translate: -50% 0;
@@ -544,7 +631,7 @@
   pointer-events: none;
   background-repeat: no-repeat;
   /* Damage to the surface, so it sits with the paint, under the furniture. */
-  z-index: 1;
+  z-index: 2;
 }
 
 [data-cracks='1'] .door__cracks {
@@ -596,7 +683,7 @@
 
 .door__number {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 11%;
   left: 50%;
   translate: -50% 0;
@@ -621,8 +708,12 @@
  * covers the timber; they do not paint over the handle, the letterbox or
  * the kick plate, and a tag that did would look like a mistake.
  *
- * The doorway stacks: the face of the door, then paint and damage over it,
- * then the furniture screwed on top of everything.
+ * The door stacks in the order these things happened to it:
+ *
+ *   face and panels   (auto)  what the door is
+ *   scorching         (1)     what the fire behind it did
+ *   paint and damage  (2)     what people did to it afterwards
+ *   furniture         (3)     what is screwed to it, over everything
  */
 /*
  * The paint stops at the edge of the door. Somebody tagging a door sprays
@@ -637,7 +728,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   overflow: hidden;
 }
 

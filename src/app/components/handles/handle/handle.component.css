@@ -9,8 +9,9 @@
   cursor: pointer;
 
   position: absolute;
-  /* Above the paint: graffiti covers the door, not its ironmongery. */
-  z-index: 2;
+  /* Above the paint and the soot: graffiti and fire mark the door, not
+     its ironmongery. */
+  z-index: 3;
   /* Positioned explicitly rather than left to the flex flow, which put it
      below the panels. Slightly above centre, where a door handle sits. */
   top: 44%;

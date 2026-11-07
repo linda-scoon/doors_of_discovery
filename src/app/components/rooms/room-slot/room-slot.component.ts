@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+  inject,
+} from '@angular/core';
 
 import { RoomDefinition } from '../../../rooms';
 import {
@@ -17,6 +24,15 @@ import { DoorSoundService } from '../../../services/door-sound.service';
  * knocks. The room components are left to do one job — present whatever
  * their API returned.
  */
+/**
+ * How long after the door starts moving the monster arrives.
+ *
+ * Short on purpose. The door it comes out of swings in 0.45s rather than
+ * the usual 1.6s, so the doorway is clear by the time the monster is out
+ * and the two read as one event rather than two.
+ */
+const MONSTER_DELAY = 150;
+
 @Component({
   selector: 'app-room-slot',
   templateUrl: './room-slot.component.html',
@@ -24,8 +40,17 @@ import { DoorSoundService } from '../../../services/door-sound.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
-export class RoomSlotComponent implements OnInit {
+export class RoomSlotComponent implements OnInit, OnDestroy {
   private readonly sound = inject(DoorSoundService);
+
+  /**
+   * Everything waiting to happen on this door.
+   *
+   * Kept so that shutting the door can call all of it off. Without this a
+   * monster fired a second after you had walked away, and lunged out
+   * through a door that was shut again by then.
+   */
+  private pending: ReturnType<typeof setTimeout>[] = [];
 
   @Input({ required: true }) room!: RoomDefinition;
 
@@ -111,7 +136,7 @@ export class RoomSlotComponent implements OnInit {
 
     // A beat of silence first. The reply only lands once you have decided
     // the door is simply stuck.
-    setTimeout(() => this.sound.knockBack(this.character.material), 700);
+    this.later(() => this.sound.knockBack(this.character.material), 700);
   }
 
   openDoor(): void {
@@ -126,11 +151,41 @@ export class RoomSlotComponent implements OnInit {
 
   /** Everything shuts again when the pointer leaves, so the wall resets. */
   closeDoor(): void {
+    this.cancelPending();
     this.open = false;
     this.burning = false;
     this.lunging = false;
     this.answering = false;
     this.refreshContentInputs();
+  }
+
+  ngOnDestroy(): void {
+    this.cancelPending();
+  }
+
+  /**
+   * Whether the room's own contents should step aside.
+   *
+   * A doorway with something in it is not an empty room, so it must never
+   * be captioned "nothing in here yet" — not even for the moment between
+   * the door opening and the monster arriving.
+   */
+  get upstaged(): boolean {
+    return (
+      this.burning ||
+      this.lunging ||
+      (this.open && this.character.surprise === 'monster')
+    );
+  }
+
+  /** Runs something later, and remembers it so closing can call it off. */
+  private later(work: () => void, delay: number): void {
+    this.pending.push(setTimeout(work, delay));
+  }
+
+  private cancelPending(): void {
+    this.pending.forEach(clearTimeout);
+    this.pending = [];
   }
 
   /** Somebody inside calls out, waits a moment, and lets you in. */
@@ -140,7 +195,7 @@ export class RoomSlotComponent implements OnInit {
     this.answering = true;
     this.sound.callOut('coming');
 
-    setTimeout(() => {
+    this.later(() => {
       this.answering = false;
       if (!this.open) this.openDoor();
     }, 1400);
@@ -153,14 +208,15 @@ export class RoomSlotComponent implements OnInit {
     }
 
     if (surprise === 'monster') {
-      // Wait for the door to get out of the way first. Fired immediately it
-      // is over before the door has finished swinging, which is no scare at
-      // all — the whole thing happens behind a door.
-      setTimeout(() => {
+      // Barely a beat. A monster door is given a fast swing of its own and
+      // the monster comes out over the top of it while it is still moving.
+      // Waiting for the door to finish meant the scare landed about a
+      // second after you had stopped expecting one.
+      this.later(() => {
         this.lunging = true;
         this.sound.shriek();
-        setTimeout(() => (this.lunging = false), 900);
-      }, 900);
+        this.later(() => (this.lunging = false), 900);
+      }, MONSTER_DELAY);
     }
   }
 

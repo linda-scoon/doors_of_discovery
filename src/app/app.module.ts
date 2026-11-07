@@ -1,5 +1,5 @@
 import { SafePipe } from './pipes/safe.pipe';
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {
   provideHttpClient,
@@ -24,6 +24,7 @@ import { EmptyRoomComponent } from './components/rooms/empty-room/empty-room.com
 import { HandleComponent } from './components/handles/handle/handle.component';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,13 @@ import { ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [provideHttpClient(withXhr(), withInterceptorsFromDi())],
 })
