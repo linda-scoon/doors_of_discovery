@@ -61,8 +61,10 @@ describe('RoomSlotComponent', () => {
 
   const door = () => fixture.nativeElement.querySelector('.door');
   const handle = () => fixture.nativeElement.querySelector('button.handle');
-  const leave = () =>
-    fixture.nativeElement.querySelector('app-room').dispatchEvent(new MouseEvent('mouseleave'));
+  const leave = (pointerType = 'mouse') =>
+    fixture.nativeElement
+      .querySelector('app-room')
+      .dispatchEvent(new PointerEvent('pointerleave', { pointerType }));
 
   it('builds the room behind the door only once it is opened', async () => {
     await createWith(plainRoom);
@@ -131,17 +133,43 @@ describe('RoomSlotComponent', () => {
     expect(sound.played).toContain('tap');
   });
 
-  it('shuts again when the pointer leaves', async () => {
+  it('shuts again when the mouse leaves', async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    leave();
+    fixture.detectChanges();
+
+    expect(door().classList).not.toContain('door--open');
+  });
+
+  it('stays open when a finger lifts off it, and shuts on a tap elsewhere', async () => {
+    await createWith(plainRoom);
+    handle().click();
+    fixture.detectChanges();
+
+    // A touch pointer always "leaves" as it lifts.
+    leave('touch');
+    fixture.detectChanges();
+    expect(door().classList).toContain('door--open');
+
+    document.body.dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true }));
+    fixture.detectChanges();
+    expect(door().classList).not.toContain('door--open');
+  });
+
+  it('is not shut by a tap inside its own room', async () => {
     await createWith(plainRoom);
     handle().click();
     fixture.detectChanges();
 
     fixture.nativeElement
-      .querySelector('app-room')
-      .dispatchEvent(new MouseEvent('mouseleave'));
+      .querySelector('.content')
+      .dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true }));
     fixture.detectChanges();
 
-    expect(door().classList).not.toContain('door--open');
+    expect(door().classList).toContain('door--open');
   });
 
   it('withholds the door state from rooms that did not ask for it', async () => {

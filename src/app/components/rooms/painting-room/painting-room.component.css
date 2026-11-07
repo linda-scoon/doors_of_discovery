@@ -1,0 +1,18 @@
+:host {
+  display: contents;
+}
+
+/* Hung in a gilt frame, and never taller than most of the doorway. */
+.painting-room__canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 58cqh;
+  object-fit: contain;
+  border: 2.5cqi solid #a8842c;
+  outline: 1px solid #5c4614;
+  box-shadow: 0 2cqi 5cqi rgba(0, 0, 0, 0.6);
+}
+
+.painting-room__title {
+  font-style: italic;
+}

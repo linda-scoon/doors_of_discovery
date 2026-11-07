@@ -1,0 +1,14 @@
+@switch (status()) {
+  @case ('loading') {
+    <p class="room-frame__waiting" aria-label="Someone is coming">
+      <span></span><span></span><span></span>
+    </p>
+  }
+  @case ('failed') {
+    <p class="room-words room-frame__failed">Nobody's answering in here.</p>
+    <button type="button" class="room-button" (click)="retry.emit()">Knock again</button>
+  }
+  @default {
+    <ng-content></ng-content>
+  }
+}

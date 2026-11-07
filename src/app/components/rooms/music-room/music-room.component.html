@@ -1,15 +1,16 @@
-@if (open) {
-  <div class="room-container">
-    <p class="title">{{ track.title }} by {{ track.artist.name }}</p>
-    <div class="track">
-      <img [src]="track.album.cover" [alt]="track.title" />
-    </div>
+<app-room-frame [status]="track.status()" (retry)="track.reload()">
+  @if (track.value(); as t) {
+    <img class="music-room__cover" [src]="t.album.cover_medium" [alt]="t.album.title" />
+    <p class="room-words room-words--small">{{ t.title }}</p>
+    <p class="room-credit">{{ t.artist.name }} · Deezer</p>
     <!--
       No controls. The player widget is large enough to cover the door's
-      handle, and a room should sound like a room rather than show a piece
-      of browser furniture. It plays by itself because you have just opened
-      the door, which counts as the interaction browsers require.
+      handle, and a room should sound like a room rather than show a piece of
+      browser furniture. It plays by itself because you have just opened the
+      door, which counts as the interaction browsers require.
     -->
-    <audio autoplay [src]="track.preview" type="audio/mpeg"></audio>
-  </div>
-}
+    @if (open()) {
+      <audio autoplay [src]="t.preview"></audio>
+    }
+  }
+</app-room-frame>

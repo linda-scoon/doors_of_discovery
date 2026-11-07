@@ -1,43 +1,46 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { JokesService } from './jokes.service';
-import {
-  animate,
-  stagger,
-  query,
-  trigger,
-  group,
-  transition,
-  style,
-} from '@angular/animations';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
 
+import { RoomFrameComponent } from '../room-frame/room-frame.component';
+import { roomLoad } from '../room-frame/room-load';
+
+/** JokeAPI sends either a one-liner or a setup with a punchline. */
+type JokeApiJoke =
+  | { type: 'single'; joke: string }
+  | { type: 'twopart'; setup: string; delivery: string };
+
+interface Joke {
+  setup: string;
+  /** Missing for a one-liner. */
+  punchline?: string;
+}
+
+/**
+ * A joke. A setup and punchline arrive one after the other, so the punchline
+ * lands rather than being read at the same moment as the question.
+ */
 @Component({
   selector: 'app-jokes-room',
+  imports: [RoomFrameComponent],
   templateUrl: './jokes-room.component.html',
   styleUrls: ['./jokes-room.component.css'],
-  animations: [
-    trigger('fade', [
-      transition(':enter', [
-        group([
-          query('.setup', [style({ opacity: 0 }), animate(2000)]),
-          query(
-            '.punch-line',
-            stagger(1000, [style({ opacity: 0 }), animate(10000)]),
-          ),
-        ]),
-      ]),
-    ]),
-  ],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JokesRoomComponent implements OnInit {
-  joke: any = {};
+export class JokesRoomComponent {
+  private readonly http = inject(HttpClient);
 
-  constructor(private jokeStream: JokesService) {}
-
-  ngOnInit(): void {
-    this.jokeStream.loadData().subscribe((data) => {
-      this.joke = data;
-    });
-  }
+  readonly joke = roomLoad(() =>
+    this.http.get<JokeApiJoke>('/api/jokes').pipe(
+      map((response): Joke => {
+        if (response?.type === 'single' && response.joke) {
+          return { setup: response.joke };
+        }
+        if (response?.type === 'twopart' && response.setup && response.delivery) {
+          return { setup: response.setup, punchline: response.delivery };
+        }
+        throw new Error('No joke in the response');
+      })
+    )
+  );
 }

@@ -42,6 +42,19 @@ function buildUpstreamUrl(api, req) {
 
   const parsed = new URL(url);
 
+  // Only whole numbers in the range the api allows, so the browser can ask
+  // for page 12 but cannot rewrite the request.
+  for (const [name, { min, max }] of Object.entries(api.queryParams || {})) {
+    const raw = req.query[name];
+    if (raw === undefined) continue;
+
+    const value = Number(raw);
+    if (!Number.isInteger(value) || value < min || value > max) {
+      throw new Error(`"${name}" must be a whole number from ${min} to ${max}`);
+    }
+    parsed.searchParams.set(name, String(value));
+  }
+
   if (api.auth.style === AuthStyle.QUERY_PARAM) {
     parsed.searchParams.set(api.auth.paramName, process.env[api.auth.keyName]);
   }

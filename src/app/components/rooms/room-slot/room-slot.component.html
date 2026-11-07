@@ -1,4 +1,4 @@
-<app-room (mouseleave)="closeDoor()">
+<app-room (pointerleave)="onPointerLeave($event)">
   <!-- The doorway's own theatrics, behind the door so they are revealed. -->
   @if (burning) {
     <span class="doorway-fire" aria-hidden="true">

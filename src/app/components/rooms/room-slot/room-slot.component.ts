@@ -1,6 +1,8 @@
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -51,6 +53,7 @@ const CLEAR_ROOM_DELAY = 1800;
 export class RoomSlotComponent implements OnInit, OnDestroy {
   private readonly sound = inject(DoorSoundService);
   private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /**
    * Everything waiting to happen on this door.
@@ -166,6 +169,22 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
       this.sound.creak();
     }
     this.reactToSurprise(this.character.surprise);
+  }
+
+  /**
+   * A mouse leaving the doorway shuts the door, so the wall resets behind
+   * you. Only a mouse: a finger "leaves" the instant it lifts, so on a phone
+   * the door shut again as soon as it was tapped open.
+   */
+  onPointerLeave(event: PointerEvent): void {
+    if (event.pointerType === 'mouse') this.closeDoor();
+  }
+
+  /** On a touch screen, a door shuts when you tap somewhere else instead. */
+  @HostListener('document:pointerdown', ['$event'])
+  onPointerDownAnywhere(event: PointerEvent): void {
+    if (!this.open || event.pointerType === 'mouse') return;
+    if (!this.host.nativeElement.contains(event.target as Node)) this.closeDoor();
   }
 
   /** Everything shuts again when the pointer leaves, so the wall resets. */

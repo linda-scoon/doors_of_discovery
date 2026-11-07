@@ -20,6 +20,7 @@ const express = require('express');
 const { loadEnvFile } = require('./load-env');
 const { apis } = require('./apis');
 const { createHandler } = require('./proxy');
+const { imageSources, createImageHandler } = require('./images');
 
 loadEnvFile();
 
@@ -49,6 +50,11 @@ for (const api of apis) {
   // /api/videos/trailer/:movieId.
   const segments = [`/api/${api.id}`, ...(api.pathParams || []).map((p) => `:${p}`)];
   app.get(segments.join('/'), createHandler(api));
+}
+
+// Pictures fetched on the browser's behalf; see images.js.
+for (const source of imageSources) {
+  app.get(`/api/images/${source.id}/:imageId`, createImageHandler(source));
 }
 
 /**

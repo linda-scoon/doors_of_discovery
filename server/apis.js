@@ -11,7 +11,7 @@
 
 /** How a given API expects its key to be presented. */
 const AuthStyle = {
-  /** RapidAPI wants the key in an X-RapidAPI-Key header. */
+  /** RapidAPI wants the key in an X-RapidAPI-Key header. None use it now. */
   RAPIDAPI_HEADER: 'rapidapi-header',
   /** Some APIs want the key as a query parameter instead. */
   QUERY_PARAM: 'query-param',
@@ -21,32 +21,51 @@ const AuthStyle = {
 
 /*
  * Each entry: an id (its route is /api/<id>), the upstream url, how it
- * authenticates, and optionally cacheSeconds -- how long to reuse a response.
- * Leave caching off for anything that returns one random item, or every door
- * of that kind shows the same one; see proxy.js.
+ * authenticates, and optionally:
+ *
+ *   cacheSeconds  how long to reuse a response. Leave it off for anything
+ *                 that returns one random item, or every door of that kind
+ *                 shows the same one; see proxy.js.
+ *   queryParams   numbers the browser may pass through, each with the range
+ *                 it must fall in. Anything else in the query is ignored.
+ *   pathParams    named :segments of the url, filled from the route.
  */
 const apis = [
   {
     id: 'facts',
-    url: 'https://random-facts2.p.rapidapi.com/getfact',
-    auth: { style: AuthStyle.RAPIDAPI_HEADER, keyName: 'RAPID_API_KEY' },
+    url: 'https://uselessfacts.jsph.pl/api/v2/facts/random?language=en',
+    auth: { style: AuthStyle.NONE },
   },
   {
-    id: 'images',
-    url: 'https://programming-memes-images.p.rapidapi.com/v1/memes',
-    auth: { style: AuthStyle.RAPIDAPI_HEADER, keyName: 'RAPID_API_KEY' },
+    // Public-domain paintings from the Art Institute of Chicago, twenty to a
+    // page. The room asks for a random page and picks one from it.
+    id: 'paintings',
+    url:
+      'https://api.artic.edu/api/v1/artworks/search' +
+      '?query[bool][must][][term][is_public_domain]=true' +
+      '&query[bool][must][][term][artwork_type_id]=1' +
+      '&limit=20&fields=id,title,artist_title,date_display,image_id',
+    auth: { style: AuthStyle.NONE },
+    // The museum only pages through the first thousand results of a search,
+    // so fifty pages of twenty. Past that it answers 403.
+    queryParams: { page: { min: 1, max: 50 } },
+    cacheSeconds: 86400,
   },
   {
+    // The top hundred tracks on Deezer, each with a 30-second preview. Kept
+    // for ten minutes only: the preview links stop working after fifteen.
     id: 'music',
-    url: 'https://deezerdevs-deezer.p.rapidapi.com/playlist/1132739621',
-    auth: { style: AuthStyle.RAPIDAPI_HEADER, keyName: 'RAPID_API_KEY' },
-    // A whole playlist; the room picks a track from it.
-    cacheSeconds: 3600,
+    url: 'https://api.deezer.com/chart/0/tracks?limit=100',
+    auth: { style: AuthStyle.NONE },
+    cacheSeconds: 600,
   },
   {
+    // Fifty quotes at a time; the room picks one. ZenQuotes allows five
+    // requests every thirty seconds, so the list is kept for five minutes.
     id: 'quotes',
-    url: 'https://quotelibapi.p.rapidapi.com/quote?en',
-    auth: { style: AuthStyle.RAPIDAPI_HEADER, keyName: 'RAPID_API_KEY' },
+    url: 'https://zenquotes.io/api/quotes',
+    auth: { style: AuthStyle.NONE },
+    cacheSeconds: 300,
   },
   {
     id: 'gifs',
@@ -59,7 +78,9 @@ const apis = [
   },
   {
     id: 'jokes',
-    url: 'https://v2.jokeapi.dev/joke/Any?safe-mode',
+    url:
+      'https://v2.jokeapi.dev/joke/Any?safe-mode' +
+      '&blacklistFlags=nsfw,religious,political,racist,sexist,explicit',
     auth: { style: AuthStyle.NONE },
   },
 

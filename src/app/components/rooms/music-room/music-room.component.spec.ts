@@ -1,25 +1,36 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MusicRoomComponent } from './music-room.component';
+import { failRequest, openRoom } from '../room-frame/room-testing';
+
+const track = {
+  title: 'A Song',
+  preview: 'https://example.com/preview.mp3',
+  artist: { name: 'A Band' },
+  album: { cover_medium: 'https://example.com/cover.jpg', title: 'An Album' },
+};
 
 describe('MusicRoomComponent', () => {
-  let component: MusicRoomComponent;
-  let fixture: ComponentFixture<MusicRoomComponent>;
+  it('shows the track and plays it while the door is open', async () => {
+    const room = await openRoom(MusicRoomComponent);
+    room.fixture.componentRef.setInput('open', true);
+    room.server.expectOne('/api/music').flush({ data: [track] });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ MusicRoomComponent ]
-    })
-    .compileComponents();
+    expect(room.text()).toContain('A Song');
+    expect(room.text()).toContain('A Band');
+    expect(room.fixture.nativeElement.querySelector('audio')).toBeTruthy();
   });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(MusicRoomComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  it('is silent once the door is closing', async () => {
+    const room = await openRoom(MusicRoomComponent);
+    room.server.expectOne('/api/music').flush({ data: [track] });
+    room.fixture.componentRef.setInput('open', false);
+    room.fixture.detectChanges();
+
+    expect(room.fixture.nativeElement.querySelector('audio')).toBeNull();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('says nobody is answering when the fetch fails', async () => {
+    const room = await openRoom(MusicRoomComponent);
+    failRequest(room.server, '/api/music');
+    expect(room.text()).toContain("Nobody's answering");
   });
 });

@@ -1,21 +1,32 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FactsService } from './facts.service';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
 
+import { RoomFrameComponent } from '../room-frame/room-frame.component';
+import { roomLoad } from '../room-frame/room-load';
+
+interface UselessFact {
+  text: string;
+}
+
+/** A useless fact, a different one every time the door opens. */
 @Component({
   selector: 'app-fact-room',
+  imports: [RoomFrameComponent],
   templateUrl: './fact-room.component.html',
   styleUrls: ['./fact-room.component.css'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FactRoomComponent implements OnInit {
-  randomFact: any = {};
+export class FactRoomComponent {
+  private readonly http = inject(HttpClient);
 
-  constructor(private factStream: FactsService) {}
-
-  ngOnInit(): void {
-    this.factStream.loadData().subscribe((data) => {
-      this.randomFact = data;
-    });
-  }
+  readonly fact = roomLoad(() =>
+    this.http.get<UselessFact>('/api/facts').pipe(
+      map((response) => {
+        const text = response?.text?.trim();
+        if (!text) throw new Error('No fact in the response');
+        return text;
+      })
+    )
+  );
 }

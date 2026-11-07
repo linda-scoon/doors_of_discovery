@@ -1,4 +1,11 @@
-<div class="room-container">
-  <p class="quote">{{ quote.quote_text }}</p>
-  <small class="author">{{ quote.author }}</small>
-</div>
+<app-room-frame [status]="quote.status()" (retry)="quote.reload()">
+  @if (quote.value(); as q) {
+    <blockquote class="qoutes-room__quote">
+      <p class="room-words">&ldquo;{{ q.q }}&rdquo;</p>
+      <footer class="room-words room-words--small qoutes-room__author">{{ q.a }}</footer>
+    </blockquote>
+    <p class="room-credit">
+      Quotes from <a href="https://zenquotes.io/" target="_blank" rel="noopener">ZenQuotes</a>
+    </p>
+  }
+</app-room-frame>

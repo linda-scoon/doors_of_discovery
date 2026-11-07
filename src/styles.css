@@ -55,6 +55,56 @@ body {
 }
 
 /*
+ * Inside the rooms.
+ *
+ * Global rather than per room, so twenty rooms read as one site. Sized in
+ * cqi -- a share of the doorway's width -- because a room lives in a cell
+ * about 170px wide on a phone and 260px on a desktop, and sizing against
+ * the page would be wrong at both. The doorway is the container; see
+ * room.component.css.
+ */
+.room-words {
+  font-size: clamp(0.75rem, 6.5cqi, 1.15rem);
+  line-height: 1.35;
+  text-wrap: pretty;
+}
+
+.room-words--small {
+  font-size: clamp(0.7rem, 5.2cqi, 0.95rem);
+}
+
+.room-words--big {
+  font-size: clamp(0.95rem, 9cqi, 1.6rem);
+  line-height: 1.2;
+}
+
+/* Who it came from: the API, the artist, the author. */
+.room-credit {
+  font-size: clamp(0.6rem, 4cqi, 0.75rem);
+  opacity: 0.55;
+}
+
+.room-credit a {
+  color: inherit;
+}
+
+.room-button {
+  font: inherit;
+  font-size: clamp(0.7rem, 5cqi, 0.9rem);
+  padding: 0.4em 1em;
+  border: 1px solid rgba(242, 236, 228, 0.45);
+  border-radius: 999px;
+  background: rgba(242, 236, 228, 0.08);
+  color: inherit;
+  cursor: pointer;
+}
+
+.room-button:hover,
+.room-button:focus-visible {
+  background: rgba(242, 236, 228, 0.18);
+}
+
+/*
  * A door swinging open is a large movement. Honour the system setting rather
  * than making people unwell to show off an animation.
  */

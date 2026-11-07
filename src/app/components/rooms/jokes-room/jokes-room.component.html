@@ -1,4 +1,8 @@
-<div class="room-container">
-  <p class="setup">{{ joke.setup }}</p>
-  <p class="punch-line">{{ joke.delivery }}</p>
-</div>
+<app-room-frame [status]="joke.status()" (retry)="joke.reload()">
+  @if (joke.value(); as j) {
+    <p class="room-words">{{ j.setup }}</p>
+    @if (j.punchline) {
+      <p class="room-words jokes-room__punchline">{{ j.punchline }}</p>
+    }
+  }
+</app-room-frame>
