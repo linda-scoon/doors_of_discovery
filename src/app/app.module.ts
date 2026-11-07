@@ -7,9 +7,7 @@ import {
   withXhr,
 } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { WoodenDoorComponent } from './components/doors/wooden-door/wooden-door.component';
 import { MusicRoomComponent } from './components/rooms/music-room/music-room.component';
-import { RightHandleComponent } from './components/handles/right-handle/right-handle.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JokesRoomComponent } from './components/rooms/jokes-room/jokes-room.component';
 import { QoutesRoomComponent } from './components/rooms/qoutes-room/qoutes-room.component';
@@ -28,9 +26,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
-    WoodenDoorComponent,
     MusicRoomComponent,
-    RightHandleComponent,
     JokesRoomComponent,
     QoutesRoomComponent,
     ImageRoomComponent,

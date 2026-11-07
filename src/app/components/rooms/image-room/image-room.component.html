@@ -1,9 +1,10 @@
 <app-room (mouseleave)="exitRoom()">
-  <app-wooden-door
-    (doorOpen)="enterRoom()"
-    [openedDoor]="openedDoor"
-    bgColor="#6F4E37"
-  ></app-wooden-door>
+  <app-door
+    [open]="openedDoor"
+    (opened)="enterRoom()"
+    colour="#6F4E37"
+    label="the image room"
+  ></app-door>
   <div class="room-container">
     <img src="{{ image.image }}" />
   </div>

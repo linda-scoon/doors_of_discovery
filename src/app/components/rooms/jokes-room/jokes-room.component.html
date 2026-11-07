@@ -1,9 +1,10 @@
 <app-room (mouseleave)="exitRoom()">
-  <app-wooden-door
-    (doorOpen)="enterRoom()"
-    [openedDoor]="openedDoor"
-    bgColor="#654321"
-  ></app-wooden-door>
+  <app-door
+    [open]="openedDoor"
+    (opened)="enterRoom()"
+    colour="#654321"
+    label="the jokes room"
+  ></app-door>
   <div class="room-container">
     <p class="setup">{{ joke.setup }}</p>
     <p class="punch-line">{{ joke.delivery }}</p>

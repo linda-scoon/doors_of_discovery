@@ -1,9 +1,10 @@
 <app-room (mouseleave)="exitRoom()">
-  <app-wooden-door
-    (doorOpen)="enterRoom()"
-    [openedDoor]="openedDoor"
-    bgColor="#BA9238"
-  ></app-wooden-door>
+  <app-door
+    [open]="openedDoor"
+    (opened)="enterRoom()"
+    colour="#BA9238"
+    label="the video room"
+  ></app-door>
   <div class="room-container">
     <h2>{{ videoTitle }}</h2>
     <!--

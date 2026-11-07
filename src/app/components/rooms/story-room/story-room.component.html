@@ -1,9 +1,10 @@
 <app-room (mouseleave)="exitRoom()">
-  <app-wooden-door
-    (doorOpen)="enterRoom()"
-    [openedDoor]="openedDoor"
-    bgColor="#AF6F09"
-  ></app-wooden-door>
+  <app-door
+    [open]="openedDoor"
+    (opened)="enterRoom()"
+    colour="#AF6F09"
+    label="the story room"
+  ></app-door>
 
   <ng-container >
     <div *ngIf="!showStory"class="room-container">

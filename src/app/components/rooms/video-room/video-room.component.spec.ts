@@ -18,7 +18,7 @@ describe('VideoRoomComponent', () => {
       // VideosService calls the network; the testing backend keeps the real
       // request from being made.
       providers: [provideHttpClient(), provideHttpClientTesting()],
-      // app-room and app-wooden-door are not under test here.
+
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
   });

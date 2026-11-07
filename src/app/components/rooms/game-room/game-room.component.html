@@ -1,8 +1,9 @@
 <app-room (mouseleave)="exitRoom()">
-  <app-wooden-door
-    (doorOpen)="enterRoom()"
-    [openedDoor]="openedDoor"
-    bgColor="#3D2B1F"
-  ></app-wooden-door>
+  <app-door
+    [open]="openedDoor"
+    (opened)="enterRoom()"
+    colour="#3D2B1F"
+    label="the game room"
+  ></app-door>
   <div class="room-container">GAME ROOM COMING SOON!</div>
 </app-room>

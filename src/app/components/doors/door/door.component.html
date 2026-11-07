@@ -1,3 +1,23 @@
-<div class="door" >
-  <ng-content></ng-content>
+<div
+  class="door"
+  [class.door--open]="open"
+  [class.door--hinge-right]="handleSide === 'left'"
+  [style.backgroundColor]="colour"
+>
+  <div class="door__panels door__panels--top">
+    <div class="door__panel"></div>
+    <div class="door__panel"></div>
+  </div>
+
+  <app-handle
+    [side]="handleSide"
+    [pressed]="open"
+    [label]="label"
+    (used)="onHandleUsed()"
+  ></app-handle>
+
+  <div class="door__panels door__panels--bottom">
+    <div class="door__panel"></div>
+    <div class="door__panel"></div>
+  </div>
 </div>
