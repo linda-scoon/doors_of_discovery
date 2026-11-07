@@ -33,19 +33,28 @@ describe('PetRoomComponent', () => {
     expect(pip.mood()).toBe('grumpy');
   });
 
-  it('eats what it is given, is happy, and the snack comes back later', () => {
+  it('eats what it is given and is happy, and the snack stays eaten', () => {
     const { pip } = open();
-    const fish = pip.foods()[0];
-
-    pip.feed(fish);
+    pip.feed(pip.foods()[0]);
     expect(pip.mood()).toBe('eating');
     expect(pip.foods()[0].eaten).toBe(true);
 
     vi.advanceTimersByTime(1_000);
     expect(pip.mood()).toBe('happy');
 
-    vi.advanceTimersByTime(4_000);
-    expect(pip.foods()[0].eaten).toBe(false);
+    vi.advanceTimersByTime(60_000);
+    expect(pip.foods()[0].eaten).toBe(true);
+  });
+
+  it('is full once everything is eaten, until the door is opened again', () => {
+    const { pip } = open();
+    pip.foods().forEach((food) => pip.feed(food));
+    vi.advanceTimersByTime(1_000);
+    expect(pip.mood()).toBe('full');
+
+    // Opening the door again builds the room afresh, snacks and all.
+    const again = TestBed.createComponent(PetRoomComponent).componentInstance;
+    expect(again.foods().every((food) => !food.eaten)).toBe(true);
   });
 
   it('can be fed from the keyboard', () => {

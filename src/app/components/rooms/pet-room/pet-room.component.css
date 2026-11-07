@@ -170,6 +170,11 @@ app-room-frame {
   animation: hop 0.45s ease-out 3;
 }
 
+/* Full: a contented, slow sway. */
+.pip--full .pip__head {
+  animation: lean 1.4s ease-in-out infinite alternate;
+}
+
 @keyframes hop {
   50% { transform: translateY(-12px); }
 }

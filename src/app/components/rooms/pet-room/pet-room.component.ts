@@ -12,7 +12,7 @@ import {
 import { RoomFrameComponent } from '../room-frame/room-frame.component';
 import { PetSounds } from './pet-sounds';
 
-export type Mood = 'content' | 'purring' | 'surprised' | 'grumpy' | 'eating' | 'happy';
+export type Mood = 'content' | 'purring' | 'surprised' | 'grumpy' | 'eating' | 'happy' | 'full';
 
 export interface Food {
   id: number;
@@ -41,6 +41,7 @@ const SAYS: Record<Mood, string> = {
   grumpy: 'Hey! Stop poking!',
   eating: 'Nom nom nom…',
   happy: 'Yum! Pip loves you.',
+  full: 'Pip is full, and very happy.',
 };
 
 /** Pokes close enough together to count as pestering. */
@@ -176,7 +177,11 @@ export class PetRoomComponent {
     }
   }
 
-  /** Given something to eat: munching, then very happy. */
+  /**
+   * Given something to eat: munching, then very happy. What is eaten is
+   * gone until the door is opened again -- the room is laid out afresh
+   * each time -- and once everything is eaten, Pip is full.
+   */
   feed(food: Food): void {
     this.updateFood(food.id, { dragging: false, eaten: true, dx: 0, dy: 0 });
     this.pokes = [];
@@ -184,13 +189,12 @@ export class PetRoomComponent {
     this.sounds.munch();
 
     this.later(() => {
-      this.mood.set('happy');
+      const allEaten = this.foods().every((f) => f.eaten);
+      this.mood.set(allEaten ? 'full' : 'happy');
       this.addHeart();
       this.addHeart();
-      this.settleIn(2_000);
+      if (!allEaten) this.settleIn(2_000);
     }, 900);
-    // A fresh one appears on the rug after a while.
-    this.later(() => this.updateFood(food.id, { eaten: false }), 4_000);
   }
 
   /* --------------------------------------------------------------- helpers */
