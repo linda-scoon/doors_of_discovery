@@ -213,6 +213,13 @@ export const ROOM_KINDS: readonly RoomKind[] = [
     rarity: 'common',
   },
   {
+    kind: 'live',
+    name: 'Live Window',
+    load: () => import('./components/rooms/live-room/live-room.component').then((m) => m.LiveRoomComponent),
+    rarity: 'common',
+    needsDoorState: true,
+  },
+  {
     kind: 'chapter',
     name: 'Reading Nook',
     load: () => import('./components/rooms/chapter-room/chapter-room.component').then((m) => m.ChapterRoomComponent),

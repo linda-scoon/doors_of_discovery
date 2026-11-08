@@ -243,3 +243,72 @@ test('the chess puzzle is fetched from Lichess', async () => {
   assert.equal((await get('/api/chess')).status, 200);
   assert.match(upstreamCalls[0].url, /^https:\/\/lichess\.org\/api\/puzzle\/daily/);
 });
+
+test('live streams: only live, public, embeddable streams from our channels, and the key stays in a header', async () => {
+  const live = require('./live');
+  live.forget();
+  delete process.env.YOUTUBE_API_KEY;
+  assert.equal((await get('/api/live')).status, 503);
+
+  process.env.YOUTUBE_API_KEY = 'test-youtube-key';
+  try {
+    const nasa = 'UCLA_DiR1FfKNvjuUpBHmylQ';
+    upstreamReply = (url) => {
+      if (url.includes('/search?')) {
+        const ids = url.includes(nasa) ? ['aaaaaaaaaaa', 'bbbbbbbbbbb', 'ccccccccccc', 'ddddddddddd'] : [];
+        return Response.json({ items: ids.map((videoId) => ({ id: { videoId } })) });
+      }
+      const video = (id, extra) => ({
+        id,
+        snippet: { channelId: nasa, title: `Stream ${id}`, liveBroadcastContent: 'live', ...extra?.snippet },
+        status: { embeddable: true, privacyStatus: 'public', ...extra?.status },
+      });
+      return Response.json({
+        items: [
+          video('aaaaaaaaaaa'),
+          video('bbbbbbbbbbb', { snippet: { liveBroadcastContent: 'none' } }),
+          video('ccccccccccc', { status: { embeddable: false } }),
+          video('ddddddddddd', { snippet: { channelId: 'UCsomeoneelse000000000' } }),
+        ],
+      });
+    };
+
+    const response = await get('/api/live');
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('cache-control'), /public, max-age=60/);
+    const { streams } = await response.json();
+    assert.deepEqual(streams, [{ id: 'aaaaaaaaaaa', title: 'Stream aaaaaaaaaaa', channel: 'NASA', topic: 'space' }]);
+
+    assert.ok(upstreamCalls.length > 0);
+    for (const call of upstreamCalls) {
+      assert.ok(!call.url.includes('test-youtube-key'), 'the key must never be in a URL');
+      assert.equal(call.headers['X-Goog-Api-Key'], 'test-youtube-key');
+      assert.match(call.url, /^https:\/\/www\.googleapis\.com\/youtube\/v3\//);
+    }
+    const searches = upstreamCalls.filter((c) => c.url.includes('/search?')).length;
+    assert.equal(searches, require('../shared/live-channels.json').length);
+
+    // A minute later nothing is asked again: the answer is kept.
+    upstreamCalls = [];
+    assert.equal((await get('/api/live')).status, 200);
+    assert.equal(upstreamCalls.length, 0);
+  } finally {
+    delete process.env.YOUTUBE_API_KEY;
+    live.forget();
+  }
+});
+
+test('live streams: a YouTube outage cannot use up the day\'s searches', async () => {
+  const live = require('./live');
+  live.forget();
+  process.env.YOUTUBE_API_KEY = 'test-youtube-key';
+  try {
+    upstreamReply = () => new Response('quota', { status: 403 });
+    for (let i = 0; i < 5; i += 1) assert.equal((await get('/api/live')).status, 502);
+    const searches = upstreamCalls.filter((c) => c.url.includes('/search?')).length;
+    assert.equal(searches, require('../shared/live-channels.json').length);
+  } finally {
+    delete process.env.YOUTUBE_API_KEY;
+    live.forget();
+  }
+});

@@ -27,6 +27,7 @@ const { createHandler } = require('./proxy');
 const { imageSources, createImageHandler } = require('./images');
 const { handleStories } = require('./plugs');
 const { handleChapter } = require('./books');
+const { handleLive } = require('./live');
 const {
   contentSecurityPolicy,
   inlineScriptHashes,
@@ -87,6 +88,7 @@ app.get('/api/silverfoot', handleStories);
 
 // A chapter of a classic from Project Gutenberg; see books.js.
 app.get('/api/chapter/:book', handleChapter);
+app.get('/api/live', handleLive);
 
 // Pictures fetched on the browser's behalf; see images.js.
 for (const source of imageSources) {
@@ -104,6 +106,7 @@ app.get('/api/health', (_req, res) => {
     configured[api.id] =
       !api.auth.keyName || Boolean(process.env[api.auth.keyName]);
   }
+  configured.live = Boolean(process.env.YOUTUBE_API_KEY);
   res.json({ ok: true, built: isBuilt(), rooms: configured });
 });
 
