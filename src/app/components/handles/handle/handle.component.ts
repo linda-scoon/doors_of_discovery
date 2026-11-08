@@ -21,7 +21,6 @@ export type HandleSide = 'left' | 'right';
   templateUrl: './handle.component.html',
   styleUrls: ['./handle.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class HandleComponent {
   @Input() side: HandleSide = 'right';
@@ -34,6 +33,9 @@ export class HandleComponent {
 
   /** A stuck door's handle still moves, but the door never opens. */
   @Input() stuck: boolean = false;
+
+  /** There is a fire behind this door, and it shows through the keyhole. */
+  @Input() fire: boolean = false;
 
   /** Raised when the handle is used, by click or by keyboard. */
   @Output() used = new EventEmitter<void>();

@@ -11,12 +11,12 @@ describe('WeatherRoomComponent', () => {
     expect(room.text()).toContain('12°C');
     expect(room.text()).toContain('Rain');
     expect(room.text()).toContain('15:30');
-    expect(cities.some((c) => room.text().includes(c.name))).toBeTrue();
+    expect(cities.some((c) => room.text().includes(c.name))).toBe(true);
   });
 
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(WeatherRoomComponent);
     failRequest(room.server, '/api/weather');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

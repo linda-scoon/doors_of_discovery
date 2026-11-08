@@ -1,0 +1,224 @@
+/*
+ * A cosy playroom: a soft peach wall, a wooden floor, a round rug, and
+ * Pip, a baby cheetah, sitting on it. Whimsical and warm.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  gap: 2cqi;
+  justify-content: flex-start;
+  padding: 7cqi 5cqi 5cqi;
+  background:
+    /* The rug. */
+    radial-gradient(ellipse 45% 7% at 50% 86%, #e98a7a 0 70%, #d46a5c 71% 80%, transparent 81%),
+    /* The floor. */
+    repeating-linear-gradient(90deg, #c99a6b 0 18cqi, #bb8b5d 18cqi 18.6cqi) bottom / 100% 26% no-repeat,
+    /* The wall, with a dotted paper. */
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1cqi, transparent 1.2cqi) 0 0 / 9cqi 9cqi,
+    linear-gradient(#ffe3cf, #ffd2b8);
+  color: #6b3a2a;
+}
+
+.pet-room__says {
+  min-height: 2.6em;
+  font-family: 'Caveat Brush', 'Comic Sans MS', cursive;
+  font-size: clamp(1rem, 8.5cqi, 1.6rem);
+  line-height: 1.1;
+}
+
+.pet-room__scene {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+/* ---------------------------------------------------------------- Pip */
+
+.pip {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  height: 80%;
+  max-width: 96%;
+  transform: translateX(-50%);
+  overflow: visible;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.pip__shadow { fill: rgba(80, 40, 20, 0.18); }
+.pip__fur { fill: #e8b25f; }
+.pip__chest, .pip__muzzle { fill: #fbf1dc; }
+.pip__paw { fill: #f3dcae; }
+.pip__toes { stroke: #b98a45; stroke-width: 1.6; stroke-linecap: round; }
+.pip__spots { fill: #2a1f17; }
+.pip__mane { fill: #e9e5dc; }
+.pip__ear { fill: #2a1f17; }
+.pip__ear-inner { fill: #e8b25f; }
+.pip__cheek { fill: #f4978e; opacity: 0.35; }
+.pip__iris { fill: #e3a22a; }
+.pip__pupil { fill: #1d1612; }
+.pip__glint { fill: #ffffff; }
+.pip__nose { fill: #2b1d16; }
+.pip__whiskers { fill: #2b1d16; }
+.pip__mouth-open { fill: #7a2b34; }
+.pip__line {
+  fill: none;
+  stroke: #1d1612;
+  stroke-linecap: round;
+  stroke-width: 3.5;
+}
+.pip__tear { fill: #1d1612; }
+
+.pip__tail-fur, .pip__tail-rings { fill: none; }
+.pip__tail-fur { stroke: #e8b25f; stroke-width: 15; stroke-linecap: round; }
+/* Separate black rings towards the end of the tail, square-ended so they
+   stay apart. */
+.pip__tail-rings {
+  stroke: #2a1f17;
+  stroke-width: 15.5;
+  stroke-linecap: butt;
+  stroke-dasharray: 0 74 5 11 5 11 5 11 5 200;
+}
+.pip__tail-tip { fill: #fbf1dc; }
+
+/* Breathing, and the tail swaying, all the time. */
+.pip__body {
+  transform-origin: 120px 250px;
+  transform-box: view-box;
+  animation: breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% { transform: scale(1.015, 0.985); }
+}
+
+.pip__tail {
+  transform-origin: 150px 228px;
+  transform-box: view-box;
+  animation: sway 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(5deg); }
+}
+
+.pip__head {
+  transform-origin: 120px 135px;
+  transform-box: view-box;
+  transition: transform 300ms ease;
+}
+
+/* Blinking now and then, when doing nothing in particular. */
+.pip__eyes-open {
+  transform-origin: 120px 100px;
+  transform-box: view-box;
+  animation: blink 4.5s infinite;
+}
+
+@keyframes blink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.1); }
+}
+
+/* Stroked: the head leans into it and rocks. */
+.pip--purring .pip__head {
+  animation: lean 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes lean {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(4deg); }
+}
+
+.pip--purring .pip__tail { animation-duration: 0.9s; }
+
+.pip--surprised .pip__body {
+  animation: squash 0.4s ease-out;
+}
+
+@keyframes squash {
+  30% { transform: scale(1.08, 0.9); }
+  60% { transform: scale(0.97, 1.04); }
+}
+
+.pip--grumpy .pip__head { transform: rotate(-4deg) translateY(3px); }
+.pip--grumpy .pip__tail { animation: lash 0.25s ease-in-out infinite alternate; }
+
+@keyframes lash {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(10deg); }
+}
+
+.pip--eating .pip__head { transform: translateY(6px) rotate(3deg); }
+.pip--eating .pip__mouth-chew {
+  transform-origin: 120px 129px;
+  transform-box: view-box;
+  animation: chew 0.22s ease-in-out infinite alternate;
+}
+
+@keyframes chew {
+  to { transform: scaleY(0.3); }
+}
+
+.pip--happy .pip__body {
+  animation: hop 0.45s ease-out 3;
+}
+
+/* Full: a contented, slow sway. */
+.pip--full .pip__head {
+  animation: lean 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes hop {
+  50% { transform: translateY(-12px); }
+}
+
+/* -------------------------------------------------------- hearts, food */
+
+.pet-room__heart {
+  position: absolute;
+  bottom: 60%;
+  font-size: clamp(1rem, 9cqi, 1.6rem);
+  color: #ef476f;
+  pointer-events: none;
+  animation: float-up 1.4s ease-out forwards;
+}
+
+@keyframes float-up {
+  from { transform: translateY(0) scale(0.6); opacity: 1; }
+  to { transform: translateY(-28cqi) scale(1.2); opacity: 0; }
+}
+
+.pet-room__food {
+  position: absolute;
+  bottom: 2%;
+  font-size: clamp(1.4rem, 12cqi, 2.4rem);
+  line-height: 1;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  filter: drop-shadow(0 1cqi 1cqi rgba(80, 40, 20, 0.3));
+  animation: pop-in 0.35s ease-out;
+}
+
+.pet-room__food--dragging {
+  z-index: 2;
+  cursor: grabbing;
+  filter: drop-shadow(0 3cqi 3cqi rgba(80, 40, 20, 0.35));
+}
+
+@keyframes pop-in {
+  from { transform: translate(-50%, 0) scale(0); }
+}
+
+.pet-room__food:focus-visible {
+  outline: 2px solid #6b3a2a;
+  outline-offset: 4px;
+  border-radius: 50%;
+}

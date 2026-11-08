@@ -16,6 +16,6 @@ describe('OnThisDayRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(OnThisDayRoomComponent);
     failRequest(room.server, /\/api\/onthisday\//);
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

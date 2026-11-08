@@ -5,7 +5,6 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
 })
 export class RoomComponent implements OnInit {
   constructor() {}

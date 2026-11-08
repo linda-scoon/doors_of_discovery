@@ -15,7 +15,6 @@
   padding: 10cqi 8cqi;
   overflow-y: auto;
   text-align: center;
-  scrollbar-width: thin;
 }
 
 /* Footsteps rather than a spinner: three dots, one after another. */

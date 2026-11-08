@@ -1,0 +1,32 @@
+<app-room-frame [status]="pick.status()">
+  @if (pick.value(); as p) {
+    @if (p.kind === 'book') {
+      <p class="book-room__sign">Staff pick</p>
+      @if (p.cover) {
+        <img class="book-room__cover" [src]="p.cover" [alt]="'Cover of ' + p.title" />
+      } @else {
+        <span class="book-room__cover book-room__cover--cloth">{{ p.title }}</span>
+      }
+      <div class="book-room__card">
+        <p class="book-room__title">{{ p.title }}</p>
+        <p class="room-words room-words--small">{{ p.author }}{{ p.year ? ', ' + p.year : '' }}</p>
+        <p class="room-credit">
+          If you like {{ p.about }} ·
+          <a [href]="p.link" target="_blank" rel="noopener">Open Library</a>
+        </p>
+      </div>
+    } @else {
+      <a class="book-room__own" [href]="p.link" target="_blank" rel="noopener">
+        @if (p.cover) {
+          <img class="book-room__own-cover" [src]="p.cover" alt="" />
+        }
+        <span class="book-room__age" aria-label="For readers aged 18 and over">18+</span>
+        <span class="book-room__own-title">{{ p.title }}</span>
+      </a>
+      @if (p.blurb) {
+        <p class="book-room__synopsis">{{ p.blurb }}</p>
+      }
+      <a class="book-room__site" [href]="p.link" target="_blank" rel="noopener">Silver Footfalls</a>
+    }
+  }
+</app-room-frame>

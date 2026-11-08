@@ -15,6 +15,6 @@ describe('IssRoomComponent', () => {
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(IssRoomComponent);
     failRequest(room.server, '/api/iss');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

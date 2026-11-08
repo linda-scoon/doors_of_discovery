@@ -10,6 +10,7 @@
  */
 
 const cities = require('../shared/cities.json');
+const bookSubjects = require('../shared/book-subjects.json');
 
 /**
  * Some APIs ask callers to say who they are. Wikimedia refuses requests
@@ -37,7 +38,8 @@ const AuthStyle = {
  *                 that returns one random item, or every door of that kind
  *                 shows the same one; see proxy.js.
  *   queryParams   numbers the browser may pass through, each with the range
- *                 it must fall in. Anything else in the query is ignored.
+ *                 it must fall in and optionally a step. Anything else in
+ *                 the query is ignored.
  *   pathParams    named :segments of the url, filled from the route.
  *   pathParamPatterns  what each of those must look like, if not anything.
  *   headers       sent with every request upstream.
@@ -90,7 +92,7 @@ const apis = [
       keyName: 'GIFS_API_KEY',
       paramName: 'api_key',
     },
-    queryParams: { offset: { min: 0, max: 450 } },
+    queryParams: { offset: { min: 0, max: 450, step: 50 } },
     cacheSeconds: 3600,
   },
   {
@@ -101,6 +103,37 @@ const apis = [
     auth: { style: AuthStyle.NONE },
   },
 
+  {
+    // Books on a subject from Open Library, fifty at a time from a random
+    // point in the list; the room picks one. Only the subjects in
+    // shared/book-subjects.json, so the room cannot be pointed elsewhere.
+    id: 'books',
+    url: 'https://openlibrary.org/subjects/:subject.json?limit=50',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+    pathParams: ['subject'],
+    pathParamPatterns: { subject: new RegExp(`^(${bookSubjects.map((s) => s.slug).join('|')})$`) },
+    queryParams: { offset: { min: 0, max: 200, step: 50 } },
+    cacheSeconds: 86400,
+  },
+  {
+    // Lichess's puzzle of the day: the position, whose move it is, and the
+    // moves that solve it. The same for a whole day, so kept an hour.
+    id: 'chess',
+    url: 'https://lichess.org/api/puzzle/daily',
+    auth: { style: AuthStyle.NONE },
+    headers: IDENTIFY,
+    cacheSeconds: 3600,
+  },
+  {
+    // What an English word means, from the Free Dictionary API.
+    id: 'dictionary',
+    url: 'https://api.dictionaryapi.dev/api/v2/entries/en/:word',
+    auth: { style: AuthStyle.NONE },
+    pathParams: ['word'],
+    pathParamPatterns: { word: /^[a-z]{2,24}$/ },
+    cacheSeconds: 86400,
+  },
   {
     // Pexels' hand-picked photos, forty to a page. The free key allows 200
     // calls an hour, so each page is kept for an hour and the room picks a
@@ -147,6 +180,7 @@ const apis = [
     auth: { style: AuthStyle.NONE },
     headers: IDENTIFY,
     pathParams: ['month', 'day'],
+    pathParamPatterns: { month: /^(0[1-9]|1[0-2])$/, day: /^(0[1-9]|[12]\d|3[01])$/ },
     cacheSeconds: 86400,
   },
   {
@@ -205,20 +239,6 @@ const apis = [
     url: 'https://www.themealdb.com/api/json/v1/1/random.php',
     auth: { style: AuthStyle.NONE },
   },
-  {
-    // Old films from the Internet Archive's Prelinger collection: adverts,
-    // public information films, home movies. Fifty to a page.
-    id: 'films',
-    url:
-      'https://archive.org/advancedsearch.php' +
-      '?q=collection%3Aprelinger+AND+mediatype%3Amovies' +
-      '&fl[]=identifier&fl[]=title&fl[]=year&rows=50&output=json',
-    auth: { style: AuthStyle.NONE },
-    // About ten thousand films, so two hundred pages of fifty.
-    queryParams: { page: { min: 1, max: 200 } },
-    cacheSeconds: 86400,
-  },
-
   // The video room needs two calls: pick a popular movie, then find its
   // trailer. Replaces imdb-api.com, which shut down.
   {
@@ -244,6 +264,9 @@ const apis = [
     // parameters. Only these names are accepted, so a request cannot reach a
     // part of the upstream API we did not intend.
     pathParams: ['movieId'],
+    // A number and nothing else: a ".." here would walk up TMDB's paths and
+    // reach other endpoints with our key on the request.
+    pathParamPatterns: { movieId: /^\d{1,10}$/ },
     // Cached per film, and a film's trailers do not change.
     cacheSeconds: 86400,
   },

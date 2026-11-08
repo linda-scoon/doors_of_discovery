@@ -23,11 +23,19 @@ const imageSources = [
 
 const IMAGE_TIMEOUT_MS = 10_000;
 
+/** Bigger than any painting the museum sends at this size, by a long way. */
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+
+function fail(res, status, message) {
+  res.set('Cache-Control', 'no-store');
+  return res.status(status).json({ error: message });
+}
+
 function createImageHandler(source) {
   return async function handleImageRequest(req, res) {
     const { imageId } = req.params;
     if (!source.idPattern.test(imageId)) {
-      return res.status(400).json({ error: 'Not an image id.' });
+      return fail(res, 400, 'Not an image id.');
     }
 
     try {
@@ -38,16 +46,25 @@ function createImageHandler(source) {
       const type = upstream.headers.get('content-type') || '';
 
       if (!upstream.ok || !type.startsWith('image/')) {
-        return res.status(502).json({ error: 'The picture could not be fetched.' });
+        return fail(res, 502, 'The picture could not be fetched.');
+      }
+      if (Number(upstream.headers.get('content-length')) > MAX_IMAGE_BYTES) {
+        return fail(res, 502, 'The picture is too large.');
+      }
+
+      const picture = Buffer.from(await upstream.arrayBuffer());
+      if (picture.length > MAX_IMAGE_BYTES) {
+        return fail(res, 502, 'The picture is too large.');
       }
 
       res.set('Content-Type', type);
-      // A given id is always the same picture, so the browser can keep it.
+      // A given id is always the same picture, so browsers and a CDN can
+      // keep it for good.
       res.set('Cache-Control', 'public, max-age=31536000, immutable');
-      return res.send(Buffer.from(await upstream.arrayBuffer()));
+      return res.send(picture);
     } catch (error) {
-      console.error(`[images/${source.id}] fetch failed:`, error.message);
-      return res.status(502).json({ error: 'The picture could not be fetched.' });
+      console.error(`[images/${source.id}] fetch failed:`, error.name);
+      return fail(res, 502, 'The picture could not be fetched.');
     }
   };
 }

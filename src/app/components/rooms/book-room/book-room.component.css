@@ -1,0 +1,150 @@
+/*
+ * A bookshop: shelves of coloured spines all round, and a book face out on
+ * the counter with a handwritten staff-pick card. The owner's own stories
+ * get a card of their own, in midnight and silver.
+ */
+:host {
+  display: contents;
+}
+
+app-room-frame {
+  gap: 3cqi;
+  background:
+    /* The shelf boards. */
+    repeating-linear-gradient(to bottom, transparent 0 22cqi, #6b4527 22cqi 24.5cqi, #3e2614 24.5cqi 25cqi),
+    /* The spines: every colour a bookshop is. */
+    repeating-linear-gradient(
+      90deg,
+      #8c2f39 0 4cqi, #2f5d62 4cqi 7cqi, #d9a441 7cqi 9.5cqi, #3b3561 9.5cqi 13cqi,
+      #e8dcc0 13cqi 15cqi, #5a7d3a 15cqi 19cqi, #a14d2a 19cqi 21.5cqi, #1f3b57 21.5cqi 25cqi
+    );
+  color: #2a1d12;
+}
+
+.book-room__sign {
+  padding: 0.5cqi 3cqi;
+  border-radius: 1cqi;
+  background: #fff6dc;
+  font-family: 'Caveat', 'Segoe Print', cursive;
+  font-size: clamp(0.9rem, 7cqi, 1.3rem);
+  color: #8c2f39;
+  box-shadow: 0 1cqi 2cqi rgba(0, 0, 0, 0.35);
+  transform: rotate(-3deg);
+}
+
+.book-room__cover {
+  display: block;
+  width: 44cqi;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 0 1cqi 1cqi 0;
+  box-shadow: -1cqi 0 0 rgba(0, 0, 0, 0.25) inset, 0 2cqi 5cqi rgba(0, 0, 0, 0.55);
+}
+
+/* No cover: a plain cloth binding with the title stamped on it. */
+.book-room__cover--cloth {
+  display: grid;
+  place-items: center;
+  padding: 4cqi;
+  background: linear-gradient(to right, #5b1f26 0 3cqi, #7d2a34 3cqi);
+  color: #e6c46a;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.65rem, 4.5cqi, 0.9rem);
+  text-align: center;
+}
+
+.book-room__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2cqi;
+  width: 100%;
+  padding: 3cqi 4cqi;
+  border-radius: 1.5cqi;
+  background: #fffaf0;
+  box-shadow: 0 1.5cqi 4cqi rgba(0, 0, 0, 0.45);
+}
+
+.book-room__title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.9rem, 7cqi, 1.3rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+/*
+ * One of the owner's own stories: the cover, face out, with the title
+ * across the bottom of it and an 18+ mark in the corner, then a few lines
+ * of synopsis and the site's name.
+ */
+.book-room__own {
+  position: relative;
+  display: block;
+  width: 58cqi;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 0 1.5cqi 1.5cqi 0;
+  background: linear-gradient(to bottom, #2b1830, #0d0a14);
+  box-shadow: -1cqi 0 0 rgba(0, 0, 0, 0.3) inset, 0 2cqi 6cqi rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.book-room__own-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-room__own-title {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 14cqi 4cqi 4cqi;
+  background: linear-gradient(to bottom, transparent, rgba(8, 4, 10, 0.85) 55%);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.95rem, 8cqi, 1.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0.5cqi 2cqi rgba(0, 0, 0, 0.8);
+}
+
+.book-room__age {
+  position: absolute;
+  top: 2.5cqi;
+  right: 2.5cqi;
+  display: grid;
+  place-items: center;
+  width: 10cqi;
+  aspect-ratio: 1;
+  border: 0.6cqi solid #ffffff;
+  border-radius: 50%;
+  background: #b3122a;
+  font-size: clamp(0.55rem, 3.6cqi, 0.75rem);
+  font-weight: 800;
+}
+
+/* On a dark panel, so it reads over the busy shelves. */
+.book-room__synopsis {
+  width: 100%;
+  padding: 2.5cqi 3.5cqi;
+  border-radius: 1.5cqi;
+  background: rgba(16, 10, 8, 0.82);
+  color: #f2ece4;
+  font-size: clamp(0.68rem, 4.6cqi, 0.88rem);
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.book-room__site {
+  padding: 0.4em 1.1em;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #2a1d12;
+  font-size: clamp(0.7rem, 5cqi, 0.9rem);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 1cqi 2cqi rgba(0, 0, 0, 0.4);
+}

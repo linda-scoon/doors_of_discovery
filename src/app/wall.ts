@@ -157,8 +157,7 @@ export class Deck {
         room: {
           id,
           name: kind.name,
-          component: kind.component,
-          isEmpty: kind.isEmpty,
+          load: kind.load,
           needsDoorState: kind.needsDoorState,
         },
         // Where it would have hung before the wall was shuffled, so a door

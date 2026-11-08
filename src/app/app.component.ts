@@ -11,6 +11,8 @@ import {
 
 import { ROOM_KINDS } from './rooms';
 import { Deck, WallCell } from './wall';
+import { RoomSlotComponent } from './components/rooms/room-slot/room-slot.component';
+import { BricksComponent } from './components/bricks/bricks.component';
 
 /** How many doors to add each time the visitor reaches the bottom. */
 const DOORS_PER_PAGE = 12;
@@ -20,7 +22,7 @@ const DOORS_PER_PAGE = 12;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [RoomSlotComponent, BricksComponent],
 })
 export class AppComponent implements AfterViewInit, OnDestroy {
   private readonly changeDetector = inject(ChangeDetectorRef);

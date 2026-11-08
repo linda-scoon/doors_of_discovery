@@ -1,10 +1,7 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 
 import { RoomSlotComponent } from './room-slot.component';
-import { RoomComponent } from '../room/room.component';
-import { DoorComponent } from '../../doors/door/door.component';
-import { HandleComponent } from '../../handles/handle/handle.component';
 import { RoomDefinition } from '../../../rooms';
 import { DoorSoundService } from '../../../services/door-sound.service';
 
@@ -29,13 +26,15 @@ class SilentSoundService {
 }
 
 describe('RoomSlotComponent', () => {
+  afterEach(() => vi.useRealTimers());
+
   let fixture: ComponentFixture<RoomSlotComponent>;
   let sound: SilentSoundService;
 
   const plainRoom: RoomDefinition = {
     id: 'test',
     name: 'Fact Room',
-    component: TestRoomContentComponent,
+    load: () => Promise.resolve(TestRoomContentComponent),
     // Pinned so the test does not depend on what the id happens to generate.
     openStyle: 'swing',
   };
@@ -44,13 +43,8 @@ describe('RoomSlotComponent', () => {
     sound = new SilentSoundService();
 
     await TestBed.configureTestingModule({
-      declarations: [
-        RoomSlotComponent,
-        RoomComponent,
-        DoorComponent,
-        HandleComponent,
-        TestRoomContentComponent,
-      ],
+      declarations: [TestRoomContentComponent],
+      imports: [RoomSlotComponent],
       providers: [{ provide: DoorSoundService, useValue: sound }],
     }).compileComponents();
 
@@ -66,43 +60,71 @@ describe('RoomSlotComponent', () => {
       .querySelector('app-room')
       .dispatchEvent(new PointerEvent('pointerleave', { pointerType }));
 
+  /** Lets the room's code arrive, then renders. */
+  async function settle() {
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
   it('builds the room behind the door only once it is opened', async () => {
-    await createWith(plainRoom);
-    // Nothing is fetched for a door nobody opens.
+    let fetched = 0;
+    await createWith({
+      ...plainRoom,
+      load: () => {
+        fetched += 1;
+        return Promise.resolve(TestRoomContentComponent);
+      },
+    });
+    // Nothing is fetched for a door nobody opens -- not even its code.
     expect(fixture.nativeElement.querySelector('.content')).toBeNull();
+    expect(fetched).toBe(0);
 
     handle().click();
-    fixture.detectChanges();
+    await settle();
 
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
+    expect(fetched).toBe(1);
   });
 
-  it('takes the room down once the door has swung shut', fakeAsync(async () => {
+  it('bricks up the doorway if the room cannot be fetched', async () => {
+    await createWith({ ...plainRoom, load: () => Promise.reject(new Error('offline')) });
+
+    handle().click();
+    await settle();
+
+    expect(fixture.nativeElement.querySelector('app-bricks')).toBeTruthy();
+  });
+
+  it('takes the room down once the door has swung shut', async () => {
     await createWith(plainRoom);
     handle().click();
-    fixture.detectChanges();
+    await settle();
 
+    vi.useFakeTimers();
     leave();
     fixture.detectChanges();
     // Still there while the door swings closed over it.
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
 
-    tick(2000);
+    vi.advanceTimersByTime(2000);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.content')).toBeNull();
-  }));
+  });
 
-  it('keeps the room if the door is opened again before it is taken down', fakeAsync(async () => {
+  it('keeps the room if the door is opened again before it is taken down', async () => {
     await createWith(plainRoom);
     handle().click();
+    await settle();
+
+    vi.useFakeTimers();
     leave();
-    tick(500);
+    vi.advanceTimersByTime(500);
     handle().click();
-    tick(2000);
+    vi.advanceTimersByTime(2000);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.content')).toBeTruthy();
-  }));
+  });
 
   it('renders exactly one door', async () => {
     await createWith(plainRoom);
@@ -117,7 +139,7 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
 
     expect(door().classList).toContain('door--open');
-    expect(fixture.componentInstance.open).toBeTrue();
+    expect(fixture.componentInstance.open).toBe(true);
   });
 
   it('builds the door label from the room name', async () => {
@@ -162,7 +184,7 @@ describe('RoomSlotComponent', () => {
   it('is not shut by a tap inside its own room', async () => {
     await createWith(plainRoom);
     handle().click();
-    fixture.detectChanges();
+    await settle();
 
     fixture.nativeElement
       .querySelector('.content')
@@ -205,21 +227,22 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
 
     expect(door().classList).not.toContain('door--open');
-    expect(fixture.componentInstance.open).toBeFalse();
+    expect(fixture.componentInstance.open).toBe(false);
   });
 
-  it('answers from inside and then lets you in', fakeAsync(async () => {
+  it('answers from inside and then lets you in', async () => {
     await createWith(plainRoom);
+    vi.useFakeTimers();
     // The surprise comes from the id, so set it directly for the test.
     fixture.componentInstance.character.surprise = 'answers';
 
     fixture.componentInstance.onTap('wood');
     expect(sound.played).toContain('callOut:coming');
-    expect(fixture.componentInstance.open).toBeFalse();
+    expect(fixture.componentInstance.open).toBe(false);
 
-    tick(1400);
-    expect(fixture.componentInstance.open).toBeTrue();
-  }));
+    vi.advanceTimersByTime(1400);
+    expect(fixture.componentInstance.open).toBe(true);
+  });
 
   it('hides the room until the door is open', async () => {
     await createWith(plainRoom);
@@ -233,15 +256,6 @@ describe('RoomSlotComponent', () => {
     fixture.detectChanges();
 
     expect(content.classList).not.toContain('room-content--hidden');
-  });
-
-  it('never leaves a door onto an empty room stuck', async () => {
-    await createWith({ ...plainRoom, openStyle: 'stuck', isEmpty: true });
-
-    handle().click();
-    fixture.detectChanges();
-
-    expect(door().classList).toContain('door--open');
   });
 
   it('still allows a stuck door onto a room with something in it', async () => {
@@ -259,6 +273,6 @@ describe('RoomSlotComponent', () => {
 
     fixture.componentInstance.onTap('wood');
 
-    expect(fixture.componentInstance.open).toBeTrue();
+    expect(fixture.componentInstance.open).toBe(true);
   });
 });

@@ -26,12 +26,12 @@ describe('RadioRoomComponent', () => {
     expect(room.text()).toContain('Two');
 
     room.fixture.nativeElement.querySelector('audio').dispatchEvent(new Event('error'));
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 
   it('is bricked up when the fetch fails', async () => {
     const room = await openRoom(RadioRoomComponent);
     failRequest(room.server, '/api/radio');
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

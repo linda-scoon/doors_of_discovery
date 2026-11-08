@@ -1,12 +1,37 @@
 <app-room-frame [status]="meal.status()">
   @if (meal.value(); as m) {
     <img class="recipe-room__dish" [src]="m.image" [alt]="m.name" />
-    <p class="room-words">{{ m.name }}</p>
+    <p class="recipe-room__name">{{ m.name }}</p>
     @if (m.kind) {
       <p class="room-words room-words--small">{{ m.kind }}</p>
     }
+
+    <article class="recipe-room__card">
+      @if (m.ingredients.length) {
+        <h4 class="recipe-room__heading">Ingredients</h4>
+        <ul class="recipe-room__ingredients">
+          @for (item of m.ingredients; track $index) {
+            <li>
+              @if (item.measure) {
+                <span class="recipe-room__measure">{{ item.measure }}</span>
+              }
+              {{ item.name }}
+            </li>
+          }
+        </ul>
+      }
+      @if (m.steps.length) {
+        <h4 class="recipe-room__heading">Method</h4>
+        <ol class="recipe-room__steps">
+          @for (step of m.steps; track $index) {
+            <li>{{ step }}</li>
+          }
+        </ol>
+      }
+    </article>
+
     <p class="room-credit">
-      <a [href]="m.link" target="_blank" rel="noopener">The recipe</a> ·
+      <a [href]="m.link" target="_blank" rel="noopener">The original recipe</a> ·
       <a href="https://www.themealdb.com/" target="_blank" rel="noopener">TheMealDB</a>
     </p>
   }

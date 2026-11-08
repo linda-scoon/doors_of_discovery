@@ -62,7 +62,7 @@ describe('door numbers', () => {
     const unlucky = all.filter((door) => door.number === 13);
 
     expect(unlucky.length).toBeGreaterThan(0);
-    unlucky.forEach((door) => expect(isPlainDesign(door.design)).toBeTrue());
+    unlucky.forEach((door) => expect(isPlainDesign(door.design)).toBe(true));
   });
 
   it('gives every material a plain face to put a number on', () => {
@@ -76,9 +76,7 @@ describe('door numbers', () => {
     });
 
     ['wood', 'metal', 'glass', 'stone'].forEach((material) =>
-      expect(plainPerMaterial.get(material))
-        .withContext(`no plain ${material} door in 600`)
-        .toBeGreaterThan(0)
+      expect(plainPerMaterial.get(material), `no plain ${material} door in 600`).toBeGreaterThan(0)
     );
   });
 });
@@ -144,9 +142,7 @@ describe('graffiti placement', () => {
     );
 
     ['single', 'curtain', 'splash', 'soft'].forEach((style) =>
-      expect(counts.get(style))
-        .withContext(`no door got the ${style} drip`)
-        .toBeGreaterThan(0)
+      expect(counts.get(style), `no door got the ${style} drip`).toBeGreaterThan(0)
     );
 
     // A splash is only a surprise while most doors are not splashed.
@@ -192,9 +188,7 @@ describe('graffiti placement', () => {
       (door) => door.graffiti!.lines.length > 1 && door.graffiti!.lines[0].runs.length
     );
 
-    expect(fromTheTop.length)
-      .withContext('every run came off the last line')
-      .toBeGreaterThan(0);
+    expect(fromTheTop.length, 'every run came off the last line').toBeGreaterThan(0);
   });
 
   it('runs paint from an upper line far enough to pass the line below', () => {
@@ -270,5 +264,23 @@ describe('graffiti placement', () => {
     const once = characterForDoor('door-42', 42).graffiti;
     const again = characterForDoor('door-42', 42).graffiti;
     expect(again).toEqual(once);
+  });
+});
+
+describe('the jump scare', () => {
+  // Rare on purpose -- a scare people expect does not scare -- but it must
+  // actually be out there to be met.
+  it('is behind about one door in a hundred, never none', () => {
+    let monsters = 0;
+    let fires = 0;
+    for (let i = 1; i <= 5000; i += 1) {
+      const { surprise } = characterForDoor(`door-${i}`, i - 1);
+      if (surprise === 'monster') monsters += 1;
+      if (surprise === 'fire') fires += 1;
+    }
+    expect(monsters).toBeGreaterThan(25);
+    expect(monsters).toBeLessThan(100);
+    expect(fires).toBeGreaterThan(25);
+    expect(fires).toBeLessThan(100);
   });
 });

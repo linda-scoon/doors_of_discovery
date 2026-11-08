@@ -25,7 +25,7 @@ describe('DoorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DoorComponent, HandleComponent],
+      imports: [DoorComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DoorComponent);
@@ -52,7 +52,7 @@ describe('DoorComponent', () => {
 
     handle().click();
 
-    expect(emitted).toBeTrue();
+    expect(emitted).toBe(true);
   });
 
   it('hinges on the right when the handle is on the left', () => {

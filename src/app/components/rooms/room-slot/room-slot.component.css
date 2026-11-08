@@ -3,8 +3,8 @@
  *
  * Being behind the door is not enough: glass and frosted doors are
  * translucent on purpose, so whatever was in the room could be read through
- * them — including "nothing in here yet", which gives away the surprise and
- * looks like a bug. The contents fade in as the door clears.
+ * them, which gives away the surprise. The contents fade in as the door
+ * clears.
  */
 .room-content--hidden {
   opacity: 0;

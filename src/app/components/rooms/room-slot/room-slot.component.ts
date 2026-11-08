@@ -7,7 +7,9 @@ import {
   OnDestroy,
   OnInit,
   ChangeDetectionStrategy,
+  Type,
   inject,
+  signal,
 } from '@angular/core';
 
 import { RoomDefinition } from '../../../rooms';
@@ -18,6 +20,10 @@ import {
   characterForDoor,
 } from '../../doors/door/door-material';
 import { DoorSoundService } from '../../../services/door-sound.service';
+import { NgComponentOutlet } from '@angular/common';
+import { RoomComponent } from '../room/room.component';
+import { DoorComponent } from '../../doors/door/door.component';
+import { BricksComponent } from '../../bricks/bricks.component';
 
 /**
  * A door and the room behind it.
@@ -48,7 +54,7 @@ const CLEAR_ROOM_DELAY = 1800;
   templateUrl: './room-slot.component.html',
   styleUrls: ['./room-slot.component.css'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false,
+  imports: [RoomComponent, DoorComponent, BricksComponent, NgComponentOutlet],
 })
 export class RoomSlotComponent implements OnInit, OnDestroy {
   private readonly sound = inject(DoorSoundService);
@@ -80,6 +86,12 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
 
   private clearRoomTimer?: ReturnType<typeof setTimeout>;
 
+  /** The room's component, once its code has been fetched. */
+  readonly roomComponent = signal<Type<unknown> | undefined>(undefined);
+
+  /** Set if the room's code could not be fetched -- offline, say. */
+  readonly roomUnavailable = signal(false);
+
   /** Set while the doorway is alight, for a door that hides fire. */
   burning = false;
 
@@ -100,13 +112,7 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
     // room asking for a creaky door would have opened silently.
     const derived = characterForDoor(this.room.id, this.ordinal);
 
-    let openStyle = this.room.openStyle ?? derived.openStyle;
-
-    // A door onto an empty room is never stuck. Refusing to open, and then
-    // having nothing behind it, is two disappointments rather than one.
-    if (this.room.isEmpty && openStyle === 'stuck') {
-      openStyle = 'swing';
-    }
+    const openStyle = this.room.openStyle ?? derived.openStyle;
 
     this.character = {
       ...derived,
@@ -163,6 +169,7 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
     this.open = true;
     clearTimeout(this.clearRoomTimer);
     this.furnished = true;
+    this.fetchRoom();
     this.refreshContentInputs();
 
     if (this.character.openStyle === 'creak') {
@@ -212,10 +219,26 @@ export class RoomSlotComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Fetches the room's code the first time the door opens; it is kept after
+   * that. The door takes over a second to swing, which covers the wait. If
+   * it cannot be fetched, the doorway is bricked up, as for any room that
+   * cannot get what it shows; opening the door again tries again.
+   */
+  private fetchRoom(): void {
+    if (this.roomComponent()) return;
+
+    this.roomUnavailable.set(false);
+    this.room.load().then(
+      (component) => this.roomComponent.set(component),
+      () => this.roomUnavailable.set(true)
+    );
+  }
+
+  /**
    * Whether the room's own contents should step aside.
    *
    * A doorway with something in it is not an empty room, so it must never
-   * be captioned "nothing in here yet" — not even for the moment between
+   * be shown with the room's own contents in front of it — not even for the moment between
    * the door opening and the monster arriving.
    */
   get upstaged(): boolean {

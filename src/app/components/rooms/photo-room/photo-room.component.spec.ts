@@ -25,6 +25,6 @@ describe('PhotoRoomComponent', () => {
   it('is bricked up when the fetch fails, as it is until the key is set', async () => {
     const room = await openRoom(PhotoRoomComponent);
     failRequest(room.server, /\/api\/photos/);
-    expect(room.bricked()).toBeTrue();
+    expect(room.bricked()).toBe(true);
   });
 });

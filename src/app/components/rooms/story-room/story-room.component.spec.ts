@@ -56,4 +56,15 @@ describe('StoryRoomComponent', () => {
     expect(tidyName('  lin   da ')).toBe('Lin da');
     expect(tidyName('x'.repeat(40)).length).toBe(24);
   });
+
+  it('shows a name as words, never as markup, whatever is typed', () => {
+    const { fixture, room, text } = open();
+    // Short enough to survive the 24-character limit whole.
+    const attack = '<img src=x onerror=a()>';
+    room.begin(attack);
+
+    // The name is written in as text, so it reads as typed and runs nothing.
+    expect(text()).toContain(attack);
+    expect(fixture.nativeElement.querySelector('img')).toBeNull();
+  });
 });
