@@ -79,13 +79,13 @@ interface Chapter {
       overflow-y: auto;
       margin-top: 2cqi;
       padding: 0 2cqi;
-      font-size: clamp(0.68rem, 4.6cqi, 0.92rem);
-      line-height: 1.55;
-      text-align: justify;
+      font-size: clamp(0.68rem, 4.4cqi, 0.9rem);
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      text-align: start;
+      text-wrap: pretty;
       hyphens: auto;
       overscroll-behavior: contain;
-      scrollbar-width: thin;
-      scrollbar-color: #b59a6a transparent;
     }
     .chapter__text p + p { text-indent: 1.4em; }
     .chapter__text p:first-child::first-letter {

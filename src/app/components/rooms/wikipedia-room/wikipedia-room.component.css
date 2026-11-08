@@ -11,7 +11,7 @@
 app-room-frame {
   justify-content: flex-start;
   gap: 3cqi;
-  padding: 6cqi 7cqi 6cqi 9cqi;
+  padding: 6cqi 5cqi 6cqi 7cqi;
   background:
     linear-gradient(to right, rgba(90, 60, 20, 0.28), transparent 7cqi),
     radial-gradient(ellipse at 60% 40%, transparent 55%, rgba(140, 100, 40, 0.22)),
@@ -69,11 +69,22 @@ app-room-frame {
   text-align: center;
 }
 
+/*
+ * A narrow column of justified text gets stretched gaps between words, and
+ * a big font in a small box packs the lines tight; both read as squeezed.
+ * So: ragged right, with whole words kept together where it can, a slightly
+ * smaller size with more space between the lines, a breath of letter
+ * spacing, and the column as wide as the page allows. The eye reads that
+ * as an open page rather than a crammed one.
+ */
 .wikipedia-room__entry {
   width: 100%;
-  font-size: clamp(0.72rem, 5cqi, 0.95rem);
-  line-height: 1.4;
-  text-align: justify;
+  font-size: clamp(0.7rem, 4.5cqi, 0.92rem);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  word-spacing: 0.04em;
+  text-align: start;
+  text-wrap: pretty;
   hyphens: auto;
 }
 

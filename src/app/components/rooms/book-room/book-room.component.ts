@@ -88,7 +88,10 @@ export class BookRoomComponent {
             year: work.first_publish_year,
             cover: work.cover_id ? `https://covers.openlibrary.org/b/id/${work.cover_id}-M.jpg` : undefined,
             about: subject.label,
-            link: `https://openlibrary.org${work.key}`,
+            // Only ever a work's page on Open Library, whatever the key says.
+            link: /^\/works\/OL\d+W$/.test(work.key ?? '')
+              ? `https://openlibrary.org${work.key}`
+              : `https://openlibrary.org/subjects/${subject.slug}`,
           };
         })
       );
