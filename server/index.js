@@ -17,6 +17,11 @@
  * Run it with `npm run serve:api` locally, or `npm run serve:prod` to serve
  * the production build the way the host does.
  */
+// Hostinger counts every thread of every site on the plan against one limit (120), and this site is quiet, so
+// Node's pool of helper threads is kept to one. It must be set before anything uses the pool, which is why it is
+// the first line that runs. The host's own value wins where one is set.
+process.env.UV_THREADPOOL_SIZE = process.env.UV_THREADPOOL_SIZE || '1';
+
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
