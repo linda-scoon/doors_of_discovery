@@ -102,6 +102,12 @@ Hostinger builds from `master` automatically on every push.
 | Framework preset | **Express** |
 | Entry file | **`server/index.js`** |
 | Package manager | npm |
+| Environment variable `NODE_OPTIONS` | **`--v8-pool-size=1`** |
+
+`NODE_OPTIONS` keeps Node's own helper threads to one: Hostinger counts every
+thread of every site on the plan against one limit (120 on the Business plan),
+and this site is quiet. Measured: 7 threads without it, 4 with it.
+`server/index.js` keeps Node's file and network pool to one thread itself.
 
 There is no build setting for Express: Hostinger installs dependencies and
 starts the entry file. The build runs anyway, from `postinstall` (see
